@@ -1,22 +1,25 @@
 package com.example.davide.letssound;
 
+import java.util.List;
 import java.util.Locale;
 
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.davide.letssound.singleton.YoutubeIntegratorSingleton;
+import com.google.api.services.youtube.model.SearchResult;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,24 +36,32 @@ public class MainActivity extends AppCompatActivity {
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    ViewPager mViewPager;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+        //init viewPager
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        viewPager = (ViewPager) findViewById(R.id.pagerId);
+        viewPager.setAdapter(mSectionsPagerAdapter);
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
+        // Give the TabLayout the ViewPager
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.slidingTabsId);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -122,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private View mRootView;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -141,9 +153,45 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
+            mRootView = inflater.inflate(R.layout.fragment_main, container, false);
+            initView();
+            return mRootView;
         }
+
+        /**
+         *
+         */
+        public void initView() {
+            (mRootView
+                    .findViewById(R.id.searchSubmitButtonId))
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String query = ((EditText) mRootView
+                                    .findViewById(R.id.searchInputId)).getText().toString();
+                            List<SearchResult> result = YoutubeIntegratorSingleton
+                                    .searchByQueryString(query);
+
+                            if (result == null) {
+                                ((TextView) mRootView
+                                        .findViewById(R.id.resultTextId)).setText("error no item found");
+                                return;
+                            }
+
+                            String resultString = "";
+                            for (SearchResult item : result) {
+                                 resultString = resultString + item.getSnippet().getTitle() + "\n";
+                            }
+
+                            ((TextView) mRootView
+                                    .findViewById(R.id.resultTextId)).setText(resultString);
+
+                        }
+                    });
+
+        }
+
+
     }
 
 }

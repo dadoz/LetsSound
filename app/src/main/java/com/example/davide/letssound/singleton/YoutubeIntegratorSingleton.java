@@ -14,8 +14,10 @@
 
 package com.example.davide.letssound.singleton;
 
+import android.os.StrictMode;
 import android.util.Log;
 
+import com.example.davide.letssound.auth.AuthCustom;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -36,7 +38,7 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
+import com.google.api.client.http.HttpTransport;
 /**
  * Print a list of videos matching a search term.
  *
@@ -52,6 +54,7 @@ public class YoutubeIntegratorSingleton {
 
     private static final long NUMBER_OF_VIDEOS_RETURNED = 25;
 
+
     /**
      * Define a global instance of a Youtube object, which will be used
      * to make YouTube Data API requests.
@@ -62,19 +65,23 @@ public class YoutubeIntegratorSingleton {
      * Initialize a YouTube object to search for videos on YouTube. Then
      * display the name and thumbnail image of each video in the result set.
      *
-     * @param args command line args.
+     * @param queryTerm command line args.
      */
-    public static void main(String[] args) {
+    public static List<SearchResult> searchByQueryString(String queryTerm) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         // Read the developer key from the properties file.
         Properties properties = new Properties();
         try {
-            InputStream in = YouTube.Search.class.getResourceAsStream("/" + PROPERTIES_FILENAME);
-            properties.load(in);
-
-        } catch (IOException e) {
-            System.err.println("There was an error reading " + PROPERTIES_FILENAME + ": " + e.getCause()
-                    + " : " + e.getMessage());
-            System.exit(1);
+            InputStream in = YoutubeIntegratorSingleton
+                    .class.getResourceAsStream("/" + PROPERTIES_FILENAME);
+            if (in != null) {
+                properties.load(in);
+            }
+        } catch (Exception e) {
+           Log.e("TAG", "There was an error reading " + PROPERTIES_FILENAME + ": " + e.getCause()
+                   + " : " + e.getMessage());
         }
 
         try {
@@ -88,7 +95,7 @@ public class YoutubeIntegratorSingleton {
             }).setApplicationName("youtube-cmdline-search-sample").build();
 
             // Prompt the user to enter a query term.
-            String queryTerm = getInputQuery();
+//            String queryTerm = getInputQuery();
 
             // Define the API request for retrieving search results.
             YouTube.Search.List search = youtube.search().list("id,snippet");
@@ -96,8 +103,9 @@ public class YoutubeIntegratorSingleton {
             // Set your developer key from the Google Developers Console for
             // non-authenticated requests. See:
             // https://console.developers.google.com/
-            String apiKey = properties.getProperty("youtube.apikey");
-            search.setKey(apiKey);
+//            String apiKey = properties.getProperty("youtube.apikey");
+
+            search.setKey(AuthCustom.API_KEY);
             search.setQ(queryTerm);
 
             // Restrict the search results to only include videos. See:
@@ -115,32 +123,20 @@ public class YoutubeIntegratorSingleton {
             if (searchResultList != null) {
                 prettyPrint(searchResultList.iterator(), queryTerm);
             }
+
+            return searchResultList;
         } catch (GoogleJsonResponseException e) {
-            System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
+            Log.e("TAG", "There was a service error: " + e.getDetails().getCode() + " : "
                     + e.getDetails().getMessage());
         } catch (IOException e) {
-            System.err.println("There was an IO error: " + e.getCause() + " : " + e.getMessage());
+            Log.e("TAG" ,"There was an IO error: " + e.getCause() + " : " + e.getMessage());
         } catch (Throwable t) {
             t.printStackTrace();
         }
+        return null;
     }
 
-    /*
-     * Prompt the user to enter a query term and return the user-specified term.
-     */
-    private static String getInputQuery() throws IOException {
-        String inputQuery = "";
 
-        System.out.print("Please enter a search term: ");
-        BufferedReader bReader = new BufferedReader(new InputStreamReader(System.in));
-        inputQuery = bReader.readLine();
-
-        if (inputQuery.length() < 1) {
-            // Use the string "YouTube Developers Live" as a default.
-            inputQuery = "YouTube Developers Live";
-        }
-        return inputQuery;
-    }
 
     /*
      * Prints out all results in the Iterator. For each result, print the

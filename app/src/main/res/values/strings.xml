@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">LetsSound</string>
 
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_section1">Search</string>
+    <string name="title_section2">History</string>
+    <string name="title_section3">Not set</string>
 
     <string name="hello_world">Hello world!</string>
 
