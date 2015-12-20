@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/small_padding"
     android:background="?android:attr/selectableItemBackground">
     <RelativeLayout
         android:layout_height="wrap_content"
@@ -14,17 +13,17 @@
             android:id="@+id/playPauseLayoutId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerInParent="true">
+            android:layout_alignParentLeft="true">
             <ImageView
                 android:id="@+id/playButtonId"
+                android:padding="@dimen/medium_padding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@android:drawable/ic_media_play"/>
             <ImageView
                 android:id="@+id/pauseButtonId"
                 android:visibility="gone"
-
+                android:padding="@dimen/medium_padding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@android:drawable/ic_media_pause"/>
@@ -35,6 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_toRightOf="@id/playPauseLayoutId"
             android:layout_marginLeft="@dimen/medium_padding"
+            android:padding="@dimen/small_padding"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/titleTextId"
@@ -56,6 +56,7 @@
 
         </LinearLayout>
         <TextView
+            android:padding="@dimen/small_padding"
             android:id="@+id/durationTimeTextId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -173,14 +173,22 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     @Override
     public void onClick(int position, View v) {
-        Snackbar.make(mRootView, "hey click play - " + position, Snackbar.LENGTH_SHORT)
-                .show();
-        try {
-            playSoundTrack(position);
-        } catch (Exception e) {
-            e.printStackTrace();
-            handleError(e);
-            mp.reset();
+
+        switch (v.getId()) {
+            case R.id.playButtonId:
+                Snackbar.make(mRootView, "hey click play - " + position, Snackbar.LENGTH_SHORT)
+                        .show();
+                try {
+                    playSoundTrack(position);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    handleError(e);
+                    mp.reset();
+                }
+                break;
+            case R.id.pauseButtonId:
+                mp.pause();
+                break;
         }
     }
 
@@ -286,8 +294,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         soundTrackTitleTextView.setText(obj.getSnippet().getTitle());
 
         setOnPlaySoundTrackPos(position);
-        testSoundTrackPlay();
-//        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
+//        testSoundTrackPlay();
+        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
     }
 
     private void testSoundTrackPlay() throws Exception {
@@ -532,11 +540,16 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      *
      * @param pos
      */
-    private void setOnPlaySoundTrackPos(int pos) {
-        //sound track status
-        soundTrackStatus.setPlayStatus();
-        soundTrackStatus.setCurrentPosition(pos);
-        soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
+    private void setOnPlaySoundTrackPos(final int pos) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //sound track status
+                soundTrackStatus.setPlayStatus();
+                soundTrackStatus.setCurrentPosition(pos);
+                soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -591,6 +604,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                 }
             }
             setOnPlayingStatus(false);
+            setOnPlaySoundTrackPos(-1);
         }
     }
 
