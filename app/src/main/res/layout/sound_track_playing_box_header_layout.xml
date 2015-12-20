@@ -12,7 +12,11 @@
 <RelativeLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/medium_padding"
+    android:layout_marginLeft="@dimen/medium_padding"
+    android:layout_marginRight="@dimen/medium_padding"
+    >
     <TextView
         android:id="@+id/soundTrackTitleTextId"
         android:layout_marginRight="@dimen/extra_large_padding"
@@ -20,7 +24,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/md_blue_grey_800"
         android:padding="@dimen/small_padding"
-        android:textSize="@dimen/title_text_medium"
+        android:textSize="@dimen/title_text_large"
         android:maxLines="1"
         android:ellipsize="end"
         android:text="sound track"/>

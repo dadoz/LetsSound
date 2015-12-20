@@ -1,5 +1,7 @@
 package com.example.davide.letssound.adapters;
 
+import android.graphics.Color;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.SoundTrackStatus;
 import com.google.api.services.youtube.model.SearchResult;
 
 import java.text.SimpleDateFormat;
@@ -23,7 +26,7 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
     private static final String PUBLISHED_AT = "Published at - ";
     private List<SearchResult> mDataset;
     private OnItemClickListenerInterface itemClickListenerRef;
-
+    private SoundTrackStatus soundTrackStatus;
     public SearchResult getItemByPosition(int position) {
         return mDataset.get(position);
     }
@@ -31,11 +34,14 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
     public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
             .OnClickListener {
+        //TODO weakRef please
         private final OnItemClickListenerInterface itemClickListenerRef;
-        TextView title;
-        TextView durationTime;
-        TextView url;
-        View playButton;
+        private final View mainView;
+        private final TextView title;
+        private final TextView durationTime;
+        private final TextView url;
+        private final View playButton;
+        private final View pauseButton;
 
         public DataObjectHolder(View itemView, OnItemClickListenerInterface itemClickListenerRef) {
             super(itemView);
@@ -44,6 +50,8 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
             url = (TextView) itemView.findViewById(R.id.urlTextId);
             durationTime = (TextView) itemView.findViewById(R.id.durationTimeTextId);
             playButton = itemView.findViewById(R.id.playButtonId);
+            pauseButton = itemView.findViewById(R.id.pauseButtonId);
+            mainView = itemView;
             itemView.setOnClickListener(this);
         }
 
@@ -57,6 +65,7 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
                                          OnItemClickListenerInterface itemClickListenerRef) {
         mDataset = myDataset;
         this.itemClickListenerRef = itemClickListenerRef;
+        this.soundTrackStatus = SoundTrackStatus.getInstance();
     }
 
     @Override
@@ -74,12 +83,31 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         holder.url.setText(PUBLISHED_AT + new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
                 .format(new Date(timestamp)));
         holder.durationTime.setText("-");
+
+        //TODO function
+        boolean isPlaying = soundTrackStatus.isPlayStatus() &&
+                soundTrackStatus.getCurrentPosition() == position;
+        holder.mainView.setBackgroundColor(isPlaying ?
+                ((Fragment) itemClickListenerRef)
+                .getActivity().getResources().getColor(R.color.md_blue_grey_800) :
+                Color.TRANSPARENT);
+
+        holder.playButton.setVisibility(isPlaying ? View.GONE : View.VISIBLE);
         holder.playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((OnClickListenerInterface) itemClickListenerRef).onClick(position, v);
             }
         });
+
+        holder.pauseButton.setVisibility(isPlaying ? View.VISIBLE : View.GONE);
+        holder.playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((OnClickListenerInterface) itemClickListenerRef).onClick(position, v);
+            }
+        });
+
     }
 
     public void addItem(SearchResult dataObj, int index) {

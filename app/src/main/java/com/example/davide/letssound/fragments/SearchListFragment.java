@@ -34,6 +34,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.decorations.SimpleDividerItemDecoration;
 import com.example.davide.letssound.singleton.YoutubeIntegratorSingleton;
@@ -65,7 +66,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         SoundTrackRecyclerViewAdapter.OnClickListenerInterface, SearchView.OnQueryTextListener,
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, View.OnClickListener {
     @Bind(R.id.trackRecyclerViewId)
-    RecyclerView trackRecyclerView;
+    RecyclerView soundTrackRecyclerView;
 
     /**
      * The fragment argument representing the section number for this
@@ -82,6 +83,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     private TextView soundTrackTitleTextView;
     private View pauseButton;
     private View playButton;
+    private SoundTrackStatus soundTrackStatus;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -111,6 +113,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      *
      */
     public void initView() {
+        soundTrackStatus = SoundTrackStatus.getInstance();
         initResult();
         initProgressBar();
         setHasOptionsMenu(true);
@@ -190,8 +193,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                 .make(mRootView, e.getMessage(), Snackbar.LENGTH_SHORT);
         snackbar.getView()
                 .setBackgroundColor(getActivity()
-                .getResources()
-                .getColor(R.color.md_red_400));
+                        .getResources()
+                        .getColor(R.color.md_red_400));
         snackbar.show();
     }
 
@@ -225,8 +228,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         List<SearchResult> list = YoutubeIntegratorSingleton
                 .searchByQueryString(query);
         if (list == null) {
-//            Snackbar.make(mRootView, "hey no result on list", Snackbar.LENGTH_SHORT)
-//                    .show();
             handleError(new Exception("No result found"));
             return;
         }
@@ -239,11 +240,11 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      * @param result
      */
     private void initRecyclerView(ArrayList<SearchResult> result) {
-        trackRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-        trackRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        soundTrackRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        soundTrackRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         SoundTrackRecyclerViewAdapter adapter =
                 new SoundTrackRecyclerViewAdapter(result, this);
-        trackRecyclerView.setAdapter(adapter);
+        soundTrackRecyclerView.setAdapter(adapter);
     }
 
     /**
@@ -256,7 +257,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         result.add(createSearchResultObj("bla"));
         initRecyclerView(result);
     }
-
 
     /**
      *
@@ -285,8 +285,9 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         String videoId = obj.getId().getVideoId();
         soundTrackTitleTextView.setText(obj.getSnippet().getTitle());
 
-//        testSoundTrackPlay();
-        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
+        setOnPlaySoundTrackPos(position);
+        testSoundTrackPlay();
+//        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
     }
 
     private void testSoundTrackPlay() throws Exception {
@@ -438,7 +439,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      * @return
      */
     private SearchResult getTrackByPosition(int position) {
-        return ((SoundTrackRecyclerViewAdapter) trackRecyclerView.getAdapter())
+        return ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView.getAdapter())
                 .getItemByPosition(position);
     }
 
@@ -472,20 +473,12 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-//        soundTrackPlayingBoxLayout.setVisibility(View.VISIBLE);
         try {
-            int color = getActivity().getResources().getColor(R.color.md_yellow_800);
-            ActionBar actionBar = ((AppCompatActivity) getActivity())
-                    .getSupportActionBar();
-            actionBar.setBackgroundDrawable(new ColorDrawable(color));
-            getActivity().findViewById(R.id.slidingTabsId).setVisibility(View.GONE);
-            soundTrackPlayingBoxLayoutHeader.setVisibility(View.VISIBLE);
-
+            setOnPlayingStatus(true);
         } catch (Exception e) {
             handleError(e);
         }
         mp.start();
-//        startActivity(new Intent(getContext(), PlayerActivity.class));
     }
 
     @Override
@@ -494,10 +487,13 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         return false;
     }
 
+    /**
+     *
+     * @return
+     */
     public long getTimestamp() {
         return System.currentTimeMillis();
     }
-
 
     /**
      *
@@ -508,6 +504,39 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         Log.e("TAG", url);
         mp.setDataSource(url);
         mp.prepare();
+    }
+
+    /**
+     *
+     * @param isPlaying
+     */
+    private void setOnPlayingStatus(final boolean isPlaying) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //header status
+                int color = getActivity().getResources().getColor(isPlaying ?
+                        R.color.md_amber_400 : R.color.md_blue_grey_800);
+                ((AppCompatActivity) getActivity())
+                        .getSupportActionBar()
+                        .setBackgroundDrawable(new ColorDrawable(color));
+                getActivity().findViewById(R.id.slidingTabsId).setVisibility(isPlaying ?
+                        View.GONE : View.VISIBLE);
+                soundTrackPlayingBoxLayoutHeader.setVisibility(isPlaying ?
+                        View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    /**
+     *
+     * @param pos
+     */
+    private void setOnPlaySoundTrackPos(int pos) {
+        //sound track status
+        soundTrackStatus.setPlayStatus();
+        soundTrackStatus.setCurrentPosition(pos);
+        soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -525,7 +554,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                 break;
         }
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -553,16 +581,16 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         public void run() {
             while (!stop.get()) {
                 if (mp.isPlaying()) {
-                    float progress = ((float) mp.getCurrentPosition() / mp.getDuration()) * 100;
-                    soundTrackProgressbar.setProgress((int) progress);
                     try {
+                        float progress = ((float) mp.getCurrentPosition() / mp.getDuration()) * 100;
+                        soundTrackProgressbar.setProgress((int) progress);
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         handleError(e);
                     }
-
                 }
             }
+            setOnPlayingStatus(false);
         }
     }
 

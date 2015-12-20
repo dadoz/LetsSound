@@ -10,18 +10,30 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:padding="@dimen/small_padding">
-        <ImageView
-            android:id="@+id/playButtonId"
-            android:layout_alignParentLeft="true"
-
+        <LinearLayout
+            android:id="@+id/playPauseLayoutId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@android:drawable/ic_media_play"/>
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true">
+            <ImageView
+                android:id="@+id/playButtonId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_media_play"/>
+            <ImageView
+                android:id="@+id/pauseButtonId"
+                android:visibility="gone"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_media_pause"/>
+
+        </LinearLayout>
         <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_toRightOf="@id/playButtonId"
+            android:layout_toRightOf="@id/playPauseLayoutId"
             android:layout_marginLeft="@dimen/medium_padding"
             android:orientation="vertical">
             <TextView
