@@ -2,6 +2,7 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/md_blue_grey_800</item>
         <!-- Customize your theme here. -->
     </style>
 

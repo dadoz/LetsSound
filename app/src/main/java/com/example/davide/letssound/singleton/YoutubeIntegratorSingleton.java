@@ -89,10 +89,13 @@ public class YoutubeIntegratorSingleton {
             // argument is required, but since we don't need anything
             // initialized when the HttpRequest is initialized, we override
             // the interface and provide a no-op function.
-            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, new HttpRequestInitializer() {
-                public void initialize(HttpRequest request) throws IOException {
-                }
-            }).setApplicationName("youtube-cmdline-search-sample").build();
+            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY,
+                    new HttpRequestInitializer() {
+                        public void initialize(HttpRequest request) throws IOException {
+                        }
+                    })
+                    .setApplicationName("letsSound")
+                    .build();
 
             // Prompt the user to enter a query term.
 //            String queryTerm = getInputQuery();

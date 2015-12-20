@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/small_padding"
+    android:background="?android:attr/selectableItemBackground">
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:padding="@dimen/small_padding">
+        <ImageView
+            android:id="@+id/playButtonId"
+            android:layout_alignParentLeft="true"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@android:drawable/ic_media_play"/>
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_toRightOf="@id/playButtonId"
+            android:layout_marginLeft="@dimen/medium_padding"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/titleTextId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginRight="@dimen/medium_padding"
+                android:textSize="@dimen/title_text_large"
+                android:textColor="@color/md_blue_grey_400"
+                android:text="title"/>
+            <TextView
+                android:id="@+id/urlTextId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/title_text_medium"
+                android:textColor="@color/md_blue_grey_200"
+                android:text="url"/>
+
+        </LinearLayout>
+        <TextView
+            android:id="@+id/durationTimeTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/md_amber_400"
+            android:textSize="@dimen/title_text_medium"
+            android:text="04:30"/>
+    </RelativeLayout>
+
+</FrameLayout>
