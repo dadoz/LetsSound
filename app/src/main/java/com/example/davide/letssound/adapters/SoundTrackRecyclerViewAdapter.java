@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.SoundTrackStatus;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.SearchResult;
 
 import java.text.SimpleDateFormat;
@@ -79,10 +80,12 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
     @Override
     public void onBindViewHolder(DataObjectHolder holder, final int position) {
         holder.title.setText(mDataset.get(position).getSnippet().getTitle());
-        long timestamp = mDataset.get(position).getSnippet().getPublishedAt().getValue();
-        holder.url.setText(PUBLISHED_AT + new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
-                .format(new Date(timestamp)));
-        holder.durationTime.setText("-");
+        DateTime publishedAt = mDataset.get(position).getSnippet().getPublishedAt();
+        holder.url.setText(publishedAt != null ?
+                PUBLISHED_AT + new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
+                .format(new Date(publishedAt.getValue())) :
+                " - ");
+        holder.durationTime.setText("00:00");
 
         //TODO function
         boolean isPlaying = soundTrackStatus.isPlayStatus() &&

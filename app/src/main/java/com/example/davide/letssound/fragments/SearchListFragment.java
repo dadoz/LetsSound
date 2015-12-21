@@ -6,6 +6,7 @@ package com.example.davide.letssound.fragments;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
@@ -22,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -84,6 +86,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     private View pauseButton;
     private View playButton;
     private SoundTrackStatus soundTrackStatus;
+    private MenuItem searchMenuItem;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -204,16 +207,28 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                         .getResources()
                         .getColor(R.color.md_red_400));
         snackbar.show();
+        setOnPlayingStatus(-1);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        searchMenuItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Activity.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setOnQueryTextListener(this);
 
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                stopPlaying();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -228,6 +243,14 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         return false;
     }
 
+    /**
+     *
+     */
+    public void stopPlaying() {
+        setOnPlayingActionbar(false);
+        setOnPlayingStatus(-1);
+        stopMediaPlayer();
+    }
     /**
      *
      * @param query
@@ -293,7 +316,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         String videoId = obj.getId().getVideoId();
         soundTrackTitleTextView.setText(obj.getSnippet().getTitle());
 
-        setOnPlaySoundTrackPos(position);
+        setOnPlayingStatus(position);
 //        testSoundTrackPlay();
         retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
     }
@@ -478,11 +501,20 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         mp.prepareAsync();
     }
 
+    /**
+     *
+     */
+    private void stopMediaPlayer() {
+        if (mp.isPlaying()) {
+            mp.stop();
+        }
+        mp.reset();
+    }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
         try {
-            setOnPlayingStatus(true);
+            setOnPlayingActionbar(true);
         } catch (Exception e) {
             handleError(e);
         }
@@ -518,16 +550,12 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      *
      * @param isPlaying
      */
-    private void setOnPlayingStatus(final boolean isPlaying) {
+    private void setOnPlayingActionbar(final boolean isPlaying) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 //header status
-                int color = getActivity().getResources().getColor(isPlaying ?
-                        R.color.md_amber_400 : R.color.md_blue_grey_800);
-                ((AppCompatActivity) getActivity())
-                        .getSupportActionBar()
-                        .setBackgroundDrawable(new ColorDrawable(color));
+                setTopActionbar(isPlaying);
                 getActivity().findViewById(R.id.slidingTabsId).setVisibility(isPlaying ?
                         View.GONE : View.VISIBLE);
                 soundTrackPlayingBoxLayoutHeader.setVisibility(isPlaying ?
@@ -538,13 +566,35 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     /**
      *
+     * @param isPlaying
+     */
+    private void setTopActionbar(boolean isPlaying) {
+        searchMenuItem.setVisible(!isPlaying);
+
+        Resources resources = getActivity().getResources();
+        int color = resources.getColor(isPlaying ?
+                R.color.md_amber_400 : R.color.md_blue_grey_800);
+        ActionBar actionbar = ((AppCompatActivity) getActivity())
+                .getSupportActionBar();
+        try {
+            actionbar.setBackgroundDrawable(new ColorDrawable(color));
+            actionbar.setDisplayHomeAsUpEnabled(isPlaying);
+            actionbar.setDisplayShowTitleEnabled(!isPlaying);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     *
      * @param pos
      */
-    private void setOnPlaySoundTrackPos(final int pos) {
+    private void setOnPlayingStatus(final int pos) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //sound track status
+                if (soundTrackStatus.isIdleStatus()) {
+                    return;
+                }
                 soundTrackStatus.setPlayStatus();
                 soundTrackStatus.setCurrentPosition(pos);
                 soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
@@ -603,8 +653,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                     }
                 }
             }
-            setOnPlayingStatus(false);
-            setOnPlaySoundTrackPos(-1);
+            setOnPlayingActionbar(false);
+            setOnPlayingStatus(-1);
         }
     }
 
