@@ -37,12 +37,14 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
             .OnClickListener {
         //TODO weakRef please
         private final OnItemClickListenerInterface itemClickListenerRef;
-        private final View mainView;
+        private final View itemView;
         private final TextView title;
         private final TextView durationTime;
         private final TextView url;
         private final View playButton;
         private final View pauseButton;
+        private final View mainSelectedView;
+        private final View mainView;
 
         public DataObjectHolder(View itemView, OnItemClickListenerInterface itemClickListenerRef) {
             super(itemView);
@@ -52,7 +54,9 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
             durationTime = (TextView) itemView.findViewById(R.id.durationTimeTextId);
             playButton = itemView.findViewById(R.id.playButtonId);
             pauseButton = itemView.findViewById(R.id.pauseButtonId);
-            mainView = itemView;
+            mainSelectedView = itemView.findViewById(R.id.resultItemSelectLayoutId);
+            mainView = itemView.findViewById(R.id.resultItemLayoutId);
+            this.itemView = itemView;
             itemView.setOnClickListener(this);
         }
 
@@ -83,16 +87,27 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         DateTime publishedAt = mDataset.get(position).getSnippet().getPublishedAt();
         holder.url.setText(publishedAt != null ?
                 PUBLISHED_AT + new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
-                .format(new Date(publishedAt.getValue())) :
+                        .format(new Date(publishedAt.getValue())) :
                 " - ");
         holder.durationTime.setText("00:00");
+        //TODO responsibility pattern
+        setSelectedItem(holder, position);
+        if (! soundTrackStatus.isSelectStatus()) {
+            setPlayingItem(holder, position);
+        }
+    }
 
-        //TODO function
+    /**
+     *
+     * @param holder
+     * @param position
+     */
+    private void setPlayingItem(DataObjectHolder holder, final int position) {
         boolean isPlaying = soundTrackStatus.isPlayStatus() &&
                 soundTrackStatus.getCurrentPosition() == position;
-        holder.mainView.setBackgroundColor(isPlaying ?
+        holder.itemView.setBackgroundColor(isPlaying ?
                 ((Fragment) itemClickListenerRef)
-                .getActivity().getResources().getColor(R.color.md_blue_grey_800) :
+                        .getActivity().getResources().getColor(R.color.md_blue_grey_800) :
                 Color.TRANSPARENT);
 
         holder.playButton.setVisibility(isPlaying ? View.GONE : View.VISIBLE);
@@ -111,6 +126,25 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
             }
         });
 
+    }
+
+    /**
+     *
+     * @param holder
+     * @param position
+     */
+    private void setSelectedItem(DataObjectHolder holder, int position) {
+        boolean isSelected = soundTrackStatus.isSelectStatus() &&
+                soundTrackStatus.getCurrentPosition() == position;
+        holder.mainSelectedView.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+        holder.title.setTextColor(((Fragment) itemClickListenerRef)
+                .getActivity().getResources().getColor(isSelected ?
+                        R.color.md_amber_400 :
+                        R.color.md_blue_grey_400));
+        holder.itemView.setBackgroundColor(isSelected ?
+                ((Fragment) itemClickListenerRef)
+                        .getActivity().getResources().getColor(R.color.md_blue_grey_800) :
+                Color.TRANSPARENT);
     }
 
     public void addItem(SearchResult dataObj, int index) {

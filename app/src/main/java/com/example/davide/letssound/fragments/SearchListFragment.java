@@ -170,8 +170,9 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     @Override
     public void onItemClick(int position, View v) {
-        Snackbar.make(mRootView, "hey click cardview - " + position, Snackbar.LENGTH_SHORT)
-                .show();
+//        Snackbar.make(mRootView, "hey click cardview - " + position, Snackbar.LENGTH_SHORT)
+//                .show();
+        setOnSelectedStatus(position);
     }
 
     @Override
@@ -600,6 +601,15 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                 soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
             }
         });
+    }
+
+    /**
+     * @param pos
+     */
+    private void setOnSelectedStatus(int pos) {
+        soundTrackStatus.setSelectStatus();
+        soundTrackStatus.setCurrentPosition(pos);
+        soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
