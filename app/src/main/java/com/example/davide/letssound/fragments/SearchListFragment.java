@@ -6,6 +6,7 @@ package com.example.davide.letssound.fragments;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,12 +35,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davide.letssound.R;
-import com.example.davide.letssound.SoundTrackStatus;
+import com.example.davide.letssound.singleton.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.decorations.SimpleDividerItemDecoration;
+import com.example.davide.letssound.downloader.DownloadVolleyResponse;
+import com.example.davide.letssound.downloader.InputStreamVolleyRequest;
 import com.example.davide.letssound.singleton.YoutubeIntegratorSingleton;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.ResourceId;
@@ -66,9 +71,11 @@ import icepick.State;
  */
 public class SearchListFragment extends Fragment implements SoundTrackRecyclerViewAdapter.OnItemClickListenerInterface,
         SoundTrackRecyclerViewAdapter.OnClickListenerInterface, SearchView.OnQueryTextListener,
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, View.OnClickListener {
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
+    @Bind(R.id.swipeContainerLayoutId)
+    SwipeRefreshLayout swipeContainerLayout;
 
     /**
      * The fragment argument representing the section number for this
@@ -87,6 +94,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     private View playButton;
     private SoundTrackStatus soundTrackStatus;
     private MenuItem searchMenuItem;
+    private String downloadFilename;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -117,6 +125,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      */
     public void initView() {
         soundTrackStatus = SoundTrackStatus.getInstance();
+        initSwipeRefresh();
         initResult();
         initProgressBar();
         setHasOptionsMenu(true);
@@ -124,11 +133,18 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         pauseButton.setOnClickListener(this);
         playButton.setOnClickListener(this);
         if (result.size() != 0) {
+            swipeContainerLayout.setVisibility(View.VISIBLE);
             initRecyclerView(result);
             return;
         }
         //TODO test - rm it
+        swipeContainerLayout.setVisibility(View.VISIBLE);
         fillList();
+    }
+
+    private void initSwipeRefresh() {
+        swipeContainerLayout.setVisibility(View.GONE);
+        swipeContainerLayout.setOnRefreshListener(this);
     }
 
     /**
@@ -170,21 +186,20 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     @Override
     public void onItemClick(int position, View v) {
-//        Snackbar.make(mRootView, "hey click cardview - " + position, Snackbar.LENGTH_SHORT)
-//                .show();
         setOnSelectedStatus(position);
     }
 
     @Override
     public void onClick(int position, View v) {
-
         switch (v.getId()) {
             case R.id.playButtonId:
-                Snackbar.make(mRootView, "hey click play - " + position, Snackbar.LENGTH_SHORT)
-                        .show();
+                swipeContainerLayout.setRefreshing(true);
+                setOnIdleStatus();
+                sendSnackbarMessage("hey click play - " + position);
                 try {
                     playSoundTrack(position);
                 } catch (Exception e) {
+                    swipeContainerLayout.setRefreshing(false);
                     e.printStackTrace();
                     handleError(e);
                     mp.reset();
@@ -193,7 +208,55 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
             case R.id.pauseButtonId:
                 mp.pause();
                 break;
+            case R.id.downloadTextId:
+                try {
+                    sendSnackbarMessage("hey download position " + position);
+                    swipeContainerLayout.setRefreshing(true);
+                    downloadSoundTrack(position);
+                } catch (Exception e) {
+                    swipeContainerLayout.setRefreshing(false);
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.shareTextId:
+                sendSnackbarMessage("hey share position " + position);
+                shareSoundTrack(position);
+                break;
         }
+    }
+
+    /**
+     *
+      * @param position
+     */
+    private void shareSoundTrack(int position) {
+        SearchResult obj = getTrackByPosition(position);
+        String videoId = obj.getId().getVideoId();
+        String title = obj.getSnippet().getTitle();
+        String content = "[Video URL]: \n http://youtube.com/?q=" + videoId;
+        shareSoundTrackByIntent(title, content);
+    }
+
+    /**
+     *
+     * @param title
+     * @param content
+     */
+    private void shareSoundTrackByIntent(String title, String content) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, content);
+        startActivity(Intent.createChooser(shareIntent, "Share sound track:"));
+    }
+
+    /**
+     *
+     * @param message
+     */
+    private void sendSnackbarMessage(String message) {
+        Snackbar.make(mRootView, message, Snackbar.LENGTH_SHORT)
+                .show();
     }
 
     /**
@@ -201,6 +264,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      * @param e
      */
     private void handleError(Exception e) {
+        swipeContainerLayout.setRefreshing(false);
+        setOnIdleStatus();
         Snackbar snackbar = Snackbar
                 .make(mRootView, e.getMessage(), Snackbar.LENGTH_SHORT);
         snackbar.getView()
@@ -208,7 +273,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                         .getResources()
                         .getColor(R.color.md_red_400));
         snackbar.show();
-        setOnPlayingStatus(-1);
     }
 
     @Override
@@ -287,6 +351,12 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         result.add(createSearchResultObj("hey"));
         result.add(createSearchResultObj("res"));
         result.add(createSearchResultObj("bla"));
+        result.add(createSearchResultObj("hey"));
+        result.add(createSearchResultObj("res"));
+        result.add(createSearchResultObj("bla"));
+        result.add(createSearchResultObj("hey"));
+        result.add(createSearchResultObj("res"));
+        result.add(createSearchResultObj("bla"));
         initRecyclerView(result);
     }
 
@@ -309,6 +379,38 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     //MediaPlayer songs
     /**
      * 
+     * @param position
+     */
+    private void downloadSoundTrack(int position) throws Exception {
+        SearchResult obj = getTrackByPosition(position);
+        String videoId = obj.getId().getVideoId();
+        downloadFilename = obj.getSnippet().getTitle();
+
+        setOnDownloadStatus();
+        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
+    }
+
+    /**
+     *
+     * @param url
+     */
+    private void downloadSoundTrackByUrl(String url) {
+        DownloadVolleyResponse volleyResponse = new DownloadVolleyResponse(downloadFilename);
+        InputStreamVolleyRequest request = new InputStreamVolleyRequest(Request.Method.GET, url,
+                volleyResponse, volleyResponse, null);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity().getApplicationContext(),
+                new HurlStack());
+        mRequestQueue.add(request);
+    }
+    /**
+     *
+     */
+    private void setOnDownloadStatus() {
+        soundTrackStatus.setDownloadStatus();
+    }
+
+    /**
+     *
      * @param position
      */
     private void playSoundTrack(int position) throws Exception {
@@ -360,8 +462,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Snackbar.make(mRootView, "success " + response, Snackbar.LENGTH_SHORT)
-                                .show();
+                        sendSnackbarMessage("success " + response);
                         String url = response.replaceAll("\"", "");
                         retrieveVideoInfoAsync(videoId, url);
                     }
@@ -374,7 +475,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
-
 
     /**
      *
@@ -393,8 +493,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                     public void onResponse(String response) {
                         try {
                             String jsonResult = response.split("=", 2)[1];
-                            Snackbar.make(mRootView, "success " + jsonResult, Snackbar.LENGTH_SHORT)
-                                    .show();
+                            sendSnackbarMessage("success " + jsonResult);
                             retrieveSoundTrackUrlAsync(videoId, jsonResult);
                         } catch (Exception e) {
                             handleError(e);
@@ -405,8 +504,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Snackbar.make(mRootView, "error" + error, Snackbar.LENGTH_SHORT)
-                                .show();
+                        handleError(error);
                     }
                 });
         // Add the request to the RequestQueue.
@@ -429,10 +527,16 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Snackbar.make(mRootView, "success " + response, Snackbar.LENGTH_SHORT)
-                                .show();
+                        //TODO refactorize it
+                        sendSnackbarMessage("success " + response);
                         try {
-                            startMediaPlayer(response);
+                            if (soundTrackStatus.isPlayStatus()) {
+                                startMediaPlayer(response);
+                                return;
+                            }
+                            if (soundTrackStatus.isDownloadStatus()) {
+                                downloadSoundTrackByUrl(response);
+                            }
                         } catch (Exception e) {
                             handleError(e);
                         }
@@ -463,7 +567,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         }
         return null;
     }
-
 
     /**
      *
@@ -514,6 +617,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        swipeContainerLayout.setRefreshing(false);
         try {
             setOnPlayingActionbar(true);
         } catch (Exception e) {
@@ -611,6 +715,13 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         soundTrackStatus.setCurrentPosition(pos);
         soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
     }
+    /**
+     *
+     */
+    private void setOnIdleStatus() {
+        soundTrackStatus.setCurrentPosition(-1);
+        soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
+    }
 
     @Override
     public void onClick(View v) {
@@ -638,6 +749,11 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this, outState);
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeContainerLayout.setRefreshing(false);
     }
 
     /***

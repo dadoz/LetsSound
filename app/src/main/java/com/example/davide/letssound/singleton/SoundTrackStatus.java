@@ -1,11 +1,11 @@
-package com.example.davide.letssound;
+package com.example.davide.letssound.singleton;
 
 /**
  * Created by davide on 20/12/15.
  */
 public class SoundTrackStatus {
     private enum StatusEnum {
-        IDLE, PLAY, SELECT
+        IDLE, PLAY, SELECT, DOWNLOAD
     }
     private StatusEnum currentStatus;
     private static SoundTrackStatus instance;
@@ -66,6 +66,12 @@ public class SoundTrackStatus {
     public void setIdleStatus() {
         this.currentStatus = StatusEnum.IDLE;
     }
+    /**
+     *
+     */
+    public void setDownloadStatus() {
+        this.currentStatus = StatusEnum.DOWNLOAD;
+    }
 
     /**
      * 
@@ -91,6 +97,13 @@ public class SoundTrackStatus {
      */
     public boolean isIdleStatus() {
         return this.currentStatus == StatusEnum.IDLE;
+    }
+    /**
+     *
+     * @return boolean
+     */
+    public boolean isDownloadStatus() {
+        return this.currentStatus == StatusEnum.DOWNLOAD;
     }
 
     /**
