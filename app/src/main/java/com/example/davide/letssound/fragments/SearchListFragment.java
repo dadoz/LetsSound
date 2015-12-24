@@ -39,6 +39,7 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.downloader.DownloadVolleyResponse.DownloadStatusEnum;
 import com.example.davide.letssound.singleton.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.decorations.SimpleDividerItemDecoration;
@@ -55,6 +56,7 @@ import org.json.JSONObject;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,13 +67,16 @@ import butterknife.ButterKnife;
 import icepick.Icepick;
 import icepick.State;
 
+import static com.example.davide.letssound.downloader.DownloadVolleyResponse.*;
+
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class SearchListFragment extends Fragment implements SoundTrackRecyclerViewAdapter.OnItemClickListenerInterface,
         SoundTrackRecyclerViewAdapter.OnClickListenerInterface, SearchView.OnQueryTextListener,
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, View.OnClickListener,
+        SwipeRefreshLayout.OnRefreshListener, OnDownloadCallbackInterface {
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
     @Bind(R.id.swipeContainerLayoutId)
@@ -116,14 +121,15 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_search_list_layout, container, false);
         ButterKnife.bind(this, mRootView);
-        initView();
+        initView(savedInstanceState);
         return mRootView;
     }
 
     /**
      *
+     * @param savedInstanceState
      */
-    public void initView() {
+    public void initView(Bundle savedInstanceState) {
         soundTrackStatus = SoundTrackStatus.getInstance();
         initSwipeRefresh();
         initResult();
@@ -132,18 +138,21 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         mp = new MediaPlayer();
         pauseButton.setOnClickListener(this);
         playButton.setOnClickListener(this);
-        if (result.size() != 0) {
-            swipeContainerLayout.setVisibility(View.VISIBLE);
+        if (soundTrackStatus.isPlayStatus()) {
+            onPlayingStatusPrepareUI();
+        }
+
+        if (savedInstanceState == null ||
+            result.size() != 0) {
             initRecyclerView(result);
             return;
         }
         //TODO test - rm it
-        swipeContainerLayout.setVisibility(View.VISIBLE);
-        fillList();
+//        fillList();
     }
 
     private void initSwipeRefresh() {
-        swipeContainerLayout.setVisibility(View.GONE);
+//        swipeContainerLayout.setVisibility(View.GONE);
         swipeContainerLayout.setOnRefreshListener(this);
     }
 
@@ -266,12 +275,20 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     private void handleError(Exception e) {
         swipeContainerLayout.setRefreshing(false);
         setOnIdleStatus();
+        createSnackBarByBackgroundColor(e.getMessage(), getActivity()
+                .getResources()
+                .getColor(R.color.md_red_400));
+    }
+
+    /**
+     *
+     * @param message
+     * @param color
+     */
+    private void createSnackBarByBackgroundColor(String message, int color) {
         Snackbar snackbar = Snackbar
-                .make(mRootView, e.getMessage(), Snackbar.LENGTH_SHORT);
-        snackbar.getView()
-                .setBackgroundColor(getActivity()
-                        .getResources()
-                        .getColor(R.color.md_red_400));
+                .make(mRootView, message, Snackbar.LENGTH_SHORT);
+        snackbar.getView().setBackgroundColor(color);
         snackbar.show();
     }
 
@@ -395,12 +412,12 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      * @param url
      */
     private void downloadSoundTrackByUrl(String url) {
-        DownloadVolleyResponse volleyResponse = new DownloadVolleyResponse(downloadFilename);
-        InputStreamVolleyRequest request = new InputStreamVolleyRequest(Request.Method.GET, url,
-                volleyResponse, volleyResponse, null);
+        DownloadVolleyResponse volleyResponse = new DownloadVolleyResponse(downloadFilename,
+                new WeakReference<OnDownloadCallbackInterface>(this));
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity().getApplicationContext(),
                 new HurlStack());
-        mRequestQueue.add(request);
+        mRequestQueue.add(new InputStreamVolleyRequest(Request.Method.GET, url,
+                volleyResponse, volleyResponse, null));
     }
     /**
      *
@@ -617,13 +634,16 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        swipeContainerLayout.setRefreshing(false);
-        try {
-            setOnPlayingActionbar(true);
-        } catch (Exception e) {
-            handleError(e);
-        }
+        onPlayingStatusPrepareUI();
         mp.start();
+    }
+
+    /**
+     *
+     */
+    private void onPlayingStatusPrepareUI() {
+        swipeContainerLayout.setRefreshing(false);
+        setOnPlayingActionbar(true);
     }
 
     @Override
@@ -674,7 +694,10 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      * @param isPlaying
      */
     private void setTopActionbar(boolean isPlaying) {
-        searchMenuItem.setVisible(!isPlaying);
+        Log.e("TAG", "hey playing" + isPlaying);
+        if (searchMenuItem != null) {
+            searchMenuItem.setVisible(!isPlaying);
+        }
 
         Resources resources = getActivity().getResources();
         int color = resources.getColor(isPlaying ?
@@ -754,6 +777,21 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     @Override
     public void onRefresh() {
         swipeContainerLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void onDownloadCallback(DownloadStatusEnum statusEnum, Exception e) {
+        if (statusEnum == DownloadStatusEnum.FAILED) {
+            handleError(e);
+            return;
+        }
+        if (statusEnum == DownloadStatusEnum.OK) {
+            swipeContainerLayout.setRefreshing(false);
+            soundTrackStatus.setIdleStatus();
+            soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
+            createSnackBarByBackgroundColor("Hey you got your song!", getActivity()
+                    .getResources().getColor(R.color.md_amber_400));
+        }
     }
 
     /***
