@@ -50,9 +50,9 @@ public class YoutubeIntegratorSingleton {
      * Define a global variable that identifies the name of a file that
      * contains the developer's API key.
      */
-    private static final String PROPERTIES_FILENAME = "youtube.properties";
+//    private static final String PROPERTIES_FILENAME = "youtube.properties";
 
-    private static final long NUMBER_OF_VIDEOS_RETURNED = 25;
+    private static final long NUMBER_OF_VIDEOS_RETURNED = 30;
 
 
     /**
@@ -72,17 +72,17 @@ public class YoutubeIntegratorSingleton {
         StrictMode.setThreadPolicy(policy);
 
         // Read the developer key from the properties file.
-        Properties properties = new Properties();
-        try {
-            InputStream in = YoutubeIntegratorSingleton
-                    .class.getResourceAsStream("/" + PROPERTIES_FILENAME);
-            if (in != null) {
-                properties.load(in);
-            }
-        } catch (Exception e) {
-           Log.e("TAG", "There was an error reading " + PROPERTIES_FILENAME + ": " + e.getCause()
-                   + " : " + e.getMessage());
-        }
+//        Properties properties = new Properties();
+//        try {
+//            InputStream in = YoutubeIntegratorSingleton
+//                    .class.getResourceAsStream("/" + PROPERTIES_FILENAME);
+//            if (in != null) {
+//                properties.load(in);
+//            }
+//        } catch (Exception e) {
+//           Log.e("TAG", "There was an error reading " + PROPERTIES_FILENAME + ": " + e.getCause()
+//                   + " : " + e.getMessage());
+//        }
 
         try {
             // This object is used to make YouTube Data API requests. The last
@@ -122,12 +122,7 @@ public class YoutubeIntegratorSingleton {
 
             // Call the API and print results.
             SearchListResponse searchResponse = search.execute();
-            List<SearchResult> searchResultList = searchResponse.getItems();
-            if (searchResultList != null) {
-                prettyPrint(searchResultList.iterator(), queryTerm);
-            }
-
-            return searchResultList;
+            return searchResponse.getItems();
         } catch (GoogleJsonResponseException e) {
             Log.e("TAG", "There was a service error: " + e.getDetails().getCode() + " : "
                     + e.getDetails().getMessage());
@@ -137,38 +132,6 @@ public class YoutubeIntegratorSingleton {
             t.printStackTrace();
         }
         return null;
-    }
-
-
-
-    /*
-     * Prints out all results in the Iterator. For each result, print the
-     * title, video ID, and thumbnail.
-     *
-     * @param iteratorSearchResults Iterator of SearchResults to print
-     *
-     * @param query Search query (String)
-     */
-    private static void prettyPrint(Iterator<SearchResult> iteratorSearchResults, String query) {
-        Log.d("TAG", "First " + NUMBER_OF_VIDEOS_RETURNED + " videos for search on \"" + query + "\".");
-        if (!iteratorSearchResults.hasNext()) {
-            Log.d("TAG", "There aren't any results for your query.");
-        }
-
-        while (iteratorSearchResults.hasNext()) {
-            SearchResult singleVideo = iteratorSearchResults.next();
-            ResourceId rId = singleVideo.getId();
-
-            // Confirm that the result represents a video. Otherwise, the
-            // item will not contain a video ID.
-            if (rId.getKind().equals("youtube#video")) {
-                Thumbnail thumbnail = singleVideo.getSnippet().getThumbnails().getDefault();
-
-                Log.d("TAG", "Video Id" + rId.getVideoId());
-                Log.d("TAG", "Title: " + singleVideo.getSnippet().getTitle());
-                Log.d("TAG", "Thumbnail: " + thumbnail.getUrl());
-            }
-        }
     }
 
     /**

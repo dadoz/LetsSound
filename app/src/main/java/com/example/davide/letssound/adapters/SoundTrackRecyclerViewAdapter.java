@@ -100,6 +100,7 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, final int position) {
+        //thumbnail Thumbnail thumbnail = singleVideo.getSnippet().getThumbnails().getDefault().getUrl();
         holder.title.setText(mDataset.get(position).getSnippet().getTitle());
         DateTime publishedAt = mDataset.get(position).getSnippet().getPublishedAt();
         holder.url.setText(publishedAt != null ?

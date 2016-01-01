@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.downloader.DownloadVolleyResponse.DownloadStatusEnum;
+import com.example.davide.letssound.downloader.helper.DownloaderHelper;
+import com.example.davide.letssound.downloader.helper.OnDownloadHelperResultInterface;
 import com.example.davide.letssound.singleton.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.decorations.SimpleDividerItemDecoration;
@@ -76,7 +79,7 @@ import static com.example.davide.letssound.downloader.DownloadVolleyResponse.*;
 public class SearchListFragment extends Fragment implements SoundTrackRecyclerViewAdapter.OnItemClickListenerInterface,
         SoundTrackRecyclerViewAdapter.OnClickListenerInterface, SearchView.OnQueryTextListener,
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, View.OnClickListener,
-        SwipeRefreshLayout.OnRefreshListener, OnDownloadCallbackInterface {
+        SwipeRefreshLayout.OnRefreshListener, OnDownloadCallbackInterface, OnDownloadHelperResultInterface {
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
     @Bind(R.id.swipeContainerLayoutId)
@@ -100,6 +103,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     private SoundTrackStatus soundTrackStatus;
     private MenuItem searchMenuItem;
     private String downloadFilename;
+    private DownloaderHelper downloaderHelper;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -131,6 +135,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      */
     public void initView(Bundle savedInstanceState) {
         soundTrackStatus = SoundTrackStatus.getInstance();
+        downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
+                new WeakReference<OnDownloadHelperResultInterface>(this));
         initSwipeRefresh();
         initResult();
         initProgressBar();
@@ -145,7 +151,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         if (savedInstanceState == null ||
             result.size() != 0) {
             initRecyclerView(result);
-            return;
+//            return;
         }
         //TODO test - rm it
 //        fillList();
@@ -202,16 +208,15 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     public void onClick(int position, View v) {
         switch (v.getId()) {
             case R.id.playButtonId:
-                swipeContainerLayout.setRefreshing(true);
-                setOnIdleStatus();
                 sendSnackbarMessage("hey click play - " + position);
                 try {
+                    swipeContainerLayout.setRefreshing(true);
+                    setOnIdleStatus();
                     playSoundTrack(position);
                 } catch (Exception e) {
-                    swipeContainerLayout.setRefreshing(false);
-                    e.printStackTrace();
-                    handleError(e);
                     mp.reset();
+                    handleError(e);
+                    e.printStackTrace();
                 }
                 break;
             case R.id.pauseButtonId:
@@ -242,7 +247,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         SearchResult obj = getTrackByPosition(position);
         String videoId = obj.getId().getVideoId();
         String title = obj.getSnippet().getTitle();
-        String content = "[Video URL]: \n http://youtube.com/?q=" + videoId;
+        String content = "[Video URL]: \n http://youtube.com/?v=" + videoId;
         shareSoundTrackByIntent(title, content);
     }
 
@@ -272,12 +277,20 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      *
      * @param e
      */
-    private void handleError(Exception e) {
+    @Override
+    public void handleError(Exception e) {
         swipeContainerLayout.setRefreshing(false);
         setOnIdleStatus();
         createSnackBarByBackgroundColor(e.getMessage(), getActivity()
                 .getResources()
                 .getColor(R.color.md_red_400));
+    }
+
+    @Override
+    public void handleSuccess(String message) {
+        createSnackBarByBackgroundColor(message, getActivity()
+                .getResources()
+                .getColor(R.color.md_teal_400));
     }
 
     /**
@@ -316,6 +329,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     @Override
     public boolean onQueryTextSubmit(String query) {
         searchView.setIconified(true);
+
+        setAsyncResultOnSubmitQuery(query);
         setResultOnSubmitQuery(query);
         return true;
     }
@@ -352,12 +367,20 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      *
      * @param result
      */
-    private void initRecyclerView(ArrayList<SearchResult> result) {
-        soundTrackRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-        soundTrackRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        SoundTrackRecyclerViewAdapter adapter =
-                new SoundTrackRecyclerViewAdapter(result, this);
-        soundTrackRecyclerView.setAdapter(adapter);
+    private void initRecyclerView(final ArrayList<SearchResult> result) {
+        final SoundTrackRecyclerViewAdapter.OnItemClickListenerInterface fragmentRef = this;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                soundTrackRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+                soundTrackRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                SoundTrackRecyclerViewAdapter adapter =
+                        new SoundTrackRecyclerViewAdapter(result, fragmentRef);
+                soundTrackRecyclerView.setAdapter(adapter);
+            }
+
+        });
+
     }
 
     /**
@@ -404,14 +427,15 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         downloadFilename = obj.getSnippet().getTitle();
 
         setOnDownloadStatus();
-        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
+        downloaderHelper.retrieveSoundTrackAsync(videoId, null);
+//        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
     }
 
     /**
      *
      * @param url
      */
-    private void downloadSoundTrackByUrl(String url) {
+    public void downloadSoundTrackByUrl(String url) {
         DownloadVolleyResponse volleyResponse = new DownloadVolleyResponse(downloadFilename,
                 new WeakReference<OnDownloadCallbackInterface>(this));
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity().getApplicationContext(),
@@ -438,7 +462,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
         setOnPlayingStatus(position);
 //        testSoundTrackPlay();
-        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
+//        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
+        downloaderHelper.retrieveSoundTrackAsync(videoId, null);
     }
 
     private void testSoundTrackPlay() throws Exception {
@@ -463,129 +488,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     }
 
     /**
-     * 
-     * @param videoId
-     * @param timestamp
-     */
-    private void retrieveVideoUrlAsync(final String videoId, String timestamp) {
-
-        // Instantiate the RequestQueue.
-        String END_POINT = "https://shrouded-island-4422.herokuapp.com/api/getVideoInfoUrl/" + 
-                videoId + "/" + timestamp;
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, END_POINT,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        sendSnackbarMessage("success " + response);
-                        String url = response.replaceAll("\"", "");
-                        retrieveVideoInfoAsync(videoId, url);
-                    }
-                }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    handleError(error);
-                }
-            });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
-
-    /**
-     *
-     * @param videoId
-     * @param videoInfoUrl
-     */
-    private void retrieveVideoInfoAsync(final String videoId, String videoInfoUrl) {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        Log.e("TAG", videoInfoUrl);
-        Log.e("TAG", videoId);
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, videoInfoUrl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            String jsonResult = response.split("=", 2)[1];
-                            sendSnackbarMessage("success " + jsonResult);
-                            retrieveSoundTrackUrlAsync(videoId, jsonResult);
-                        } catch (Exception e) {
-                            handleError(e);
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        handleError(error);
-                    }
-                });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
-
-    /**
-     *
-     * @param jsonResult
-     */
-    private void retrieveSoundTrackUrlAsync(String videoId, String jsonResult) {
-        // Instantiate the RequestQueue.
-        String END_POINT = "https://shrouded-island-4422.herokuapp.com/api/getSoundTrackUrl" +
-                buildSoundTrackUrlByJSON(videoId, jsonResult);
-        Log.e("TAG", END_POINT);
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, END_POINT,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        //TODO refactorize it
-                        sendSnackbarMessage("success " + response);
-                        try {
-                            if (soundTrackStatus.isPlayStatus()) {
-                                startMediaPlayer(response);
-                                return;
-                            }
-                            if (soundTrackStatus.isDownloadStatus()) {
-                                downloadSoundTrackByUrl(response);
-                            }
-                        } catch (Exception e) {
-                            handleError(e);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                handleError(error);
-            }
-        });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
-    /**
-     *
-     * @param dataString
-     * @return
-     */
-    private String buildSoundTrackUrlByJSON(String videoId, String dataString) {
-        try {
-            JSONObject reader = new JSONObject(dataString);
-            String tsCreate = reader.getString("ts_create");
-            String r = reader.getString("r");
-            String h2 = reader.getString("h2");
-            return "/" + videoId + "/" + tsCreate + "/" + r + "/" + h2;
-        } catch (JSONException e) {
-            handleError(e);
-        }
-        return null;
-    }
-
-    /**
      *
      * @param position
      * @return
@@ -601,7 +503,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      * @throws IOException
      * @throws Exception
      */
-    private void startMediaPlayer(String url) throws Exception {
+    public void startMediaPlayer(String url) throws Exception {
+        Log.e("TAG", url);
         mp.reset();
         mp.setOnErrorListener(this);
         mp.setOnPreparedListener(this);
@@ -694,7 +597,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      * @param isPlaying
      */
     private void setTopActionbar(boolean isPlaying) {
-        Log.e("TAG", "hey playing" + isPlaying);
+//        Log.e("TAG", "hey playing" + isPlaying);
         if (searchMenuItem != null) {
             searchMenuItem.setVisible(!isPlaying);
         }
@@ -720,7 +623,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (soundTrackStatus.isIdleStatus()) {
+                if (!soundTrackStatus.isIdleStatus()) {
                     return;
                 }
                 soundTrackStatus.setPlayStatus();
@@ -792,6 +695,18 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
             createSnackBarByBackgroundColor("Hey you got your song!", getActivity()
                     .getResources().getColor(R.color.md_amber_400));
         }
+    }
+
+    public void setAsyncResultOnSubmitQuery(final String query) {
+        String[] queryArray = {query};
+        new AsyncTask<String, Boolean, Boolean>() {
+            @Override
+            protected Boolean doInBackground(String... params) {
+                setResultOnSubmitQuery(params[0]);
+                return true;
+            }
+        }.execute(queryArray);
+
     }
 
     /***

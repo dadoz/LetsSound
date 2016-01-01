@@ -9,10 +9,8 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 
 import static android.os.Environment.*;
 
@@ -22,15 +20,12 @@ import static android.os.Environment.*;
 public class DownloadVolleyResponse implements Response.Listener<byte[]>, Response.ErrorListener {
     private final String filename;
     private final WeakReference<OnDownloadCallbackInterface> fragmentWeakReference;
-    private String LOCAL_PATH = "/music/letsSound";
-    private String TAG = "DownloadVolleyResponse";
-    private String EXTENSION = ".m4a";
+    private final static String LOCAL_PATH = "/letsSound";
+    private final static String EXTENSION = ".mp3";
+    public enum DownloadStatusEnum {OK, FAILED}
 
-    public enum DownloadStatusEnum {
-        OK, FAILED
-    }
-
-    public DownloadVolleyResponse(String filename, WeakReference<OnDownloadCallbackInterface> fragmentWeakReference) {
+    public DownloadVolleyResponse(String filename,
+                                  WeakReference<OnDownloadCallbackInterface> fragmentWeakReference) {
         this.filename = filename;
         this.fragmentWeakReference = fragmentWeakReference;
     }
@@ -91,6 +86,9 @@ public class DownloadVolleyResponse implements Response.Listener<byte[]>, Respon
 
     }
 
+    /**
+     * interface to handle download callback
+     */
     public interface OnDownloadCallbackInterface {
         void onDownloadCallback(DownloadStatusEnum statusEnum, Exception e);
     }
