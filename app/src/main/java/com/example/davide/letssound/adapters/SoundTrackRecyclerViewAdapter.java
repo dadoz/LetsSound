@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.davide.letssound.R;
-import com.example.davide.letssound.singleton.SoundTrackStatus;
+import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.SearchResult;
 

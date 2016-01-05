@@ -9,14 +9,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.davide.letssound.R;
-import com.example.davide.letssound.singleton.YoutubeIntegratorSingleton;
-import com.google.api.services.youtube.model.SearchResult;
-
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.

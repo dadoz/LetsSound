@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -34,28 +35,22 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.downloader.DownloadVolleyResponse.DownloadStatusEnum;
 import com.example.davide.letssound.downloader.helper.DownloaderHelper;
 import com.example.davide.letssound.downloader.helper.OnDownloadHelperResultInterface;
-import com.example.davide.letssound.singleton.SoundTrackStatus;
+import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.decorations.SimpleDividerItemDecoration;
 import com.example.davide.letssound.downloader.DownloadVolleyResponse;
 import com.example.davide.letssound.downloader.InputStreamVolleyRequest;
-import com.example.davide.letssound.singleton.YoutubeIntegratorSingleton;
+import com.example.davide.letssound.helpers.YoutubeConnector;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.SearchResultSnippet;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -104,6 +99,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     private MenuItem searchMenuItem;
     private String downloadFilename;
     private DownloaderHelper downloaderHelper;
+    private YoutubeConnector youtubeConnector;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -328,10 +324,9 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        searchView.setIconified(true);
-
-        setAsyncResultOnSubmitQuery(query);
-        setResultOnSubmitQuery(query);
+        searchMenuItem.collapseActionView();
+        soundTrackStatus.setIdleStatus();
+        searchOnYoutubeAsync(query);
         return true;
     }
 
@@ -349,18 +344,42 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         stopMediaPlayer();
     }
     /**
-     *
+     * @deprecated
      * @param query
      */
     private void setResultOnSubmitQuery(String query) {
-        List<SearchResult> list = YoutubeIntegratorSingleton
-                .searchByQueryString(query);
+        List<SearchResult> list = youtubeConnector
+                .search(query);
         if (list == null) {
             handleError(new Exception("No result found"));
             return;
         }
         createSearchResultList(list);
         initRecyclerView(result);
+    }
+
+    /**
+     *
+     * @param queryString
+     */
+    public void searchOnYoutubeAsync(final String queryString) {
+        final Handler handler = new Handler();
+        new Thread(){
+            public void run(){
+                youtubeConnector = YoutubeConnector.getInstance();
+                final List<SearchResult> list = youtubeConnector.search(queryString);
+                handler.post(new Runnable(){
+                    public void run(){
+                        if (list == null) {
+                            handleError(new Exception("No result found"));
+                            return;
+                        }
+                        createSearchResultList(list);
+                        initRecyclerView(result);
+                    }
+                });
+            }
+        }.start();
     }
 
     /**
@@ -432,7 +451,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     }
 
     /**
-     *
      * @param url
      */
     public void downloadSoundTrackByUrl(String url) {
@@ -686,17 +704,18 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     public void onDownloadCallback(DownloadStatusEnum statusEnum, Exception e) {
         if (statusEnum == DownloadStatusEnum.FAILED) {
             handleError(e);
-            return;
-        }
-        if (statusEnum == DownloadStatusEnum.OK) {
+        } else if (statusEnum == DownloadStatusEnum.OK) {
             swipeContainerLayout.setRefreshing(false);
             soundTrackStatus.setIdleStatus();
             soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
-            createSnackBarByBackgroundColor("Hey you got your song!", getActivity()
-                    .getResources().getColor(R.color.md_amber_400));
+            handleSuccess("Hey you got your song!");
         }
     }
 
+    /**
+     * @deprecated
+     * @param query
+     */
     public void setAsyncResultOnSubmitQuery(final String query) {
         String[] queryArray = {query};
         new AsyncTask<String, Boolean, Boolean>() {

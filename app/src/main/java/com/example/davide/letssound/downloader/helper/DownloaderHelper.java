@@ -1,15 +1,13 @@
 package com.example.davide.letssound.downloader.helper;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.davide.letssound.singleton.SoundTrackStatus;
+import com.example.davide.letssound.helpers.SoundTrackStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,7 +78,7 @@ public class DownloaderHelper implements DownloaderInterface, Response.ErrorList
         return null;
     }
     /**
-     *
+     * @deprecated
      * @param dataString
      * @return
      */
@@ -103,7 +101,6 @@ public class DownloaderHelper implements DownloaderInterface, Response.ErrorList
     @Override
     public void onResponse(String response) {
         try {
-            resultWeakRef.get().handleSuccess("success " + response);
             String url = getSoundTrackDownloadUrlByJSON(response);
             handleDownloadStatus(url);
             handlePlayStatus(url);
@@ -114,6 +111,7 @@ public class DownloaderHelper implements DownloaderInterface, Response.ErrorList
 
     public void handlePlayStatus(String url) throws Exception {
         if (soundTrackStatus.isPlayStatus()) {
+            resultWeakRef.get().handleSuccess("Eureka playing:" + url);
             resultWeakRef.get().startMediaPlayer(url);
         }
     }

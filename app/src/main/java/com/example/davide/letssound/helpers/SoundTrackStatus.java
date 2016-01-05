@@ -1,4 +1,4 @@
-package com.example.davide.letssound.singleton;
+package com.example.davide.letssound.helpers;
 
 /**
  * Created by davide on 20/12/15.

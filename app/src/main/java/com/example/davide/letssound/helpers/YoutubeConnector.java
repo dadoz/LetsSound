@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.example.davide.letssound.singleton;
+package com.example.davide.letssound.helpers;
 
 import android.os.StrictMode;
 import android.util.Log;
@@ -26,70 +26,53 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
-import com.google.api.services.youtube.model.Thumbnail;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
-import com.google.api.client.http.HttpTransport;
+
 /**
  * Print a list of videos matching a search term.
  *
  * @author Jeremy Walker
  */
-public class YoutubeIntegratorSingleton {
+public class YoutubeConnector {
 
     /**
      * Define a global variable that identifies the name of a file that
      * contains the developer's API key.
      */
-//    private static final String PROPERTIES_FILENAME = "youtube.properties";
-
     private static final long NUMBER_OF_VIDEOS_RETURNED = 30;
-
+    private static final String TAG = "YoutubeConnector";
 
     /**
      * Define a global instance of a Youtube object, which will be used
      * to make YouTube Data API requests.
      */
-    private static YouTube youtube;
+    private static YouTube.Search.List search;
+    private static YoutubeConnector instance;
 
     /**
      * Initialize a YouTube object to search for videos on YouTube. Then
      * display the name and thumbnail image of each video in the result set.
      *
-     * @param queryTerm command line args.
      */
-    public static List<SearchResult> searchByQueryString(String queryTerm) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+    public static YoutubeConnector getInstance() {
+        return instance == null ?
+                instance = new YoutubeConnector() :
+                instance;
+    }
 
-        // Read the developer key from the properties file.
-//        Properties properties = new Properties();
-//        try {
-//            InputStream in = YoutubeIntegratorSingleton
-//                    .class.getResourceAsStream("/" + PROPERTIES_FILENAME);
-//            if (in != null) {
-//                properties.load(in);
-//            }
-//        } catch (Exception e) {
-//           Log.e("TAG", "There was an error reading " + PROPERTIES_FILENAME + ": " + e.getCause()
-//                   + " : " + e.getMessage());
-//        }
+    private YoutubeConnector() {
+        initYoutubeConnector();
+    }
 
+    public static void initYoutubeConnector() {
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
         try {
-            // This object is used to make YouTube Data API requests. The last
-            // argument is required, but since we don't need anything
-            // initialized when the HttpRequest is initialized, we override
-            // the interface and provide a no-op function.
-            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY,
+            YouTube youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JACKSON_FACTORY,
                     new HttpRequestInitializer() {
                         public void initialize(HttpRequest request) throws IOException {
                         }
@@ -97,45 +80,44 @@ public class YoutubeIntegratorSingleton {
                     .setApplicationName("letsSound")
                     .build();
 
-            // Prompt the user to enter a query term.
-//            String queryTerm = getInputQuery();
-
-            // Define the API request for retrieving search results.
-            YouTube.Search.List search = youtube.search().list("id,snippet");
-
-            // Set your developer key from the Google Developers Console for
-            // non-authenticated requests. See:
-            // https://console.developers.google.com/
-//            String apiKey = properties.getProperty("youtube.apikey");
-
+            search = youtube.search().list("id,snippet");
             search.setKey(AuthCustom.API_KEY);
-            search.setQ(queryTerm);
-
             // Restrict the search results to only include videos. See:
             // https://developers.google.com/youtube/v3/docs/search/list#type
             search.setType("video");
-
             // To increase efficiency, only retrieve the fields that the
             // application uses.
             search.setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)");
             search.setMaxResults(NUMBER_OF_VIDEOS_RETURNED);
 
             // Call the API and print results.
-            SearchListResponse searchResponse = search.execute();
-            return searchResponse.getItems();
         } catch (GoogleJsonResponseException e) {
-            Log.e("TAG", "There was a service error: " + e.getDetails().getCode() + " : "
+            Log.e(TAG, "There was a service error: " + e.getDetails().getCode() + " : "
                     + e.getDetails().getMessage());
         } catch (IOException e) {
-            Log.e("TAG" ,"There was an IO error: " + e.getCause() + " : " + e.getMessage());
+            Log.e(TAG ,"There was an IO error: " + e.getCause() + " : " + e.getMessage());
         } catch (Throwable t) {
             t.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     * @param queryString
+     * @return
+     */
+    public List<SearchResult> search(String queryString) {
+        try {
+            search.setQ(queryString);
+            return search.execute().getItems();
+        } catch (IOException e) {
+            Log.e(TAG, "There was an error: " + e.getCause() + " : " + e.getMessage());
         }
         return null;
     }
 
     /**
-     * auth clas
+     * auth class
      */
     public static class Auth {
         /**
@@ -146,7 +128,7 @@ public class YoutubeIntegratorSingleton {
         /**
          * Define a global instance of the JSON factory.
          */
-        public static final JsonFactory JSON_FACTORY = new JacksonFactory();
+        public static final JsonFactory JACKSON_FACTORY = new JacksonFactory();
 
     }
 }
