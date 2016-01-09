@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
@@ -150,7 +151,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 //            return;
         }
         //TODO test - rm it
-//        fillList();
+        fillList();
     }
 
     private void initSwipeRefresh() {
@@ -622,7 +623,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
         Resources resources = getActivity().getResources();
         int color = resources.getColor(isPlaying ?
-                R.color.md_amber_400 : R.color.md_blue_grey_800);
+                R.color.md_amber_400 : R.color.md_indigo_A200);
         ActionBar actionbar = ((AppCompatActivity) getActivity())
                 .getSupportActionBar();
         try {

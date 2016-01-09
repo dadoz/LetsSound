@@ -104,8 +104,8 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         holder.title.setText(mDataset.get(position).getSnippet().getTitle());
         DateTime publishedAt = mDataset.get(position).getSnippet().getPublishedAt();
         holder.url.setText(publishedAt != null ?
-                PUBLISHED_AT + new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
-                        .format(new Date(publishedAt.getValue())) :
+                new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
+                    .format(new Date(publishedAt.getValue())) :
                 " - ");
         holder.durationTime.setText("00:00");
         //TODO responsibility pattern - REMEBER this is viewHolder pos :()
@@ -141,13 +141,13 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         boolean isSelected = soundTrackStatus.isSelectStatus() &&
                 soundTrackStatus.getCurrentPosition() == position;
         holder.mainSelectedView.setVisibility(isSelected ? View.VISIBLE : View.GONE);
-        holder.title.setTextColor(((Fragment) itemClickListenerRef)
-                .getActivity().getResources().getColor(isSelected ?
-                        R.color.md_amber_400 :
-                        R.color.md_blue_grey_400));
+//        holder.title.setTextColor(((Fragment) itemClickListenerRef)
+//                .getActivity().getResources().getColor(isSelected ?
+//                        R.color.md_indigo_400 :
+//                        R.color.md_blue_grey_200));
         holder.itemView.setBackgroundColor(isSelected ?
                 ((Fragment) itemClickListenerRef)
-                        .getActivity().getResources().getColor(R.color.md_blue_grey_800) :
+                        .getActivity().getResources().getColor(R.color.md_violet_custom_2) :
                 Color.TRANSPARENT);
     }
 
