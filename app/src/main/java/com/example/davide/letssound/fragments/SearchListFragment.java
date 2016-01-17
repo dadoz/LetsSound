@@ -545,8 +545,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         soundTrackTitleTextView.setText(obj.getSnippet().getTitle());
 
         setOnPlayingStatus(position);
-        testSoundTrackPlay();
-//        downloaderHelper.retrieveSoundTrackAsync(videoId, null);
+//        testSoundTrackPlay();
+        downloaderHelper.retrieveSoundTrackAsync(videoId, null);
     }
 
     private void testSoundTrackPlay() throws Exception {
