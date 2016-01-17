@@ -20,10 +20,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true">
                 <ImageView
+                    android:id="@+id/songIconId"
                     android:padding="@dimen/medium_padding"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/common_plus_signin_btn_icon_dark_normal"/>
+                    android:layout_width="70dp"
+                    android:layout_height="@dimen/medium_icon_size"
+                    android:src="@drawable/sound_track_icon"/>
                 <ImageView
                     android:id="@+id/playButtonId"
                     android:visibility="gone"

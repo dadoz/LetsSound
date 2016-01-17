@@ -4,6 +4,8 @@ package com.example.davide.letssound.helpers;
  * Created by davide on 20/12/15.
  */
 public class SoundTrackStatus {
+    public static final int INVALID_POSITION = -1;
+
     private enum StatusEnum {
         IDLE, PLAY, SELECT, DOWNLOAD
     }
@@ -122,4 +124,12 @@ public class SoundTrackStatus {
         this.currentPosition = currentPosition;
     }
 
+    /**
+     *
+     * @param pos
+     * @return
+     */
+    public boolean isValidPosition(int pos) {
+        return pos != INVALID_POSITION;
+    }
 }

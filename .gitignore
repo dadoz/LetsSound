@@ -41,3 +41,4 @@ Thumbs.db
 build/*
 app/*.apk
 credentials
+prototype/*

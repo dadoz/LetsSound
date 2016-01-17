@@ -7,52 +7,105 @@
     android:layout_width="fill_parent"
     android:orientation="vertical"
     android:layout_alignParentBottom="true"
-    android:background="@color/md_amber_400">
+    android:background="@color/md_yellow_custom_1">
 
-<RelativeLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/medium_padding"
-    android:layout_marginLeft="@dimen/medium_padding"
-    android:layout_marginRight="@dimen/medium_padding"
-    >
-    <TextView
-        android:id="@+id/soundTrackTitleTextId"
-        android:layout_marginRight="@dimen/extra_large_padding"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/md_blue_grey_800"
-        android:padding="@dimen/small_padding"
-        android:textSize="@dimen/title_text_large"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:text="sound track"/>
+        android:layout_margin="@dimen/medium_padding">
+        <RelativeLayout
+            android:id="@+id/titleLayoutId"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/soundTrackTitleTextId"
+                android:layout_marginLeft="@dimen/medium_large_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/md_violet_custom_1"
+                android:padding="@dimen/small_padding"
+                android:textSize="@dimen/title_text_large"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="sound track"/>
 
-    <ImageView
-        android:id="@+id/pausePlayingBoxButtonId"
-        android:layout_alignParentRight="true"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_media_pause"/>
-    <ImageView
-        android:visibility="gone"
-        android:id="@+id/playPlayingBoxButtonId"
-        android:layout_alignParentRight="true"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_media_play"/>
-</RelativeLayout>
-    <ProgressBar
-        style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="-7dp"
-        android:layout_alignParentTop="true"
-        android:id="@+id/soundTrackProgressbarId"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+            <ImageView
+                android:id="@+id/pausePlayingBoxButtonId"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="@dimen/medium_large_padding"
+                android:src="@drawable/pause_icon"/>
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/playPlayingBoxButtonId"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="@dimen/medium_large_padding"
+                android:src="@drawable/play_icon"/>
 
+        </RelativeLayout>
+        <SeekBar
+            android:id="@+id/soundTrackSeekbarId"
+            style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
+            android:layout_below="@id/titleLayoutId"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_padding"/>
+        <TextView
+            android:id="@+id/durationTimeActionbarTextId"
+            android:layout_below="@id/soundTrackSeekbarId"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_red_custom_3"
+            android:layout_marginRight="@dimen/medium_large_padding"
+            android:textSize="10sp"
+            android:textStyle="italic"
+            android:text="10:00"/>
+        <TextView
+            android:id="@+id/currentTimeActionbarTextId"
+            android:layout_below="@id/soundTrackSeekbarId"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_red_custom_3"
+            android:layout_marginLeft="@dimen/medium_large_padding"
+            android:textSize="10sp"
+            android:textStyle="italic"
+            android:text="10:00"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/md_yellow_custom_2">
+        <TextView
+            android:id="@+id/downloadTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/md_red_custom_1"
+            android:padding="@dimen/medium_padding"
+            android:textSize="@dimen/title_text_medium"
+            android:background="?android:selectableItemBackground"
+            android:text="DOWNLOAD"/>
+        <TextView
+            android:id="@+id/shareTextId"
+            android:layout_toLeftOf="@+id/downloadTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_red_custom_1"
+            android:padding="@dimen/medium_padding"
+            android:textSize="@dimen/title_text_medium"
+            android:background="?android:selectableItemBackground"
+            android:text="SHARE"/>
+    </RelativeLayout>
 </LinearLayout>

@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -59,6 +60,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.Bind;
@@ -92,7 +94,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     private MediaObserver observer;
     @State ArrayList<SearchResult> result;
     private View soundTrackPlayingBoxLayoutHeader;
-    private ProgressBar soundTrackProgressbar;
     private TextView soundTrackTitleTextView;
     private View pauseButton;
     private View playButton;
@@ -101,6 +102,11 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     private String downloadFilename;
     private DownloaderHelper downloaderHelper;
     private YoutubeConnector youtubeConnector;
+    private TextView durationTimeActionbarTextView;
+    private TextView currentTimeActionbarTextView;
+    private SeekBar soundTrackSeekbar;
+    private View downloadTextView;
+    private View shareTextView;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -182,56 +188,95 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         soundTrackPlayingBoxLayoutHeader = getActivity()
                 .findViewById(R.id.soundTrackPlayingBoxLayoutId);
         soundTrackPlayingBoxLayoutHeader.setVisibility(View.GONE);
-        soundTrackProgressbar = (ProgressBar) soundTrackPlayingBoxLayoutHeader
-                .findViewById(R.id.soundTrackProgressbarId);
+        soundTrackSeekbar = (SeekBar) soundTrackPlayingBoxLayoutHeader
+                .findViewById(R.id.soundTrackSeekbarId);
+        durationTimeActionbarTextView = (TextView) soundTrackPlayingBoxLayoutHeader
+                .findViewById(R.id.durationTimeActionbarTextId);
+        currentTimeActionbarTextView = (TextView) soundTrackPlayingBoxLayoutHeader
+                .findViewById(R.id.currentTimeActionbarTextId);
         soundTrackTitleTextView = (TextView) soundTrackPlayingBoxLayoutHeader
                 .findViewById(R.id.soundTrackTitleTextId);
         pauseButton = soundTrackPlayingBoxLayoutHeader
                 .findViewById(R.id.pausePlayingBoxButtonId);
         playButton = soundTrackPlayingBoxLayoutHeader
                 .findViewById(R.id.playPlayingBoxButtonId);
+        shareTextView = soundTrackPlayingBoxLayoutHeader
+                .findViewById(R.id.shareTextId);
+        downloadTextView = soundTrackPlayingBoxLayoutHeader
+                .findViewById(R.id.downloadTextId);
 
-        int color = getActivity().getResources().getColor(R.color.md_blue_grey_600);
-        soundTrackProgressbar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        shareTextView.setOnClickListener(this);
+        downloadTextView.setOnClickListener(this);
+
+        int color = getActivity().getResources().getColor(R.color.md_red_custom_1);
+        soundTrackSeekbar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        soundTrackSeekbar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
 
 
     @Override
     public void onItemClick(int position, View v) {
-        setOnSelectedStatus(position);
+//        setOnSelectedStatus(position);
+        playSoundTrackWrapper(position);
     }
 
     @Override
     public void onClick(int position, View v) {
+//        switch (v.getId()) {
+//            case R.id.playButtonId:
+//                playSoundTrackWrapper(position);
+//                break;
+//            case R.id.pauseButtonId:
+//                mp.pause();
+//                break;
+//
+//        }
+    }
+
+    /**
+     *
+     * @param isPlaying
+     */
+    public void setPlayPlayerUI(boolean isPlaying) {
+        pauseButton.setVisibility(isPlaying ? View.VISIBLE : View.GONE);
+        playButton.setVisibility(isPlaying ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.playButtonId:
-                sendSnackbarMessage("hey click play - " + position);
-                try {
-                    swipeContainerLayout.setRefreshing(true);
-                    setOnIdleStatus();
-                    playSoundTrack(position);
-                } catch (Exception e) {
-                    mp.reset();
-                    handleError(e);
-                    e.printStackTrace();
-                }
-                break;
-            case R.id.pauseButtonId:
+            case R.id.pausePlayingBoxButtonId:
                 mp.pause();
+                setPlayPlayerUI(false);
+                break;
+            case R.id.playPlayingBoxButtonId:
+                mp.start();
+                setPlayPlayerUI(true);
                 break;
             case R.id.downloadTextId:
                 try {
-                    sendSnackbarMessage("hey download position " + position);
+                    int pos = soundTrackStatus.getCurrentPosition();
+                    if (!soundTrackStatus.isValidPosition(pos)) {
+                        handleError(new Exception("Song position not valid - please select it again"));
+                        break;
+                    }
+                    sendSnackbarMessage("hey download position " + pos);
                     swipeContainerLayout.setRefreshing(true);
-                    downloadSoundTrack(position);
+                    downloadSoundTrack(pos);
                 } catch (Exception e) {
                     swipeContainerLayout.setRefreshing(false);
                     e.printStackTrace();
                 }
                 break;
             case R.id.shareTextId:
-                sendSnackbarMessage("hey share position " + position);
-                shareSoundTrack(position);
+                int pos = soundTrackStatus.getCurrentPosition();
+                if (!soundTrackStatus.isValidPosition(pos)) {
+                    handleError(new Exception("Song position not valid - please select it again"));
+                    break;
+                }
+
+                sendSnackbarMessage("hey share position " + pos);
+                shareSoundTrack(pos);
                 break;
         }
     }
@@ -341,7 +386,10 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      */
     public void stopPlaying() {
         setOnPlayingActionbar(false);
-        setOnPlayingStatus(-1);
+        setOnIdleStatus();
+        //reset play pos
+        setOnPlayingStatus(SoundTrackStatus.INVALID_POSITION);
+//        setOnSelectedStatus(SoundTrackStatus.INVALID_POSITION);
         stopMediaPlayer();
     }
     /**
@@ -473,6 +521,23 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      *
      * @param position
      */
+    private void playSoundTrackWrapper(int position) {
+//        sendSnackbarMessage("hey click play - " + position);
+        try {
+            swipeContainerLayout.setRefreshing(true);
+            setPlayPlayerUI(true);
+            setOnIdleStatus();
+            playSoundTrack(position);
+        } catch (Exception e) {
+            mp.reset();
+            handleError(e);
+            e.printStackTrace();
+        }
+    }
+    /**
+     *
+     * @param position
+     */
     private void playSoundTrack(int position) throws Exception {
         initMediaPlayer();
         SearchResult obj = getTrackByPosition(position);
@@ -480,9 +545,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         soundTrackTitleTextView.setText(obj.getSnippet().getTitle());
 
         setOnPlayingStatus(position);
-//        testSoundTrackPlay();
-//        retrieveVideoUrlAsync(videoId, Long.toString(getTimestamp()));
-        downloaderHelper.retrieveSoundTrackAsync(videoId, null);
+        testSoundTrackPlay();
+//        downloaderHelper.retrieveSoundTrackAsync(videoId, null);
     }
 
     private void testSoundTrackPlay() throws Exception {
@@ -498,7 +562,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 observer.stop();
-                soundTrackProgressbar.setProgress(mediaPlayer.getCurrentPosition());
+                soundTrackSeekbar.setProgress(mediaPlayer.getCurrentPosition());
             }
         });
         observer = new MediaObserver();
@@ -595,6 +659,22 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     /**
      *
+     */
+    private void setOnSelectedActionbar(final boolean isSelected) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setTopActionbar(isSelected);
+                getActivity().findViewById(R.id.slidingTabsId).setVisibility(isSelected ?
+                        View.GONE : View.VISIBLE);
+                soundTrackPlayingBoxLayoutHeader.setVisibility(isSelected ?
+                        View.VISIBLE : View.GONE);
+
+            }
+        });
+    }
+    /**
+     *
      * @param isPlaying
      */
     private void setOnPlayingActionbar(final boolean isPlaying) {
@@ -621,13 +701,13 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
             searchMenuItem.setVisible(!isPlaying);
         }
 
-        Resources resources = getActivity().getResources();
-        int color = resources.getColor(isPlaying ?
-                R.color.md_amber_400 : R.color.md_indigo_A200);
-        ActionBar actionbar = ((AppCompatActivity) getActivity())
-                .getSupportActionBar();
         try {
-            actionbar.setBackgroundDrawable(new ColorDrawable(color));
+//            Resources resources = getActivity().getResources();
+//            int color = resources.getColor(isPlaying ?
+//                    R.color.md_red_custom_1 : R.color.md_yellow_custom_1);
+            ActionBar actionbar = ((AppCompatActivity) getActivity())
+                    .getSupportActionBar();
+//            actionbar.setBackgroundDrawable(new ColorDrawable(color));
             actionbar.setDisplayHomeAsUpEnabled(isPlaying);
             actionbar.setDisplayShowTitleEnabled(!isPlaying);
         } catch (Exception e) {
@@ -642,10 +722,9 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!soundTrackStatus.isIdleStatus()) {
-                    return;
+                if (soundTrackStatus.isValidPosition(pos)) {
+                    soundTrackStatus.setPlayStatus();
                 }
-                soundTrackStatus.setPlayStatus();
                 soundTrackStatus.setCurrentPosition(pos);
                 soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
             }
@@ -659,29 +738,20 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         soundTrackStatus.setSelectStatus();
         soundTrackStatus.setCurrentPosition(pos);
         soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
+        setOnSelectedActionbar(true);
+
+        SearchResult obj = ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView.getAdapter())
+                .getItemByPosition(pos);
+        soundTrackTitleTextView.setText(obj.getSnippet().getTitle());
     }
+
+
     /**
      *
      */
     private void setOnIdleStatus() {
-        soundTrackStatus.setCurrentPosition(-1);
+        soundTrackStatus.setCurrentPosition(SoundTrackStatus.INVALID_POSITION);
         soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.pausePlayingBoxButtonId:
-                mp.pause();
-                pauseButton.setVisibility(View.GONE);
-                playButton.setVisibility(View.VISIBLE);
-                break;
-            case R.id.playPlayingBoxButtonId:
-                mp.start();
-                pauseButton.setVisibility(View.VISIBLE);
-                playButton.setVisibility(View.GONE);
-                break;
-        }
     }
 
     @Override
@@ -739,13 +809,39 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
             stop.set(true);
         }
 
+        /**
+         *
+         * @param millisec
+         * @return
+         */
+        public String parseMillisecToString(long millisec) {
+            return String.format("%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(millisec),
+                    TimeUnit.MILLISECONDS.toSeconds(millisec) -
+                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
+        }
+
+        /**
+         *
+         */
+        private void updateView() {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    currentTimeActionbarTextView.setText(parseMillisecToString(mp.getCurrentPosition()));
+                    durationTimeActionbarTextView.setText(parseMillisecToString(mp.getDuration()));
+                }
+            });
+        }
+
         @Override
         public void run() {
             while (!stop.get()) {
                 if (mp.isPlaying()) {
                     try {
                         float progress = ((float) mp.getCurrentPosition() / mp.getDuration()) * 100;
-                        soundTrackProgressbar.setProgress((int) progress);
+                        updateView();
+                        soundTrackSeekbar.setProgress((int) progress);
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         handleError(e);
@@ -753,8 +849,9 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                 }
             }
             setOnPlayingActionbar(false);
-            setOnPlayingStatus(-1);
+            setOnPlayingStatus(SoundTrackStatus.INVALID_POSITION);
         }
+
     }
 
 }
