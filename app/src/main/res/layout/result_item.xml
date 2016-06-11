@@ -24,7 +24,7 @@
                     android:padding="@dimen/medium_padding"
                     android:layout_width="70dp"
                     android:layout_height="@dimen/medium_icon_size"
-                    android:src="@drawable/sound_track_icon"/>
+                    android:src="@drawable/sound_track_icon_dark"/>
                 <ImageView
                     android:id="@+id/playButtonId"
                     android:visibility="gone"
@@ -80,7 +80,7 @@
 
             </LinearLayout>
         </RelativeLayout>
-        <include layout="@layout/result_item_selected"/>
+        <!--<include layout="@layout/result_item_selected"/>-->
     </LinearLayout>
 
 

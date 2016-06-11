@@ -5,5 +5,4 @@
         <item name="android:textColorPrimary">@color/md_violet_custom_2</item>
         <item name="android:textColorSecondary">@color/md_violet_custom_1</item>
     </style>
-
 </resources>

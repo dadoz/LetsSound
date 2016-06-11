@@ -40,8 +40,8 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         private final TextView title;
         private final TextView durationTime;
         private final TextView url;
-        private final View playButton;
-        private final View pauseButton;
+//        private final View playButton;
+//        private final View pauseButton;
         private final View mainSelectedView;
         private final View shareTextView;
         private final View downloadTextView;
@@ -54,8 +54,8 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
             title = (TextView) itemView.findViewById(R.id.titleTextId);
             url = (TextView) itemView.findViewById(R.id.urlTextId);
             durationTime = (TextView) itemView.findViewById(R.id.durationTimeTextId);
-            playButton = itemView.findViewById(R.id.playButtonId);
-            pauseButton = itemView.findViewById(R.id.pauseButtonId);
+//            playButton = itemView.findViewById(R.id.playButtonId);
+//            pauseButton = itemView.findViewById(R.id.pauseButtonId);
             mainSelectedView = itemView.findViewById(R.id.resultItemSelectLayoutId);
             mainView = itemView.findViewById(R.id.resultItemLayoutId);
             shareTextView = itemView.findViewById(R.id.shareTextId);
@@ -66,8 +66,8 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
             itemView.setOnClickListener(this);
 //            shareTextView.setOnClickListener(this);
 //            downloadTextView.setOnClickListener(this);
-            playButton.setOnClickListener(this);
-            pauseButton.setOnClickListener(this);
+//            playButton.setOnClickListener(this);
+//            pauseButton.setOnClickListener(this);
 
         }
 
@@ -132,8 +132,8 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
                         .getActivity().getResources().getColor(R.color.md_violet_custom_2) :
                 Color.TRANSPARENT);
 
-        holder.playButton.setVisibility(isPlaying ? View.GONE : View.VISIBLE);
-        holder.pauseButton.setVisibility(isPlaying ? View.VISIBLE : View.GONE);
+//        holder.playButton.setVisibility(isPlaying ? View.GONE : View.VISIBLE);
+//        holder.pauseButton.setVisibility(isPlaying ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -144,8 +144,8 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
     private void setSelectedItem(DataObjectHolder holder, int position) {
         boolean isSelected = (soundTrackStatus.isSelectStatus() || soundTrackStatus.isPlayStatus()) &&
                 soundTrackStatus.getCurrentPosition() == position;
-        holder.mainSelectedView.setVisibility(isSelected ? View.VISIBLE : View.GONE);
-        holder.songIcon.setVisibility(isSelected ? View.GONE : View.VISIBLE);
+//        holder.mainSelectedView.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+//        holder.songIcon.setVisibility(isSelected ? View.GONE : View.VISIBLE);
 //        holder.mainView.setVisibility(isSelected ? View.GONE : View.VISIBLE);
 //        holder.title.setTextColor(((Fragment) itemClickListenerRef)
 //                .getActivity().getResources().getColor(isSelected ?

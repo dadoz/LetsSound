@@ -2,57 +2,51 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/soundTrackPlayingBoxLayoutId"
     android:layout_height="wrap_content"
     android:layout_width="fill_parent"
     android:orientation="vertical"
-    android:layout_alignParentBottom="true"
-    android:background="@color/md_yellow_custom_1">
+    android:layout_alignParentBottom="true">
 
     <RelativeLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:id="@+id/titleLayoutId"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/medium_padding">
-        <RelativeLayout
-            android:id="@+id/titleLayoutId"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/soundTrackTitleTextId"
-                android:layout_marginLeft="@dimen/medium_large_padding"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/md_violet_custom_1"
-                android:padding="@dimen/small_padding"
-                android:textSize="@dimen/title_text_large"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:text="sound track"/>
+        android:paddingTop="@dimen/medium_padding"
+        android:paddingLeft="@dimen/medium_padding"
+        android:paddingRight="@dimen/medium_padding"
+        android:paddingBottom="40dp"
+        android:background="@color/md_yellow_custom_1">
+        <TextView
+            android:id="@+id/soundTrackTitleTextId"
+            android:layout_marginLeft="@dimen/medium_large_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_violet_custom_1"
+            android:textSize="@dimen/title_text_large"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="sound track"/>
 
-            <ImageView
-                android:id="@+id/pausePlayingBoxButtonId"
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginRight="@dimen/medium_large_padding"
-                android:src="@drawable/pause_icon"/>
-            <ImageView
-                android:visibility="gone"
-                android:id="@+id/playPlayingBoxButtonId"
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginRight="@dimen/medium_large_padding"
-                android:src="@drawable/play_icon"/>
-
-        </RelativeLayout>
+        <ImageView
+            android:visibility="gone"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="@dimen/medium_large_padding"
+            android:src="@drawable/pause_icon"/>
+        <ImageView
+            android:visibility="gone"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="@dimen/medium_large_padding"
+            android:src="@drawable/play_icon"/>
         <SeekBar
             android:id="@+id/soundTrackSeekbarId"
-            style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
-            android:layout_below="@id/titleLayoutId"
+            style="Widget.AppCompat.SeekBar"
+            android:layout_below="@id/soundTrackTitleTextId"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/medium_padding"/>
@@ -62,7 +56,7 @@
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_red_custom_3"
+            android:textColor="@color/md_violet_custom_0"
             android:layout_marginRight="@dimen/medium_large_padding"
             android:textSize="10sp"
             android:textStyle="italic"
@@ -73,7 +67,7 @@
             android:layout_alignParentLeft="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_red_custom_3"
+            android:textColor="@color/md_violet_custom_0"
             android:layout_marginLeft="@dimen/medium_large_padding"
             android:textSize="10sp"
             android:textStyle="italic"
@@ -81,8 +75,8 @@
 
     </RelativeLayout>
 
-
     <RelativeLayout
+        android:visibility="gone"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,9 +1,4 @@
 package com.example.davide.letssound.fragments;
-
-/**
- * Created by davide on 26/11/15.
- */
-
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -15,6 +10,7 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -39,6 +35,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
+import com.example.davide.letssound.BuildConfig;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.downloader.DownloadVolleyResponse.DownloadStatusEnum;
 import com.example.davide.letssound.downloader.helper.DownloaderHelper;
@@ -69,7 +66,6 @@ import icepick.Icepick;
 import icepick.State;
 
 import static com.example.davide.letssound.downloader.DownloadVolleyResponse.*;
-
 
 /**
  * A placeholder fragment containing a simple view.
@@ -145,8 +141,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         initProgressBar();
         setHasOptionsMenu(true);
         mp = new MediaPlayer();
-        pauseButton.setOnClickListener(this);
-        playButton.setOnClickListener(this);
         if (soundTrackStatus.isPlayStatus()) {
             onPlayingStatusPrepareUI();
         }
@@ -156,8 +150,11 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
             initRecyclerView(result);
 //            return;
         }
-        //TODO test - rm it
-        fillList();
+
+        if (BuildConfig.DEBUG) {
+            //TODO test - rm it
+            fillList();
+        }
     }
 
     private void initSwipeRefresh() {
@@ -196,9 +193,9 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
                 .findViewById(R.id.currentTimeActionbarTextId);
         soundTrackTitleTextView = (TextView) soundTrackPlayingBoxLayoutHeader
                 .findViewById(R.id.soundTrackTitleTextId);
-        pauseButton = soundTrackPlayingBoxLayoutHeader
+        pauseButton = getActivity()
                 .findViewById(R.id.pausePlayingBoxButtonId);
-        playButton = soundTrackPlayingBoxLayoutHeader
+        playButton = getActivity()
                 .findViewById(R.id.playPlayingBoxButtonId);
         shareTextView = soundTrackPlayingBoxLayoutHeader
                 .findViewById(R.id.shareTextId);
@@ -207,8 +204,11 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
         shareTextView.setOnClickListener(this);
         downloadTextView.setOnClickListener(this);
+        pauseButton.setOnClickListener(this);
+        playButton.setOnClickListener(this);
+        initPlayerUI();
 
-        int color = getActivity().getResources().getColor(R.color.md_red_custom_1);
+        int color = getActivity().getResources().getColor(R.color.md_violet_custom_0);
         soundTrackSeekbar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         soundTrackSeekbar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
@@ -231,6 +231,14 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 //                break;
 //
 //        }
+    }
+
+    /**
+     *
+     */
+    public void initPlayerUI() {
+        pauseButton.setVisibility(View.GONE);
+        playButton.setVisibility(View.GONE);
     }
 
     /**
@@ -364,9 +372,11 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
             case android.R.id.home:
                 stopPlaying();
                 return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -385,6 +395,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      *
      */
     public void stopPlaying() {
+        initPlayerUI();
         setOnPlayingActionbar(false);
         setOnIdleStatus();
         //reset play pos
@@ -522,10 +533,8 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      * @param position
      */
     private void playSoundTrackWrapper(int position) {
-//        sendSnackbarMessage("hey click play - " + position);
         try {
             swipeContainerLayout.setRefreshing(true);
-            setPlayPlayerUI(true);
             setOnIdleStatus();
             playSoundTrack(position);
         } catch (Exception e) {
@@ -545,7 +554,10 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         soundTrackTitleTextView.setText(obj.getSnippet().getTitle());
 
         setOnPlayingStatus(position);
-//        testSoundTrackPlay();
+        if (BuildConfig.DEBUG) {
+            testSoundTrackPlay();
+            return;
+        }
         downloaderHelper.retrieveSoundTrackAsync(videoId, null);
     }
 
@@ -620,6 +632,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        setPlayPlayerUI(true);
         onPlayingStatusPrepareUI();
         mp.start();
     }
@@ -853,5 +866,6 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
         }
 
     }
+
 
 }

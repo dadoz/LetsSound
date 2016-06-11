@@ -3,6 +3,7 @@ package com.example.davide.letssound;
 import java.lang.ref.WeakReference;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -73,11 +74,19 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_settings:
+                openSettings();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     *
+     */
+    private void openSettings() {
+        this.startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+    }
 
 }

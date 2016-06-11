@@ -110,8 +110,9 @@ public class DownloaderHelper implements DownloaderInterface, Response.ErrorList
     }
 
     public void handlePlayStatus(String url) throws Exception {
-        if (soundTrackStatus.isPlayStatus()) {
-            resultWeakRef.get().handleSuccess("Eureka playing:" + url);
+        if (soundTrackStatus.isPlayStatus() &&
+                url != null) {
+//            resultWeakRef.get().handleSuccess("Eureka playing:" + url);
             resultWeakRef.get().startMediaPlayer(url);
         }
     }
