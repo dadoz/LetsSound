@@ -31,10 +31,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.Volley;
 import com.example.davide.letssound.BuildConfig;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.downloader.DownloadVolleyResponse.DownloadStatusEnum;
@@ -57,6 +53,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -151,10 +148,10 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
 //            return;
         }
 
-        if (BuildConfig.DEBUG) {
-            //TODO test - rm it
-            fillList();
-        }
+//        if (BuildConfig.DEBUG) {
+//            //TODO test - rm it
+//            fillList();
+//        }
     }
 
     private void initSwipeRefresh() {
@@ -516,10 +513,10 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
     public void downloadSoundTrackByUrl(String url) {
         DownloadVolleyResponse volleyResponse = new DownloadVolleyResponse(downloadFilename,
                 new WeakReference<OnDownloadCallbackInterface>(this));
-        RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity().getApplicationContext(),
-                new HurlStack());
-        mRequestQueue.add(new InputStreamVolleyRequest(Request.Method.GET, url,
-                volleyResponse, volleyResponse, null));
+//        RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity().getApplicationContext(),
+//                new HurlStack());
+//        mRequestQueue.add(new InputStreamVolleyRequest(Request.Method.GET, url,
+//                volleyResponse, volleyResponse, null));
     }
     /**
      *
@@ -763,8 +760,13 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
      *
      */
     private void setOnIdleStatus() {
-        soundTrackStatus.setCurrentPosition(SoundTrackStatus.INVALID_POSITION);
-        soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
+        //TODO crash
+        try {
+            soundTrackStatus.setCurrentPosition(SoundTrackStatus.INVALID_POSITION);
+            soundTrackRecyclerView.getAdapter().notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -828,7 +830,7 @@ public class SearchListFragment extends Fragment implements SoundTrackRecyclerVi
          * @return
          */
         public String parseMillisecToString(long millisec) {
-            return String.format("%02d:%02d",
+            return String.format(Locale.getDefault(), "%02d:%02d",
                     TimeUnit.MILLISECONDS.toMinutes(millisec),
                     TimeUnit.MILLISECONDS.toSeconds(millisec) -
                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
