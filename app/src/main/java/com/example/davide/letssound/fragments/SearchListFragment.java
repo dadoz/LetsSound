@@ -26,6 +26,7 @@ import com.example.davide.letssound.downloader.helper.OnDownloadHelperResultInte
 import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.decorations.SimpleDividerItemDecoration;
+import com.example.davide.letssound.managers.TrackSearchManager;
 import com.example.davide.letssound.utils.Utils;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.ResourceId;
@@ -64,6 +65,7 @@ public class SearchListFragment extends Fragment implements
     private MenuItem searchMenuItem;
     private View mainView;
     private DownloaderHelper downloaderHelper;
+    private TrackSearchManager searchManager;
 
     /**
      *
@@ -93,6 +95,7 @@ public class SearchListFragment extends Fragment implements
         soundTrackStatus = SoundTrackStatus.getInstance();
         downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
                 new WeakReference<OnDownloadHelperResultInterface>(this));
+        searchManager = TrackSearchManager.getInstance();
 //        mp = new MediaPlayer();
 
         return mainView;
@@ -238,7 +241,7 @@ public class SearchListFragment extends Fragment implements
     public boolean onQueryTextSubmit(String query) {
         searchMenuItem.collapseActionView();
         soundTrackStatus.setIdleStatus();
-//        searchOnYoutubeAsync(query);
+        searchManager.onSearchAsync(query);//searchOnYoutubeAsync(query);
         return true;
     }
 

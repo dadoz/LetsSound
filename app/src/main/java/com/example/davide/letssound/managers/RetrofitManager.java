@@ -1,6 +1,8 @@
-package com.example.davide.letssound.helpers;
+package com.example.davide.letssound.managers;
 
 import com.example.davide.letssound.auth.AuthCustom;
+
+import java.util.ArrayList;
 
 import retrofit2.Retrofit;
 import retrofit2.http.GET;
@@ -15,6 +17,7 @@ public class RetrofitManager {
     private static final String BASE_URL = "https://www.googleapis.com/youtube/v3/";
     private final YoutubeService service;
     private static final String YOUTUBE_PART = "snippet";
+    private static RetrofitManager instance;
 
     /**
      * constructor
@@ -27,11 +30,16 @@ public class RetrofitManager {
         service = retrofit.create(YoutubeService.class);
     }
 
+    public static RetrofitManager getInstance() {
+        return instance == null ?
+                instance = new RetrofitManager() : instance;
+    }
+
     /**
      *
      * @return
      */
-    public Observable searchList(String query) {
+    public Observable<ArrayList<Object>> searchList(String query) {
         return service.searchList(query, YOUTUBE_PART);
     }
 
@@ -41,6 +49,6 @@ public class RetrofitManager {
     public interface YoutubeService {
         //part=snippet
         @GET("search?key=" + AuthCustom.API_KEY)
-        Observable searchList(@Query("q") String query, @Query("part") String part);
+        Observable<ArrayList<Object>> searchList(@Query("q") String query, @Query("part") String part);
     }
 }
