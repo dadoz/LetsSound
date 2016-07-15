@@ -38,9 +38,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         switch (position) {
             case 0:
             default:
-                return SearchListFragment.newInstance(position);
+                return SearchListFragment.getInstance(position);
             case 1:
-                return HistoryListFragment.newInstance(position);
+                return HistoryListFragment.getInstace(position);
         }
     }
 

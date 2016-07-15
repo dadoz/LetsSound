@@ -14,7 +14,6 @@
 
 package com.example.davide.letssound.helpers;
 
-import android.os.StrictMode;
 import android.util.Log;
 
 import com.example.davide.letssound.auth.AuthCustom;
@@ -26,7 +25,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 
 import java.io.IOException;

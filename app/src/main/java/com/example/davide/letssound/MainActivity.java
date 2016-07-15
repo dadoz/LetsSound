@@ -16,39 +16,14 @@ import android.view.MenuItem;
 import com.example.davide.letssound.adapters.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarId);
-        toolbar.setTitle(R.string.app_name);
-        setSupportActionBar(toolbar);
-        //init viewPager
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
-                new WeakReference<Activity>(this));
-        viewPager = (ViewPager) findViewById(R.id.pagerId);
-        viewPager.setAdapter(mSectionsPagerAdapter);
-
-        // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.slidingTabsId);
-        tabLayout.setupWithViewPager(viewPager);
+        initView();
     }
 
     @Override
@@ -63,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -71,16 +45,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         switch (id) {
             case R.id.action_settings:
                 openSettings();
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
 
     /**
      *
@@ -89,4 +60,40 @@ public class MainActivity extends AppCompatActivity {
         this.startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
     }
 
+    /**
+     * TODO move in a base class
+     */
+    private void initView() {
+        initActionBar();
+        initViewPager();
+    }
+
+    /**
+     * TODO move in a base class
+     */
+    private void initActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarId);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
+        }
+    }
+
+    /**
+     * TODO move in a base class
+     */
+    private void initViewPager() {
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
+                new WeakReference<Activity>(this));
+        viewPager = (ViewPager) findViewById(R.id.pagerId);
+        if (viewPager != null) {
+            viewPager.setAdapter(mSectionsPagerAdapter);
+        }
+
+        // Give the TabLayout the ViewPager
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.slidingTabsId);
+        if (tabLayout != null) {
+            tabLayout.setupWithViewPager(viewPager);
+        }
+    }
 }
