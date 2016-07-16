@@ -10,10 +10,13 @@ import android.widget.TextView;
 
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.helpers.SoundTrackStatus;
+import com.example.davide.letssound.models.SoundTrack;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.SearchResult;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,11 +28,18 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
             .Adapter<SoundTrackRecyclerViewAdapter
             .DataObjectHolder> {
     private static final String PUBLISHED_AT = "Published at - ";
-    private List<SearchResult> mDataset;
-    private OnItemClickListenerInterface itemClickListenerRef;
+    private List<SoundTrack> list;
+    private WeakReference<OnItemClickListenerInterface> itemClickListenerRef;
     private SoundTrackStatus soundTrackStatus;
-    public SearchResult getItemByPosition(int position) {
-        return mDataset.get(position);
+    public SoundTrack getItemByPosition(int position) {
+        return list.get(position);
+    }
+
+    /**
+     *
+     */
+    public void removeAll() {
+        list.clear();
     }
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder
@@ -87,9 +97,9 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         }
     }
 
-    public SoundTrackRecyclerViewAdapter(List<SearchResult> dataset,
-                                         OnItemClickListenerInterface itemClickListenerRef) {
-        mDataset = dataset;
+    public SoundTrackRecyclerViewAdapter(List<SoundTrack> dataset,
+                                         WeakReference<OnItemClickListenerInterface> itemClickListenerRef) {
+        list = dataset;
         this.itemClickListenerRef = itemClickListenerRef;
         this.soundTrackStatus = SoundTrackStatus.getInstance();
     }
@@ -99,14 +109,14 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.result_item, parent, false);
 
-        return new DataObjectHolder(view, itemClickListenerRef);
+        return new DataObjectHolder(view, itemClickListenerRef.get());
     }
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, final int position) {
         //thumbnail Thumbnail thumbnail = singleVideo.getSnippet().getThumbnails().getDefault().getUrl();
-        holder.title.setText(mDataset.get(position).getSnippet().getTitle());
-        DateTime publishedAt = mDataset.get(position).getSnippet().getPublishedAt();
+        holder.title.setText(list.get(position).getSnippet().getTitle());
+        DateTime publishedAt = list.get(position).getSnippet().getPublishedAt();
         holder.url.setText(publishedAt != null ?
                 new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
                     .format(new Date(publishedAt.getValue())) :
@@ -128,7 +138,7 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         boolean isPlaying = soundTrackStatus.isPlayStatus() &&
                 soundTrackStatus.getCurrentPosition() == position;
         holder.itemView.setBackgroundColor(isPlaying ?
-                ((Fragment) itemClickListenerRef)
+                ((Fragment) itemClickListenerRef.get())
                         .getActivity().getResources().getColor(R.color.md_violet_custom_2) :
                 Color.TRANSPARENT);
 
@@ -152,14 +162,14 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
 //                        R.color.md_indigo_400 :
 //                        R.color.md_blue_grey_200));
         holder.itemView.setBackgroundColor(isSelected ?
-                ((Fragment) itemClickListenerRef)
+                ((Fragment) itemClickListenerRef.get())
                         .getActivity().getResources().getColor(R.color.md_violet_custom_2) :
                 Color.TRANSPARENT);
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return list.size();
     }
 
     public interface OnItemClickListenerInterface {
@@ -167,6 +177,14 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
     }
     public interface OnClickListenerInterface {
         void onClick(int position, View v);
+    }
+
+    /**
+     *
+     * @param lst
+     */
+    public void addAll(ArrayList<SoundTrack> lst) {
+        this.list = lst;
     }
 
 }

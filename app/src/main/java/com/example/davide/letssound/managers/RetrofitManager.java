@@ -1,13 +1,17 @@
 package com.example.davide.letssound.managers;
 
 import com.example.davide.letssound.auth.AuthCustom;
+import com.example.davide.letssound.helpers.GsonConverterHelper;
+import com.example.davide.letssound.models.SoundTrack;
 
 import java.util.ArrayList;
 
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by davide on 15/07/16.
@@ -23,11 +27,12 @@ public class RetrofitManager {
      * constructor
      */
     public RetrofitManager() {
-        Retrofit retrofit = new Retrofit.Builder()
+        service = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .build();
-
-        service = retrofit.create(YoutubeService.class);
+                .addConverterFactory(GsonConverterHelper.getGsonConverter())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build()
+                .create(YoutubeService.class);
     }
 
     public static RetrofitManager getInstance() {
@@ -40,7 +45,12 @@ public class RetrofitManager {
      * @return
      */
     public Observable<ArrayList<Object>> searchList(String query) {
-        return service.searchList(query, YOUTUBE_PART);
+        return service.searchList(query, YOUTUBE_PART).map(new Func1<ArrayList<SoundTrack>, ArrayList<Object>>() {
+            @Override
+            public ArrayList<Object> call(ArrayList<SoundTrack> soundTracks) {
+                return new ArrayList<Object>(soundTracks);
+            }
+        });
     }
 
     /**
@@ -49,6 +59,6 @@ public class RetrofitManager {
     public interface YoutubeService {
         //part=snippet
         @GET("search?key=" + AuthCustom.API_KEY)
-        Observable<ArrayList<Object>> searchList(@Query("q") String query, @Query("part") String part);
+        Observable<ArrayList<SoundTrack>> searchList(@Query("q") String query, @Query("part") String part);
     }
 }

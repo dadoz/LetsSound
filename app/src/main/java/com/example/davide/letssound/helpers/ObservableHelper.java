@@ -1,5 +1,7 @@
 package com.example.davide.letssound.helpers;
 
+import android.util.Log;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -36,13 +38,14 @@ public class ObservableHelper {
 
                     @Override
                     public void onCompleted() {
+                        Log.e("TAG", "completed");
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         setRequestType();
                         if (listener.get() != null) {
-                            listener.get().onObservableError(requestType);
+                            listener.get().onObservableError(requestType, e.getMessage());
                         }
                     }
 
@@ -67,7 +70,7 @@ public class ObservableHelper {
      *
      */
     private void setRequestType() {
-        requestType = "";
+        requestType = " - ";
         //requestType = updateRequestType(list.get(0)); //TODO FIX
 
     }
@@ -75,9 +78,9 @@ public class ObservableHelper {
     /**
      *
      */
-    private interface ObservableHelperInterface {
+    public interface ObservableHelperInterface {
         void onObservableSuccess(ArrayList<Object> list, String requestType);
         void onObservableEmpty();
-        void onObservableError(String requestType);
+        void onObservableError(String type, String requestType);
     }
 }

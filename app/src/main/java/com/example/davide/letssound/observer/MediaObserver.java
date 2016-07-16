@@ -32,34 +32,39 @@ public class MediaObserver implements Runnable {
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisec)));
     }
 
+    @Override
+    public void run() {
+
+    }
+
     /**
      *
      */
-    private void updateView() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                currentTimeActionbarTextView.setText(parseMillisecToString(mp.getCurrentPosition()));
-                durationTimeActionbarTextView.setText(parseMillisecToString(mp.getDuration()));
-            }
-        });
-    }
+//    private void updateView() {
+//        getActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                currentTimeActionbarTextView.setText(parseMillisecToString(mp.getCurrentPosition()));
+//                durationTimeActionbarTextView.setText(parseMillisecToString(mp.getDuration()));
+//            }
+//        });
+//    }
 
-    @Override
-    public void run() {
-        while (!stop.get()) {
-            if (mp.isPlaying()) {
-                try {
-                    float progress = ((float) mp.getCurrentPosition() / mp.getDuration()) * 100;
-                    updateView();
-                    soundTrackSeekbar.setProgress((int) progress);
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    handleError(e);
-                }
-            }
-        }
-        setOnPlayingActionbar(false);
-        setOnPlayingStatus(SoundTrackStatus.INVALID_POSITION);
-    }
+//    @Override
+//    public void run() {
+//        while (!stop.get()) {
+//            if (mp.isPlaying()) {
+//                try {
+//                    float progress = ((float) mp.getCurrentPosition() / mp.getDuration()) * 100;
+//                    updateView();
+//                    soundTrackSeekbar.setProgress((int) progress);
+//                    Thread.sleep(100);
+//                } catch (InterruptedException e) {
+//                    handleError(e);
+//                }
+//            }
+//        }
+//        setOnPlayingActionbar(false);
+//        setOnPlayingStatus(SoundTrackStatus.INVALID_POSITION);
+//    }
 }
