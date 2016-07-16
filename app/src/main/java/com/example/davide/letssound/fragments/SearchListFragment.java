@@ -117,10 +117,11 @@ public class SearchListFragment extends Fragment implements
 //        initSwipeRefresh();
 //        initProgressBar();
         setHasOptionsMenu(true);
-        if (savedInstanceState == null) {
-            initRecyclerView(new ArrayList<SoundTrack>());
+        if (savedInstanceState != null) {
+            initViewFromSavedInstance(savedInstanceState);
+            return;
         }
-        initViewFromSavedInstance(savedInstanceState);
+        initRecyclerView(new ArrayList<SoundTrack>());
     }
 
     /**
@@ -130,10 +131,7 @@ public class SearchListFragment extends Fragment implements
     private void initViewFromSavedInstance(Bundle savedInstanceState) {
         //TODO implement this
 //        if (BuildConfig.DEBUG)
-//        if (savedInstanceState == null ||
-//                trackList.size() != 0) {
-//            initRecyclerView(result);
-//        }
+        initRecyclerView(trackList);
     }
 
     @Override
@@ -350,41 +348,6 @@ public class SearchListFragment extends Fragment implements
             actionbar.setDisplayHomeAsUpEnabled(isPlaying);
             actionbar.setDisplayShowTitleEnabled(!isPlaying);
         }
-    }
-
-
-
-    /**
-     * @deprecated
-     */
-    private void fillList() {
-        ArrayList<SearchResult> result = new ArrayList<>();
-        result.add(createSearchResultObj("hey"));
-        result.add(createSearchResultObj("res"));
-        result.add(createSearchResultObj("bla"));
-        result.add(createSearchResultObj("hey"));
-        result.add(createSearchResultObj("res"));
-        result.add(createSearchResultObj("bla"));
-        result.add(createSearchResultObj("hey"));
-        result.add(createSearchResultObj("res"));
-        result.add(createSearchResultObj("bla"));
-//        initRecyclerView(result);
-    }
-
-    /**
-     *
-     * @param title
-     * @return
-     */
-    private SearchResult createSearchResultObj(String title) {
-        SearchResult obj = new SearchResult();
-        SearchResultSnippet snippet = new SearchResultSnippet();
-        snippet.setTitle(title);
-        snippet.setPublishedAt(new DateTime(new Date()));
-        obj.setKind("John Bleam");
-        obj.setId(new ResourceId().setVideoId("blaaaaaaurl bla claaaa"));
-        obj.setSnippet(snippet);
-        return obj;
     }
 
     @Override

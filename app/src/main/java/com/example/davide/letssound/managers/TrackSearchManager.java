@@ -4,9 +4,14 @@ import android.util.Log;
 
 import com.example.davide.letssound.helpers.ObservableHelper;
 import com.example.davide.letssound.models.SoundTrack;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.youtube.model.ResourceId;
+import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.SearchResultSnippet;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 
 import rx.Subscription;
 
@@ -98,6 +103,39 @@ public class TrackSearchManager implements SearchManagerInterface,
         createSearchResultList(list);
         initRecyclerView(result);
     }
-*/
+
+    /**
+     * @deprecated
+     */
+/*    private void fillList() {
+        ArrayList<SearchResult> result = new ArrayList<>();
+        result.add(createSearchResultObj("hey"));
+        result.add(createSearchResultObj("res"));
+        result.add(createSearchResultObj("bla"));
+        result.add(createSearchResultObj("hey"));
+        result.add(createSearchResultObj("res"));
+        result.add(createSearchResultObj("bla"));
+        result.add(createSearchResultObj("hey"));
+        result.add(createSearchResultObj("res"));
+        result.add(createSearchResultObj("bla"));
+//        initRecyclerView(result);
+    }
+
+    /**
+     *
+     * @param title
+     * @return
+     */
+/*    private SearchResult createSearchResultObj(String title) {
+        SearchResult obj = new SearchResult();
+        SearchResultSnippet snippet = new SearchResultSnippet();
+        snippet.setTitle(title);
+        snippet.setPublishedAt(new DateTime(new Date()));
+        obj.setKind("John Bleam");
+        obj.setId(new ResourceId().setVideoId("blaaaaaaurl bla claaaa"));
+        obj.setSnippet(snippet);
+        return obj;
+    }
+    */
 
 }
