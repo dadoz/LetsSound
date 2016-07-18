@@ -1,22 +1,98 @@
 package com.example.davide.letssound.managers;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.View;
 
 import com.example.davide.letssound.BuildConfig;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
+import com.example.davide.letssound.helpers.ObservableHelper;
 import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.example.davide.letssound.observer.MediaObserver;
+import com.example.davide.letssound.services.MediaService;
 import com.google.api.services.youtube.model.SearchResult;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
+import rx.Observable;
+import rx.Subscription;
+import rx.functions.Func1;
 
 /**
  * Created by davide on 15/07/16.
  */
-public class MusicPlayerHelper {
+public class MusicPlayerHelper implements ObservableHelper.ObservableHelperInterface {
+    private MusicPlayerHelper instance;
+    private RetrofitYoutubeDownloaderManager retrofitManager;
+    private ObservableHelper observableHelper;
+    private MediaService service;
+
+    public MusicPlayerHelper getInstance() {
+        if (instance == null) {
+            instance = new MusicPlayerHelper();
+        }
+        retrofitManager = RetrofitYoutubeDownloaderManager.getInstance();
+        observableHelper = ObservableHelper
+                .getInstance(new WeakReference<ObservableHelper.ObservableHelperInterface>(instance));
+        return instance;
+    }
+
+    /**
+     *
+     * @param videoId
+     */
+    public void playSoundTrack(String videoId) {
+        fetchSoundTrackUrl(videoId);
+    }
+
+    /**
+     *
+     * @param videoId
+     */
+    public void fetchSoundTrackUrl(String videoId) {
+        Observable<Object> obs = retrofitManager.fetchUrlByVideoId(videoId)
+                .map(new Func1<String, Object>() {
+            @Override
+            public Object call(String s) {
+                return s;
+            }
+        });
+        observableHelper.initObservableObject(obs);
+    }
+
+    @Override
+    public void onObservableSuccess(ArrayList<Object> list, String requestType) {
+        //TODO fix it
+    }
+
+    @Override
+    public void onObservableSuccess(Object obj, String requestType) {
+        initMediaService((String) obj);
+    }
+
+
+    @Override
+    public void onObservableEmpty() {
+
+    }
+
+    @Override
+    public void onObservableError(String type, String requestType) {
+
+    }
+
+    /**
+     *
+     */
+    private void initMediaService(String url) {
+
+    }
+
+
     /**
      *
      */

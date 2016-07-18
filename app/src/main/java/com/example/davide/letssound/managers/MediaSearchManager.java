@@ -1,39 +1,37 @@
 package com.example.davide.letssound.managers;
 
+import android.app.Activity;
+import android.media.session.MediaController;
 import android.util.Log;
 
 import com.example.davide.letssound.helpers.ObservableHelper;
-import com.example.davide.letssound.models.SoundTrack;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.youtube.model.ResourceId;
-import com.google.api.services.youtube.model.SearchResult;
-import com.google.api.services.youtube.model.SearchResultSnippet;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Date;
 
 import rx.Subscription;
 
 /**
  * Created by davide on 13/07/16.
  */
-public class TrackSearchManager implements SearchManagerInterface,
+public class MediaSearchManager implements SearchManagerInterface,
         ObservableHelper.ObservableHelperInterface {
-    private static TrackSearchManager instance;
+    private static MediaSearchManager instance;
     private static RetrofitManager retrofitManager;
     private static ObservableHelper observableHelper;
     private static WeakReference<TrackSearchManagerInterface> listener;
+    private static WeakReference<Activity> activityRef;
 
     /**
      *
      * @return
      */
-    public static TrackSearchManager getInstance(WeakReference<TrackSearchManagerInterface> lst) {
+    public static MediaSearchManager getInstance(WeakReference<TrackSearchManagerInterface> lst) {
         if (instance == null) {
-            instance = new TrackSearchManager();
+            instance = new MediaSearchManager();
         }
         listener = lst;
+        activityRef = new WeakReference<Activity>(new Activity());
         retrofitManager = RetrofitManager.getInstance();
         observableHelper = ObservableHelper
                 .getInstance(new WeakReference<ObservableHelper.ObservableHelperInterface>(instance));
@@ -57,6 +55,10 @@ public class TrackSearchManager implements SearchManagerInterface,
     }
 
     @Override
+    public void onObservableSuccess(Object obj, String requestType) {
+    }
+
+    @Override
     public void onObservableEmpty() {
         Log.e("TAG", "empty");
         listener.get().onTrackSearchError("empty fields");
@@ -71,6 +73,26 @@ public class TrackSearchManager implements SearchManagerInterface,
     public interface TrackSearchManagerInterface {
         void onTrackSearchSuccess(Object list);
         void onTrackSearchError(String error);
+    }
+
+    /**
+     * play media by controller
+     */
+    private void playMedia() {
+        MediaController controller = activityRef.get().getMediaController();
+        if (controller != null) {
+            controller.getTransportControls().play();
+        }
+    }
+
+    /**
+     * pause media by controller
+     */
+    private void pauseMedia() {
+        MediaController controller = activityRef.get().getMediaController();
+        if (controller != null) {
+            controller.getTransportControls().pause();
+        }
     }
 
     /**

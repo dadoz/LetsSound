@@ -25,19 +25,12 @@ import com.example.davide.letssound.downloader.helper.DownloaderHelper;
 import com.example.davide.letssound.downloader.helper.OnDownloadHelperResultInterface;
 import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
-import com.example.davide.letssound.decorations.SimpleDividerItemDecoration;
-import com.example.davide.letssound.managers.TrackSearchManager;
+import com.example.davide.letssound.managers.MediaSearchManager;
 import com.example.davide.letssound.models.SoundTrack;
 import com.example.davide.letssound.utils.Utils;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.youtube.model.ResourceId;
-import com.google.api.services.youtube.model.SearchResult;
-import com.google.api.services.youtube.model.SearchResultSnippet;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,7 +47,7 @@ public class SearchListFragment extends Fragment implements
         View.OnClickListener, OnDownloadHelperResultInterface, SwipeRefreshLayout.OnRefreshListener,
         SearchView.OnQueryTextListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnPreparedListener, OnItemClickListenerInterface,
-        OnDownloadCallbackInterface, TrackSearchManager.TrackSearchManagerInterface {
+        OnDownloadCallbackInterface, MediaSearchManager.TrackSearchManagerInterface {
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
     @Bind(R.id.swipeContainerLayoutId)
@@ -68,13 +61,7 @@ public class SearchListFragment extends Fragment implements
     private MenuItem searchMenuItem;
     private View mainView;
     private DownloaderHelper downloaderHelper;
-    private TrackSearchManager searchManager;
-
-    /**
-     *
-     */
-    public SearchListFragment() {
-    }
+    private MediaSearchManager searchManager;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -98,7 +85,7 @@ public class SearchListFragment extends Fragment implements
         soundTrackStatus = SoundTrackStatus.getInstance();
         downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
                 new WeakReference<OnDownloadHelperResultInterface>(this));
-        searchManager = TrackSearchManager.getInstance(new WeakReference<TrackSearchManager.TrackSearchManagerInterface>(this));
+        searchManager = MediaSearchManager.getInstance(new WeakReference<MediaSearchManager.TrackSearchManagerInterface>(this));
 //        mp = new MediaPlayer();
 
         return mainView;
@@ -162,20 +149,21 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(int position, View v) {
+
 //        playSoundTrackWrapper(position);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.pausePlayingBoxButtonId:
+//            case R.id.pausePlayingBoxButtonId:
 //                mp.pause();
 //                setPlayPlayerUI(false);
-                break;
-            case R.id.playPlayingBoxButtonId:
+//                break;
+//            case R.id.playPlayingBoxButtonId:
 //                mp.start();
 //                setPlayPlayerUI(true);
-                break;
+//                break;
             case R.id.downloadTextId:
 //                downloadAction();
                 break;
@@ -201,7 +189,7 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void startMediaPlayer(String url) throws Exception {
-        startMediaPlayer(url);
+        //startMediaPlayer(url);
     }
 
 

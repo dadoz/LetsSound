@@ -68,6 +68,45 @@ public class ObservableHelper {
 
     /**
      *
+     * @param observable
+     */
+    public Subscription initObservableObject(Observable<Object> observable) {
+        return observable
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Object>() {
+
+                    @Override
+                    public void onCompleted() {
+                        Log.e("TAG", "completed");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        setRequestType();
+                        if (listener.get() != null) {
+                            listener.get().onObservableError(requestType, e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onNext(Object obj) {
+                        setRequestType();
+                        if (obj == null &&
+                                listener.get() != null) {
+                            listener.get().onObservableEmpty();
+                            return;
+                        }
+
+                        if (listener.get() != null) {
+                            listener.get().onObservableSuccess(obj, requestType);
+                        }
+                    }
+                });
+    }
+
+    /**
+     *
      */
     private void setRequestType() {
         requestType = " - ";
@@ -80,6 +119,7 @@ public class ObservableHelper {
      */
     public interface ObservableHelperInterface {
         void onObservableSuccess(ArrayList<Object> list, String requestType);
+        void onObservableSuccess(Object obj, String requestType);
         void onObservableEmpty();
         void onObservableError(String type, String requestType);
     }
