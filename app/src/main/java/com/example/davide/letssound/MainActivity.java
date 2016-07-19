@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        doBindService();
         initView();
     }
 
@@ -45,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        doUnbindService();
     }
 
     /**
@@ -114,35 +112,4 @@ public class MainActivity extends AppCompatActivity {
             tabLayout.setupWithViewPager(viewPager);
         }
     }
-
-    /**
-     * start service and bind it
-     */
-    private void doBindService() {
-        bindService(new Intent(MainActivity.this, MediaService.class),
-                serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    /**
-     * undbind service
-     */
-    private void doUnbindService() {
-        unbindService(serviceConnection);
-    }
-
-    private MediaService boundService;
-    /**
-     *
-     */
-    public ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            boundService = ((MediaService.MediaBinder) iBinder).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            boundService = null;
-        }
-    };
 }

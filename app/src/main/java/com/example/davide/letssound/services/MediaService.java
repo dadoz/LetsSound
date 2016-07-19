@@ -24,7 +24,9 @@ import android.util.Log;
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.helpers.LocalPlayback;
+import com.example.davide.letssound.helpers.MediaSessionQueueHelper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,12 @@ public class MediaService extends Service {
     private LocalPlayback localPlayback;
     private MediaSession mediaSession;
     private int REQUEST_CODE = 99;
+    private static final String TAG = "MediaService";
+    private MediaSessionQueueHelper queueHelper;
+
+    public void sampleLog() {
+        Log.e(TAG, "Hye service");
+    }
 
     /**
      *
@@ -83,6 +91,8 @@ public class MediaService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         mediaSession.setSessionActivity(pi);
 //        musicLightCallbackHandlers.updatePlaybackState(null);
+
+        queueHelper = MediaSessionQueueHelper.getInstance();
     }
 
     @Nullable
@@ -105,8 +115,16 @@ public class MediaService extends Service {
      *
      */
     public class MediaSessionCallback extends MediaSession.Callback {
+
         @Override
         public void onPlay() {
+            Log.e(TAG, "playing");
+            try {
+                MediaSession.QueueItem queueItem = queueHelper.getItemQueuedd(0);
+                localPlayback.onPlay(queueItem.getDescription().getDescription().toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -123,10 +141,14 @@ public class MediaService extends Service {
 
         @Override
         public void onPause() {
+            Log.e(TAG, "pause");
+
         }
 
         @Override
         public void onStop() {
+            Log.e(TAG, "s");
+
         }
 
         @Override
@@ -149,11 +171,13 @@ public class MediaService extends Service {
         }
     }
 
-    public void prepareMediaSessionToPlay() {
+    /**
+     *
+     */
+    public void prepareMediaSessionToPlay(String url) {
         //fill queue to playable songs
 //        QueueHelper.getPlayingQueue(mediaId, mMusicProvider);
-        MediaSession.QueueItem rmp = new MediaSession.QueueItem();
-        mediaSession.setQueue();
+        mediaSession.setQueue(queueHelper.addItemOnQueue(url));
     }
 
     /**

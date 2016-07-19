@@ -1,43 +1,38 @@
 package com.example.davide.letssound.managers;
 
-import android.content.Intent;
-import android.media.MediaPlayer;
+import android.app.Activity;
+import android.media.session.MediaController;
 import android.util.Log;
-import android.view.View;
 
-import com.example.davide.letssound.BuildConfig;
-import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.helpers.ObservableHelper;
-import com.example.davide.letssound.helpers.SoundTrackStatus;
-import com.example.davide.letssound.observer.MediaObserver;
 import com.example.davide.letssound.services.MediaService;
-import com.google.api.services.youtube.model.SearchResult;
 
-import java.io.FileDescriptor;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import rx.Observable;
-import rx.Subscription;
 import rx.functions.Func1;
 
 /**
  * Created by davide on 15/07/16.
  */
-public class MusicPlayerHelper implements ObservableHelper.ObservableHelperInterface {
-    private MusicPlayerHelper instance;
-    private RetrofitYoutubeDownloaderManager retrofitManager;
-    private ObservableHelper observableHelper;
-    private MediaService service;
+public class MusicPlayerManager implements ObservableHelper.ObservableHelperInterface {
+    private static final String TAG = "MusicPlayerManagerTAG";
+    private static MusicPlayerManager instance;
+    private static RetrofitYoutubeDownloaderManager retrofitManager;
+    private static ObservableHelper observableHelper;
+    private static WeakReference<MediaService> serviceRef;
+    private static WeakReference<Activity> activityRef;
 
-    public MusicPlayerHelper getInstance() {
+    public static MusicPlayerManager getInstance(WeakReference<Activity> activity,
+                                                 WeakReference<MediaService> service) {
         if (instance == null) {
-            instance = new MusicPlayerHelper();
+            instance = new MusicPlayerManager();
         }
         retrofitManager = RetrofitYoutubeDownloaderManager.getInstance();
-        observableHelper = ObservableHelper
-                .getInstance(new WeakReference<ObservableHelper.ObservableHelperInterface>(instance));
+        activityRef = activity;
+        serviceRef = service;
+        observableHelper = new ObservableHelper(new WeakReference<ObservableHelper.ObservableHelperInterface>(instance));
         return instance;
     }
 
@@ -54,6 +49,7 @@ public class MusicPlayerHelper implements ObservableHelper.ObservableHelperInter
      * @param videoId
      */
     public void fetchSoundTrackUrl(String videoId) {
+        Log.e(TAG, "fetch" + videoId);
         Observable<Object> obs = retrofitManager.fetchUrlByVideoId(videoId)
                 .map(new Func1<String, Object>() {
             @Override
@@ -67,10 +63,12 @@ public class MusicPlayerHelper implements ObservableHelper.ObservableHelperInter
     @Override
     public void onObservableSuccess(ArrayList<Object> list, String requestType) {
         //TODO fix it
+        Log.e(TAG, "success music player LIST");
     }
 
     @Override
     public void onObservableSuccess(Object obj, String requestType) {
+        Log.e(TAG, "success music player " + obj.toString());
         initMediaService((String) obj);
     }
 
@@ -81,15 +79,37 @@ public class MusicPlayerHelper implements ObservableHelper.ObservableHelperInter
     }
 
     @Override
-    public void onObservableError(String type, String requestType) {
-
+    public void onObservableError(String type, String error) {
+        Log.e(TAG, "error" + error);
     }
 
     /**
      *
      */
     private void initMediaService(String url) {
+        MediaService tmp = serviceRef.get();
+        tmp.prepareMediaSessionToPlay(url); //MUST BE SYNC
+        playMedia();
+    }
 
+    /**
+     * play media by controller
+     */
+    private void playMedia() {
+        MediaController controller = activityRef.get().getMediaController();
+        if (controller != null) {
+            controller.getTransportControls().play();
+        }
+    }
+
+    /**
+     * pause media by controller
+     */
+    private void pauseMedia() {
+        MediaController controller = activityRef.get().getMediaController();
+        if (controller != null) {
+            controller.getTransportControls().pause();
+        }
     }
 
 

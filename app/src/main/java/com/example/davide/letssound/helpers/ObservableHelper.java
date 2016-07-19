@@ -11,19 +11,14 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by davide on 15/07/16.
- */
 public class ObservableHelper {
 
-    private static ObservableHelper instance;
-    private static WeakReference<ObservableHelperInterface> listener;
+    private static final String TAG = "ObservableHelperTag";
+    private WeakReference<ObservableHelperInterface> listener;
     private String requestType;
 
-    public static ObservableHelper getInstance(WeakReference<ObservableHelperInterface> lst) {
+    public ObservableHelper(WeakReference<ObservableHelperInterface> lst) {
         listener = lst;
-        return instance == null ?
-                instance = new ObservableHelper() : instance;
     }
 
     /**
@@ -38,7 +33,7 @@ public class ObservableHelper {
 
                     @Override
                     public void onCompleted() {
-                        Log.e("TAG", "completed");
+                        Log.e(TAG, "completed");
                     }
 
                     @Override
@@ -78,7 +73,7 @@ public class ObservableHelper {
 
                     @Override
                     public void onCompleted() {
-                        Log.e("TAG", "completed");
+                        Log.e(TAG, "completed");
                     }
 
                     @Override

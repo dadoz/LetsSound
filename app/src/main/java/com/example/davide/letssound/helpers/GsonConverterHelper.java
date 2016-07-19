@@ -1,5 +1,6 @@
 package com.example.davide.letssound.helpers;
 
+import com.example.davide.letssound.gsonDeserializer.SoundTrackURLDeserializer;
 import com.example.davide.letssound.models.SoundTrack;
 import com.example.davide.letssound.gsonDeserializer.SoundTrackDeserializer;
 import com.google.gson.GsonBuilder;
@@ -17,6 +18,7 @@ public class GsonConverterHelper {
     public static GsonConverterFactory getGsonConverter() {
         return GsonConverterFactory.create(new GsonBuilder()
                 .registerTypeAdapter(new TypeToken<ArrayList<SoundTrack>>() {}.getType(), new SoundTrackDeserializer())
+                .registerTypeAdapter(new TypeToken<String>() {}.getType(), new SoundTrackURLDeserializer())
                 .create());
     }
 

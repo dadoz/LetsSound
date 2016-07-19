@@ -1,8 +1,14 @@
 package com.example.davide.letssound.fragments;
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -12,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.downloader.DownloadVolleyResponse.DownloadStatusEnum;
 import com.example.davide.letssound.downloader.helper.DownloaderHelper;
@@ -26,7 +34,9 @@ import com.example.davide.letssound.downloader.helper.OnDownloadHelperResultInte
 import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.managers.MediaSearchManager;
+import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.models.SoundTrack;
+import com.example.davide.letssound.services.MediaService;
 import com.example.davide.letssound.utils.Utils;
 
 import java.lang.ref.WeakReference;
@@ -62,6 +72,8 @@ public class SearchListFragment extends Fragment implements
     private View mainView;
     private DownloaderHelper downloaderHelper;
     private MediaSearchManager searchManager;
+    private MusicPlayerManager musicPlayerManager;
+    private MediaService boundService;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -76,18 +88,40 @@ public class SearchListFragment extends Fragment implements
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mainView = inflater.inflate(R.layout.fragment_search_list_layout, container, false);
-        ButterKnife.bind(this, mainView);
-
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        doBindService();
         //init component
         soundTrackStatus = SoundTrackStatus.getInstance();
         downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
                 new WeakReference<OnDownloadHelperResultInterface>(this));
         searchManager = MediaSearchManager.getInstance(new WeakReference<MediaSearchManager.TrackSearchManagerInterface>(this));
-//        mp = new MediaPlayer();
 
+//        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
+//                new WeakReference<>(boundService));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        doUnbindService();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        mainView = inflater.inflate(R.layout.fragment_search_list_layout, container, false);
+        ButterKnife.bind(this, mainView);
         return mainView;
     }
 
@@ -149,8 +183,8 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(int position, View v) {
-
-//        playSoundTrackWrapper(position);
+        String videoId = trackList.get(position).getId().getVideoId();
+        musicPlayerManager.playSoundTrack(videoId);
     }
 
     @Override
@@ -352,4 +386,36 @@ public class SearchListFragment extends Fragment implements
         setResultOnSavedInstance(new ArrayList<SoundTrack>());
         updateRecyclerViewData(new ArrayList<SoundTrack>());
     }
+
+    /**
+     * start service and bind it
+     */
+    private void doBindService() {
+        getActivity().bindService(new Intent(getActivity(), MediaService.class),
+                serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    /**
+     * undbind service
+     */
+    private void doUnbindService() {
+        getActivity().unbindService(serviceConnection);
+    }
+
+    /**
+     *
+     */
+    public ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            boundService = ((MediaService.MediaBinder) iBinder).getService();
+            musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
+                    new WeakReference<>(boundService));
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            boundService = null;
+        }
+    };
 }
