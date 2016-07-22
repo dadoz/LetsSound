@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.drm.DrmStore;
+import android.graphics.drawable.Icon;
 import android.media.AudioManager;
 import android.media.MediaDataSource;
 import android.media.MediaMetadata;
@@ -23,15 +24,18 @@ import android.os.IBinder;
 import android.service.media.MediaBrowserService;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.helpers.LocalPlayback;
 import com.example.davide.letssound.helpers.MediaSessionQueueHelper;
+import com.example.davide.letssound.helpers.NotificationHelper;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,17 +45,17 @@ import java.util.List;
  */
 public class MediaService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
     private static final String TAG = "MediaService";
-    private NotificationManager nm;
     private MediaSession mediaSession;
-
 
     public static final String SESSION_TOKEN_TAG = "ls-token";
     public static String PARAM_TRACK_URI = "PARAM_TRACK_URI";
-    private int REQUEST_CODE = 99;
-    private final static int NOTIFICATION_ID = 999999;
     private PlaybackState playbackState;
     private AudioManager audioManager;
     private MediaPlayer mediaPlayer;
+    private MediaController mediaController;
+    private NotificationHelper notificationHelper;
+    public int SEEKTO_MIN = 10000;
+
 
     /**
      *
@@ -79,9 +83,17 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     public void onCreate() {
         super.onCreate();
         initNotification();
-        showNotification();
         initMediaSession();
+        getSystemService(NOTIFICATION_SERVICE);
         Log.e("TAG", "hey service start");
+    }
+
+    /**
+     *
+     */
+    private void initNotification() {
+        notificationHelper = new NotificationHelper(new WeakReference<>(this),
+                new WeakReference<>(mediaSession), new WeakReference<>(playbackState));
     }
 
     /**
@@ -107,6 +119,9 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnBufferingUpdateListener(this);
 
+        //create media controller
+        mediaController = new MediaController(getApplicationContext(), mediaSession.getSessionToken());
+
     }
 
     @Nullable
@@ -117,12 +132,30 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)  {
-        return START_NOT_STICKY;
+        if (intent != null &&
+                intent.getAction() != null) {
+            switch (intent.getAction()) {
+                case NotificationHelper.ACTION_PLAY:
+                    mediaController.getTransportControls().play();
+                    break;
+                case NotificationHelper.ACTION_FAST_FORWARD:
+                    mediaController.getTransportControls().fastForward();
+                    break;
+                case NotificationHelper.ACTION_REWIND:
+                    mediaController.getTransportControls().rewind();
+                    break;
+                case NotificationHelper.ACTION_PAUSE:
+                    mediaController.getTransportControls().pause();
+                    break;
+            }
+        }
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
-        nm.cancel(NOTIFICATION_ID);
+        notificationHelper.cancel();
     }
 
     @Override
@@ -141,7 +174,28 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                 .setState(PlaybackState.STATE_PLAYING, 0, 1.0f)
                 .build();
         mediaSession.setPlaybackState(playbackState);
-//        updateNotification();
+        notificationHelper.updateNotification();
+    }
+
+    /**
+     * @deprecated
+     * @param bundle
+     * @return
+     * @throws IOException
+     */
+    private Uri getUriFromBundle(Bundle bundle) {
+        return bundle.getParcelable(PARAM_TRACK_URI);
+    }
+
+    /**
+     * @deprecated
+     * @param bundle
+     * @return
+     * @throws IOException
+     */
+    public FileDescriptor getFileDescriptorFromBundle(Bundle bundle) throws IOException {
+        String fileName = bundle.getString(PARAM_TRACK_URI);
+        return getApplicationContext().getAssets().openFd(fileName).getFileDescriptor();
     }
 
     /**
@@ -151,6 +205,53 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 
         @Override
         public void onPlay() {
+            if (playbackState.getState() == PlaybackState.STATE_PAUSED) {
+                mediaPlayer.start();
+
+                playbackState = new PlaybackState.Builder()
+                        .setState(PlaybackState.STATE_PLAYING, 0, 1.0f)
+                        .build();
+                mediaSession.setPlaybackState(playbackState);
+                notificationHelper.updateNotification();
+            }
+        }
+
+        @Override
+        public void onRewind() {
+            if (playbackState.getState() == PlaybackState.STATE_PLAYING) {
+                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - SEEKTO_MIN);
+            }
+        }
+
+        @Override
+        public void onFastForward() {
+            if (playbackState.getState() == PlaybackState.STATE_PLAYING) {
+                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - SEEKTO_MIN);
+            }
+        }
+
+        @Override
+        public void onPause() {
+            if (playbackState.getState() == PlaybackState.STATE_PLAYING) {
+                mediaPlayer.pause();
+                playbackState = new PlaybackState.Builder()
+                        .setState(PlaybackState.STATE_PAUSED, 0, 1.0f)
+                        .build();
+                mediaSession.setPlaybackState(playbackState);
+                notificationHelper.updateNotification();
+            }
+        }
+
+        @Override
+        public void onStop() {
+            if (playbackState.getState() == PlaybackState.STATE_PLAYING) {
+                mediaPlayer.stop();
+                playbackState = new PlaybackState.Builder()
+                        .setState(PlaybackState.STATE_STOPPED, 0, 1.0f)
+                        .build();
+                mediaSession.setPlaybackState(playbackState);
+                notificationHelper.updateNotification();
+            }
         }
 
         @Override
@@ -164,19 +265,6 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
         }
-
-        @Override
-        public void onPause() {
-            Log.e(TAG, "pause");
-
-        }
-
-        @Override
-        public void onStop() {
-            Log.e(TAG, "s");
-
-        }
-
         @Override
         public void onSkipToNext() {
 
@@ -219,76 +307,4 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         }
     };
 
-
-    /**
-     *
-     */
-    public void prepareMediaSessionToPlay(String url) {
-        //fill queue to playable songs
-//        QueueHelper.getPlayingQueue(mediaId, mMusicProvider);
-//        mediaSession.setQueue(queueHelper.addItemOnQueue(url));
-    }
-
-    /**
-     * @deprecated
-     * @param bundle
-     * @return
-     * @throws IOException
-     */
-    private Uri getUriFromBundle(Bundle bundle) {
-        return bundle.getParcelable(PARAM_TRACK_URI);
-    }
-
-    /**
-     * @deprecated
-     * @param bundle
-     * @return
-     * @throws IOException
-     */
-    public FileDescriptor getFileDescriptorFromBundle(Bundle bundle) throws IOException {
-        String fileName = bundle.getString(PARAM_TRACK_URI);
-        return getApplicationContext().getAssets().openFd(fileName).getFileDescriptor();
-    }
-
-    /**
-     * NOTIFICATION HANDLER
-     */
-    private void initNotification() {
-        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    }
-
-    /**
-     *
-     */
-    private void showNotification() {
-        String text = "hey service";
-
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-        Notification notification = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.play_icon)
-                .setTicker(text)
-                .setWhen(System.currentTimeMillis())
-                .setContentTitle("hey new content")
-                .setContentText(text)
-                .setContentIntent(contentIntent)
-                .build();
-        nm.notify(NOTIFICATION_ID, notification);
-    }
-
-//    public class MediaPlayerController {
-//        private final MediaSession mediaSession;
-//
-//        public MediaPlayerController(MediaSession mediaSession) {
-//            this.mediaSession = mediaSession;
-//        }
-//        private void playMedia() {
-//            mediaSession.getController().getTransportControls().play();
-//        }
-//
-//        private void pauseMedia() {
-//            mediaSession.getController().getTransportControls().pause();
-//            }
-//        }
-//
-//    }
 }
