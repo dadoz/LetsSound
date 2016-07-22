@@ -20,7 +20,7 @@ public class LocalPlayback implements AudioManager.OnAudioFocusChangeListener,
     private final AudioManager audioManager;
     private final WifiManager.WifiLock wifiLock;
     private MediaPlayer mp;
-    private MediaService.MediaSessionCallback callback;
+//    private MediaService.MediaSessionCallback callback;
 
     public LocalPlayback(MediaService service) {
         this.service = service;
@@ -85,7 +85,7 @@ public class LocalPlayback implements AudioManager.OnAudioFocusChangeListener,
         mp.setOnSeekCompleteListener(this);
     }
 
-    public void setCallback(MediaService.MediaSessionCallback callback) {
-        this.callback = callback;
-    }
+//    public void setCallback(MediaService.MediaSessionCallback callback) {
+//        this.callback = callback;
+//    }
 }

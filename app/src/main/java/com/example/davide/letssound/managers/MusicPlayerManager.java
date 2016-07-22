@@ -2,12 +2,15 @@ package com.example.davide.letssound.managers;
 
 import android.app.Activity;
 import android.media.session.MediaController;
+import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.example.davide.letssound.helpers.ObservableHelper;
 import com.example.davide.letssound.services.MediaService;
 
 import java.lang.ref.WeakReference;
+import java.util.AbstractList;
 import java.util.ArrayList;
 
 import rx.Observable;
@@ -23,13 +26,16 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
     private static ObservableHelper observableHelper;
     private static WeakReference<MediaService> serviceRef;
     private static WeakReference<Activity> activityRef;
+    private static WeakReference<OnMusicPlayerCallback> listener;
 
     public static MusicPlayerManager getInstance(WeakReference<Activity> activity,
-                                                 WeakReference<MediaService> service) {
+                                                 WeakReference<MediaService> service,
+                                                 WeakReference<OnMusicPlayerCallback> lst) {
         if (instance == null) {
             instance = new MusicPlayerManager();
         }
         retrofitManager = RetrofitYoutubeDownloaderManager.getInstance();
+        listener = lst;
         activityRef = activity;
         serviceRef = service;
         observableHelper = new ObservableHelper(new WeakReference<ObservableHelper.ObservableHelperInterface>(instance));
@@ -69,7 +75,7 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
     @Override
     public void onObservableSuccess(Object obj, String requestType) {
         Log.e(TAG, "success music player " + obj.toString());
-        initMediaService((String) obj);
+        playMedia((String) obj);
     }
 
 
@@ -83,35 +89,40 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
         Log.e(TAG, "error" + error);
     }
 
-    /**
-     *
-     */
-    private void initMediaService(String url) {
-        MediaService tmp = serviceRef.get();
-        tmp.prepareMediaSessionToPlay(url); //MUST BE SYNC
-        playMedia();
-    }
+//    /**
+//     *
+//     */
+//    private void initMediaService(String url) {
+//        MediaService tmp = serviceRef.get();
+//        tmp.prepareMediaSessionToPlay(url); //MUST BE SYNC
+//        playMedia();
+//    }
 
     /**
      * play media by controller
+     * @param videoUrl
      */
-    private void playMedia() {
-        MediaController controller = activityRef.get().getMediaController();
-        if (controller != null) {
-            controller.getTransportControls().play();
-        }
+    private void playMedia(String videoUrl) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(MediaService.PARAM_TRACK_URI, Uri.parse(videoUrl));
+        listener.get().onPlayMediaCallback(bundle);
+//        listener.get().onPlayMediaCallback(bundle);
     }
 
     /**
      * pause media by controller
      */
     private void pauseMedia() {
-        MediaController controller = activityRef.get().getMediaController();
-        if (controller != null) {
-            controller.getTransportControls().pause();
-        }
+
+//        MediaController controller = activityRef.get().getMediaController();
+//        if (controller != null) {
+//            controller.getTransportControls().pause();
+//        }
     }
 
+    public interface OnMusicPlayerCallback {
+        void onPlayMediaCallback(Bundle bundle);
+    }
 
     /**
      *

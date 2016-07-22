@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -57,7 +58,7 @@ public class SearchListFragment extends Fragment implements
         View.OnClickListener, OnDownloadHelperResultInterface, SwipeRefreshLayout.OnRefreshListener,
         SearchView.OnQueryTextListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnPreparedListener, OnItemClickListenerInterface,
-        OnDownloadCallbackInterface, MediaSearchManager.TrackSearchManagerInterface {
+        OnDownloadCallbackInterface, MediaSearchManager.TrackSearchManagerInterface, MusicPlayerManager.OnMusicPlayerCallback {
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
     @Bind(R.id.swipeContainerLayoutId)
@@ -90,15 +91,14 @@ public class SearchListFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        doBindService();
         //init component
         soundTrackStatus = SoundTrackStatus.getInstance();
         downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
                 new WeakReference<OnDownloadHelperResultInterface>(this));
         searchManager = MediaSearchManager.getInstance(new WeakReference<MediaSearchManager.TrackSearchManagerInterface>(this));
 
-//        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
-//                new WeakReference<>(boundService));
+        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
+                new WeakReference<>(boundService), new WeakReference<MusicPlayerManager.OnMusicPlayerCallback>(this));
     }
 
     @Override
@@ -114,7 +114,6 @@ public class SearchListFragment extends Fragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        doUnbindService();
     }
 
     @Override
@@ -387,35 +386,11 @@ public class SearchListFragment extends Fragment implements
         updateRecyclerViewData(new ArrayList<SoundTrack>());
     }
 
-    /**
-     * start service and bind it
-     */
-    private void doBindService() {
-        getActivity().bindService(new Intent(getActivity(), MediaService.class),
-                serviceConnection, Context.BIND_AUTO_CREATE);
+
+    @Override
+    public void onPlayMediaCallback(Bundle bundle) {
+        //TODO fix it big leak
+        ((MainActivity) getActivity()).playMedia(bundle);
     }
 
-    /**
-     * undbind service
-     */
-    private void doUnbindService() {
-        getActivity().unbindService(serviceConnection);
-    }
-
-    /**
-     *
-     */
-    public ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            boundService = ((MediaService.MediaBinder) iBinder).getService();
-            musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
-                    new WeakReference<>(boundService));
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            boundService = null;
-        }
-    };
 }

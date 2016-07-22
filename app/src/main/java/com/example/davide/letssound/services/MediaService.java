@@ -7,12 +7,16 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.drm.DrmStore;
+import android.media.AudioManager;
+import android.media.MediaDataSource;
 import android.media.MediaMetadata;
+import android.media.MediaPlayer;
 import android.media.MediaRouter;
 import android.media.browse.MediaBrowser;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -26,34 +30,49 @@ import com.example.davide.letssound.R;
 import com.example.davide.letssound.helpers.LocalPlayback;
 import com.example.davide.letssound.helpers.MediaSessionQueueHelper;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by davide on 13/07/16.
  */
-public class MediaService extends Service {
-    private NotificationManager nm;
-    private final static int NOTIFICATION_ID = 999999;
-    private IBinder binder = new MediaBinder();
-    private LocalPlayback localPlayback;
-    private MediaSession mediaSession;
-    private int REQUEST_CODE = 99;
+public class MediaService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
     private static final String TAG = "MediaService";
-    private MediaSessionQueueHelper queueHelper;
+    private NotificationManager nm;
+    private MediaSession mediaSession;
 
-    public void sampleLog() {
-        Log.e(TAG, "Hye service");
-    }
+
+    public static final String SESSION_TOKEN_TAG = "ls-token";
+    public static String PARAM_TRACK_URI = "PARAM_TRACK_URI";
+    private int REQUEST_CODE = 99;
+    private final static int NOTIFICATION_ID = 999999;
+    private PlaybackState playbackState;
+    private AudioManager audioManager;
+    private MediaPlayer mediaPlayer;
 
     /**
      *
      */
     public class MediaBinder extends Binder {
+        /**
+         *
+         * @return
+         */
         public MediaService getService() {
             return MediaService.this;
         }
+
+        /**
+         *
+         * @return
+         */
+        public MediaSession.Token getMediaSessionToken() {
+            return mediaSession.getSessionToken();
+        }
+
     }
     
     @Override
@@ -69,36 +88,31 @@ public class MediaService extends Service {
      * init mediasession
      */
     private void initMediaSession() {
-//        musicLightCallbackHandlers = new MusicLightCallbackHandlers(this);
-//        mPlayingQueue = new ArrayList<>();
-//        mMusicProvider = new MusicProvider();
-//        mPackageValidator = new PackageValidator(this);
+        playbackState = new PlaybackState.Builder()
+                .setState(PlaybackState.STATE_PLAYING, 0, 1.0f)
+                .build();
 
-        // Start a new MediaSession
-        MediaSessionCallback mediaSessionCallback = new MediaSessionCallback();
-        mediaSession = new MediaSession(this, "MusicService");
-        mediaSession.setCallback(mediaSessionCallback);
-        mediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        //set up media session
+        mediaSession = new MediaSession(this, SESSION_TOKEN_TAG);
+        mediaSession.setCallback(msCallback);
+        mediaSession.setActive(true);
+        mediaSession.setPlaybackState(playbackState);
 
-        localPlayback = new LocalPlayback(this);
-        localPlayback.setCallback(mediaSessionCallback);
-//        localPlayback.setState(PlaybackState.STATE_NONE);
-//        localPlayback.start();
+        //set up audio manager
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
-        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), REQUEST_CODE,
-                new Intent(getApplicationContext(), MainActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        mediaSession.setSessionActivity(pi);
-//        musicLightCallbackHandlers.updatePlaybackState(null);
+        //create media player
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(this);
+        mediaPlayer.setOnCompletionListener(this);
+        mediaPlayer.setOnBufferingUpdateListener(this);
 
-        queueHelper = MediaSessionQueueHelper.getInstance();
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return binder;
+        return new MediaBinder();
     }
 
     @Override
@@ -111,20 +125,32 @@ public class MediaService extends Service {
         nm.cancel(NOTIFICATION_ID);
     }
 
+    @Override
+    public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        Log.e("hey", "on prepared");
+        mediaPlayer.start();
+        playbackState = new PlaybackState.Builder()
+                .setState(PlaybackState.STATE_PLAYING, 0, 1.0f)
+                .build();
+        mediaSession.setPlaybackState(playbackState);
+//        updateNotification();
+    }
+
     /**
      *
      */
-    public class MediaSessionCallback extends MediaSession.Callback {
+    public MediaSession.Callback msCallback = new MediaSession.Callback() {
 
         @Override
         public void onPlay() {
-            Log.e(TAG, "playing");
-            try {
-                MediaSession.QueueItem queueItem = queueHelper.getItemQueuedd(0);
-                localPlayback.onPlay(queueItem.getDescription().getDescription().toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
 
         @Override
@@ -168,8 +194,31 @@ public class MediaService extends Service {
 
         @Override
         public void onPlayFromSearch(final String query, final Bundle extras) {
+            Log.e(TAG, "playing");
+            try {
+//                FileDescriptor fd = getFileDescriptorFromBundle(extras);
+//                mediaPlayer.setDataSource(fd);
+                Uri url = getUriFromBundle(extras);
+                mediaPlayer.reset();
+                mediaPlayer.setDataSource(MediaService.this, url);
+                mediaPlayer.prepareAsync();
+
+                PlaybackState playbackState = new PlaybackState.Builder()
+                        .setState(PlaybackState.STATE_CONNECTING, 0, 1.0f)
+                        .build();
+                mediaSession.setPlaybackState(playbackState);
+                mediaSession.setMetadata(new MediaMetadata.Builder()
+                        .putString(MediaMetadata.METADATA_KEY_ARTIST, "ARTIST")
+                        .putString(MediaMetadata.METADATA_KEY_AUTHOR, "AUTHOR")
+                        .putString(MediaMetadata.METADATA_KEY_ALBUM, "ALBUM")
+                        .putString(MediaMetadata.METADATA_KEY_TITLE, "this is title")
+                        .build());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    }
+    };
+
 
     /**
      *
@@ -177,11 +226,32 @@ public class MediaService extends Service {
     public void prepareMediaSessionToPlay(String url) {
         //fill queue to playable songs
 //        QueueHelper.getPlayingQueue(mediaId, mMusicProvider);
-        mediaSession.setQueue(queueHelper.addItemOnQueue(url));
+//        mediaSession.setQueue(queueHelper.addItemOnQueue(url));
     }
 
     /**
-     * 
+     * @deprecated
+     * @param bundle
+     * @return
+     * @throws IOException
+     */
+    private Uri getUriFromBundle(Bundle bundle) {
+        return bundle.getParcelable(PARAM_TRACK_URI);
+    }
+
+    /**
+     * @deprecated
+     * @param bundle
+     * @return
+     * @throws IOException
+     */
+    public FileDescriptor getFileDescriptorFromBundle(Bundle bundle) throws IOException {
+        String fileName = bundle.getString(PARAM_TRACK_URI);
+        return getApplicationContext().getAssets().openFd(fileName).getFileDescriptor();
+    }
+
+    /**
+     * NOTIFICATION HANDLER
      */
     private void initNotification() {
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
