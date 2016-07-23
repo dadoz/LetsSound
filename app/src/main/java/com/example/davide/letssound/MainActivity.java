@@ -15,7 +15,12 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.design.widget.TabLayout;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
@@ -145,16 +150,16 @@ public class MainActivity extends AppCompatActivity {
     private void doUnbindService() {
         unbindService(serviceConnection);
     }
-    public MediaController mediaController;
+    public MediaControllerCompat mediaController;
 
-    public MediaController.Callback mcCallback = new MediaController.Callback () {
+    public MediaControllerCompat.Callback mcCallback = new MediaControllerCompat.Callback () {
 
         @Override
         public void onSessionEvent(String event, Bundle extras) {
         }
 
         @Override
-        public void onPlaybackStateChanged(PlaybackState state) {
+        public void onPlaybackStateChanged(PlaybackStateCompat state) {
             switch (state.getState()) {
                 case PlaybackState.STATE_NONE:
                     break;
@@ -169,15 +174,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onMetadataChanged(MediaMetadata metadata) {
+        public void onMetadataChanged(MediaMetadataCompat metadata) {
         }
 
         @Override
-        public void onQueueChanged(List<MediaSession.QueueItem> queue) {
+        public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
         }
 
         @Override
-        public void onAudioInfoChanged(MediaController.PlaybackInfo info) {
+        public void onAudioInfoChanged(MediaControllerCompat.PlaybackInfo info) {
         }
     };
     /**
@@ -187,8 +192,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mediaController = new MediaController(MainActivity.this,
-                    ((MediaService.MediaBinder) iBinder).getMediaSessionToken());
+            try {
+                mediaController = new MediaControllerCompat(MainActivity.this,
+                        ((MediaService.MediaBinder) iBinder).getMediaSessionToken());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
             mediaController.registerCallback(mcCallback);
         }
 
