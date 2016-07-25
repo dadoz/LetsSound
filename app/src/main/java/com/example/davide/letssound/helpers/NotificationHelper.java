@@ -2,8 +2,11 @@ package com.example.davide.letssound.helpers;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -11,13 +14,23 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.managers.VolleyMediaArtManager;
 import com.example.davide.letssound.services.MediaService;
 
 import java.lang.ref.WeakReference;
 
-public class NotificationHelper {
+import retrofit2.http.GET;
+
+public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaArtCallbackInterface {
     private final static int NOTIFICATION_ID = 999999;
 
     public static final String ACTION_PLAY = "play";
@@ -31,6 +44,7 @@ public class NotificationHelper {
     private static WeakReference<PlaybackStateCompat> playbackStateRef;
     private static WeakReference<MediaSessionCompat> mediaSessionRef;
     private NotificationManagerCompat nm;
+    private NotificationCompat.Builder notificationBuilder;
 
     public NotificationHelper(WeakReference<MediaService> srv, WeakReference<MediaSessionCompat> ms,
                               WeakReference<PlaybackStateCompat> ps) {
@@ -43,12 +57,15 @@ public class NotificationHelper {
     /**
      *
      * @param playbackState
+     * @param mediaArtUri
      */
-    public void updateNotification(WeakReference<PlaybackStateCompat> playbackState) {
+    public void updateNotification(WeakReference<PlaybackStateCompat> playbackState, Uri mediaArtUri) {
+        retrieveMediaArtAsync(mediaArtUri); //TODO take care of this
+
         updatePlaybackCallbackState(playbackState);
         PendingIntent contentIntent = PendingIntent.getActivity(serviceRef.get(), 0,
                 new Intent(serviceRef.get(), MainActivity.class), 0);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat
+        notificationBuilder = new NotificationCompat
                 .Builder(serviceRef.get().getApplicationContext());
         notificationBuilder
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -58,6 +75,7 @@ public class NotificationHelper {
                 .setContentTitle(playbackStateRef.get().getState() == PlaybackStateCompat.STATE_PLAYING ? "Playing music" : "Paused @@@@@@@@@")
                 .setContentText(" - ")
                 .setSmallIcon(R.drawable.sound_track_icon)
+//                .setLargeIcon(retrieveMediaArt())
                 .addAction(getActionDependingOnState(PlaybackState.STATE_REWINDING))
                 .addAction(getActionDependingOnState(PlaybackState.STATE_PLAYING))
                 .addAction(getActionDependingOnState(PlaybackState.STATE_FAST_FORWARDING))
@@ -68,6 +86,17 @@ public class NotificationHelper {
                         .setCancelButtonIntent(getPendingIntent(ACTION_STOP)));
         setNotificationPlaybackState(notificationBuilder);
         nm.notify(NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+    /**
+     *
+     * @param mediaArtUri
+     * @return
+     */
+    private void retrieveMediaArtAsync(Uri mediaArtUri) {
+        VolleyMediaArtManager.getInstance(new WeakReference<> (serviceRef.get().getApplicationContext()),
+                new WeakReference<VolleyMediaArtManager.OnVolleyMediaArtCallbackInterface>(this))
+                .retrieveMediaArtAsync(mediaArtUri);
     }
 
     /**
@@ -148,5 +177,20 @@ public class NotificationHelper {
      */
     public void updatePlaybackCallbackState(WeakReference<PlaybackStateCompat> playbackState) {
         playbackStateRef = playbackState;
+    }
+
+    @Override
+    public void onVolleyMediaArtSuccess(Bitmap response) {
+        if (notificationBuilder != null) {
+            Notification notifcation = notificationBuilder
+                    .setLargeIcon(response)
+                    .build();
+            nm.notify(NOTIFICATION_ID, notifcation);
+        }
+    }
+
+    @Override
+    public void onVolleyMediaArtError(VolleyError error) {
+        Log.e(TAG, "VOLLEY - " + error.getMessage());
     }
 }

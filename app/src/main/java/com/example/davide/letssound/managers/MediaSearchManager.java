@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import rx.Subscription;
 
-public class MediaSearchManager implements SearchManagerInterface,
+public class MediaSearchManager implements MediaSearchManagerInterface,
         ObservableHelper.ObservableHelperInterface {
     private static final String TAG = "MediaSearchManager";
     private static MediaSearchManager instance;

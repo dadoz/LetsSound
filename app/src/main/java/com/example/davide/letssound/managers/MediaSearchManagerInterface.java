@@ -7,7 +7,7 @@ import rx.Subscription;
 /**
  * Created by davide on 13/07/16.
  */
-public interface SearchManagerInterface {
+public interface MediaSearchManagerInterface {
     public Object onSearchSync(String query);
     public Subscription onSearchAsync(String query);
 

@@ -27,6 +27,7 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
     private static WeakReference<MediaService> serviceRef;
     private static WeakReference<Activity> activityRef;
     private static WeakReference<OnMusicPlayerCallback> listener;
+    private String thumbnailUrl;
 
     public static MusicPlayerManager getInstance(WeakReference<Activity> activity,
                                                  WeakReference<MediaService> service,
@@ -46,16 +47,17 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
      *
      * @param videoId
      */
-    public void playSoundTrack(String videoId) {
-        fetchSoundTrackUrl(videoId);
+    public void playSoundTrack(String videoId, String thumbnailUrl) {
+        fetchSoundTrackUrl(videoId, thumbnailUrl);
     }
 
     /**
      *
      * @param videoId
      */
-    public void fetchSoundTrackUrl(String videoId) {
+    public void fetchSoundTrackUrl(String videoId, String thumbnailUrl) {
         Log.e(TAG, "fetch" + videoId);
+        this.thumbnailUrl = thumbnailUrl;
         Observable<Object> obs = retrofitManager.fetchUrlByVideoId(videoId)
                 .map(new Func1<String, Object>() {
             @Override
@@ -68,14 +70,12 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
 
     @Override
     public void onObservableSuccess(ArrayList<Object> list, String requestType) {
-        //TODO fix it
-        Log.e(TAG, "success music player LIST");
     }
 
     @Override
     public void onObservableSuccess(Object obj, String requestType) {
         Log.e(TAG, "success music player " + obj.toString());
-        playMedia((String) obj);
+        playMedia((String) obj, thumbnailUrl);
     }
 
 
@@ -102,9 +102,10 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
      * play media by controller
      * @param videoUrl
      */
-    private void playMedia(String videoUrl) {
+    private void playMedia(String videoUrl, String thumbnailUrl) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(MediaService.PARAM_TRACK_URI, Uri.parse(videoUrl));
+        bundle.putParcelable(MediaService.PARAM_TRACK_THUMBNAIL, Uri.parse(thumbnailUrl));
         listener.get().onPlayMediaCallback(bundle);
 //        listener.get().onPlayMediaCallback(bundle);
     }

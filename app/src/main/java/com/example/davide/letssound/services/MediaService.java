@@ -28,6 +28,7 @@ import java.lang.ref.WeakReference;
  */
 public class MediaService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
     private static final String TAG = "MediaService";
+    public static String PARAM_TRACK_THUMBNAIL = "PARAM_TRACK_THUMBNAIL";
     private MediaSessionCompat mediaSession;
 
     public static final String SESSION_TOKEN_TAG = "ls-token";
@@ -165,7 +166,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                 .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                 .build();
         mediaSession.setPlaybackState(playbackState);
-        notificationHelper.updateNotification(new WeakReference<>(playbackState));
+        notificationHelper.updateNotification(new WeakReference<>(playbackState), mediaArtUri);
     }
 
     /**
@@ -178,6 +179,18 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         return bundle.getParcelable(PARAM_TRACK_URI);
     }
 
+
+    /**
+     * @deprecated
+     * @param bundle
+     * @return
+     * @throws IOException
+     */
+    private Uri getMediaArtUriFromBundle(Bundle bundle) {
+        return bundle.getParcelable(PARAM_TRACK_THUMBNAIL);
+    }
+
+
     /**
      * @deprecated
      * @param bundle
@@ -189,6 +202,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         return getApplicationContext().getAssets().openFd(fileName).getFileDescriptor();
     }
 
+    private Uri mediaArtUri;
     /**
      *
      */
@@ -203,7 +217,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification(new WeakReference<>(playbackState));
+                notificationHelper.updateNotification(new WeakReference<>(playbackState), mediaArtUri);
             }
         }
         @Override
@@ -213,6 +227,8 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 //                FileDescriptor fd = getFileDescriptorFromBundle(extras);
 //                mediaPlayer.setDataSource(fd);
                 Uri url = getUriFromBundle(extras);
+                //TODO fix it
+                mediaArtUri = getMediaArtUriFromBundle(extras);
                 mediaPlayer.reset();
                 mediaPlayer.setDataSource(MediaService.this, url);
                 mediaPlayer.prepareAsync();
@@ -226,6 +242,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .putString(MediaMetadataCompat.METADATA_KEY_AUTHOR, "AUTHOR")
                         .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, "ALBUM")
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, "this is title")
+                        .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, mediaArtUri.toString())
                         .build());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -254,7 +271,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification(new WeakReference<>(playbackState));
+                notificationHelper.updateNotification(new WeakReference<>(playbackState), mediaArtUri);
             }
         }
 
@@ -266,7 +283,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification(new WeakReference<>(playbackState));
+                notificationHelper.updateNotification(new WeakReference<>(playbackState), mediaArtUri);
             }
         }
 
@@ -296,5 +313,4 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 
         }
     };
-
 }

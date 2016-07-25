@@ -187,8 +187,9 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(int position, View v) {
-        String videoId = trackList.get(position).getId().getVideoId();
-        musicPlayerManager.playSoundTrack(videoId);
+        SoundTrack soundTrack = trackList.get(position);
+        musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
+                soundTrack.getSnippet().getThumbnails().getMedium().getUrl());
     }
 
     @Override
