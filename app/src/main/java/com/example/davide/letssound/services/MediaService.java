@@ -3,10 +3,7 @@ package com.example.davide.letssound.services;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.media.MediaMetadata;
 import android.media.MediaPlayer;
-import android.media.session.MediaController;
-import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
@@ -14,11 +11,9 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ServiceCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
@@ -131,16 +126,16 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                 case NotificationHelper.ACTION_PLAY:
                     mediaController.getTransportControls().play();
                     break;
-                case NotificationHelper.ACTION_FAST_FORWARD:
+                case com.example.davide.letssound.helpers.NotificationHelper.ACTION_FAST_FORWARD:
                     mediaController.getTransportControls().fastForward();
                     break;
-                case NotificationHelper.ACTION_REWIND:
+                case com.example.davide.letssound.helpers.NotificationHelper.ACTION_REWIND:
                     mediaController.getTransportControls().rewind();
                     break;
-                case NotificationHelper.ACTION_PAUSE:
+                case com.example.davide.letssound.helpers.NotificationHelper.ACTION_PAUSE:
                     mediaController.getTransportControls().pause();
                     break;
-                case NotificationHelper.ACTION_STOP:
+                case com.example.davide.letssound.helpers.NotificationHelper.ACTION_STOP:
                     mediaController.getTransportControls().stop();
                     break;
             }

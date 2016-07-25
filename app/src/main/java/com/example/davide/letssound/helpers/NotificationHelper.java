@@ -44,7 +44,7 @@ public class NotificationHelper {
         serviceRef = srv;
         mediaSessionRef = ms;
         playbackStateRef = ps;
-//        nm = (NotificationManager) serviceRef.get().getSystemService(Context.NOTIFICATION_SERVICE);
+//        nm = (NotificationHelper) serviceRef.get().getSystemService(Context.NOTIFICATION_SERVICE);
         nm = NotificationManagerCompat.from(serviceRef.get());
     }
 
@@ -52,27 +52,27 @@ public class NotificationHelper {
      *
      */
     public void updateNotification() {
-        int notificationColor = ResourceHelper.getThemeColor(serviceRef.get(),
-                android.R.attr.colorPrimary, Color.DKGRAY);
+//        int notificationColor = ResourceHelper.getThemeColor(serviceRef.get(),
+//                android.R.attr.colorPrimary, Color.DKGRAY);
 
         PendingIntent contentIntent = PendingIntent.getActivity(serviceRef.get(), 0, new Intent(serviceRef.get(), MainActivity.class), 0);
         Notification notification = new NotificationCompat.Builder(serviceRef.get())
-//                .setPriority(Notification.PRIORITY_DEFAULT)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setCategory(Notification.CATEGORY_TRANSPORT)
                 .setContentIntent(contentIntent)
                 .setContentTitle(" - ")
                 .setContentText(" - ")
-                .setColor(notificationColor)
-                .setOngoing(playbackStateRef.get().getState() == PlaybackStateCompat.STATE_PLAYING)
-//                .setShowWhen(false)
+//                .setColor(notificationColor)
+                .setOngoing(playbackStateRef.get().getState() != PlaybackStateCompat.STATE_PLAYING)
+                .setWhen(0)
+                .setShowWhen(false)
                 .setSmallIcon(R.drawable.sound_track_icon)
-//                .setAutoCancel(false)
                 .addAction(getActionDependingOnState(PlaybackState.STATE_REWINDING))
                 .addAction(getActionDependingOnState(PlaybackState.STATE_PLAYING))
                 .addAction(getActionDependingOnState(PlaybackState.STATE_FAST_FORWARDING))
                 .setStyle(new NotificationCompat.MediaStyle()
                         .setMediaSession(mediaSessionRef.get().getSessionToken())
+                        .setShowActionsInCompactView(new int[] {1})
                         .setShowCancelButton(true)
                         .setCancelButtonIntent(getPendingIntent(ACTION_STOP)))//getActionDependingOnState(PlaybackState.STATE_STOPPED))
 //                        .setShowActionsInCompactView(1, 2))

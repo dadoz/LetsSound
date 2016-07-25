@@ -1,11 +1,18 @@
 package com.example.davide.letssound.managers;
 
+import android.content.Context;
+
 import com.example.davide.letssound.auth.AuthCustom;
 import com.example.davide.letssound.helpers.GsonConverterHelper;
+import com.example.davide.letssound.interceptors.CacheControlApplicationInterceptor;
 import com.example.davide.letssound.models.SoundTrack;
 
+import java.lang.ref.WeakReference;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.ArrayList;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.http.GET;
@@ -22,6 +29,7 @@ public class RetrofitManager {
     private final YoutubeService service;
     private static final String YOUTUBE_PART = "snippet";
     private static RetrofitManager instance;
+    private WeakReference<Context> contextRef;
 
     /**
      * constructor
@@ -29,6 +37,7 @@ public class RetrofitManager {
     public RetrofitManager() {
         service = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(getClient())
                 .addConverterFactory(GsonConverterHelper.getGsonConverter())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()
@@ -51,6 +60,17 @@ public class RetrofitManager {
                 return new ArrayList<Object>(soundTracks);
             }
         });
+    }
+
+    public OkHttpClient getClient() {
+        //TODO leak
+//        Cache cache = (contextWeakRef.get()
+//                .getApplicationContext()).getCache();
+        return new OkHttpClient.Builder()
+//                .cache(cache)
+                .addInterceptor(new CacheControlApplicationInterceptor(contextRef)) //app
+                .addNetworkInterceptor(new CacheControlApplicationInterceptor(contextRef)) //network
+                .build();
     }
 
     /**

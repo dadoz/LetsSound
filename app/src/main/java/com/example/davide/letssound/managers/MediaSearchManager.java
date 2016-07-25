@@ -11,6 +11,7 @@ import rx.Subscription;
 
 public class MediaSearchManager implements SearchManagerInterface,
         ObservableHelper.ObservableHelperInterface {
+    private static final String TAG = "MediaSearchManager";
     private static MediaSearchManager instance;
     private static RetrofitManager retrofitManager;
     private static ObservableHelper observableHelper;
@@ -42,7 +43,7 @@ public class MediaSearchManager implements SearchManagerInterface,
 
     @Override
     public void onObservableSuccess(ArrayList<Object> list, String requestType) {
-        Log.e("TAG", "success results  " + list.size());
+        Log.e(TAG, "success results  " + list.size());
         listener.get().onTrackSearchSuccess(list);
     }
 
@@ -52,13 +53,13 @@ public class MediaSearchManager implements SearchManagerInterface,
 
     @Override
     public void onObservableEmpty() {
-        Log.e("TAG", "empty");
+        Log.e(TAG, "empty");
         listener.get().onTrackSearchError("empty fields");
     }
 
     @Override
     public void onObservableError(String requestType, String error) {
-        Log.e("TAG", "hey" + error);
+        Log.e(TAG, "hey" + error);
         listener.get().onTrackSearchError(error);
     }
 

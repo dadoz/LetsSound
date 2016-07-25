@@ -66,7 +66,7 @@ public class SearchListFragment extends Fragment implements
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private SearchView searchView;
-    @State
+//    @State
     ArrayList<SoundTrack> trackList = new ArrayList<>();
     private SoundTrackStatus soundTrackStatus;
     private MenuItem searchMenuItem;
