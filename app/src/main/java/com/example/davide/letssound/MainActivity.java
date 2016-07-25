@@ -37,7 +37,7 @@ import com.example.davide.letssound.services.MediaService;
 public class MainActivity extends AppCompatActivity {
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager viewPager;
-    private String TAG = "AppCompatActivity";
+    private String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

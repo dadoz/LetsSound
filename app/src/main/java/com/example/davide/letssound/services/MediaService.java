@@ -126,16 +126,16 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                 case NotificationHelper.ACTION_PLAY:
                     mediaController.getTransportControls().play();
                     break;
-                case com.example.davide.letssound.helpers.NotificationHelper.ACTION_FAST_FORWARD:
+                case NotificationHelper.ACTION_FAST_FORWARD:
                     mediaController.getTransportControls().fastForward();
                     break;
-                case com.example.davide.letssound.helpers.NotificationHelper.ACTION_REWIND:
+                case NotificationHelper.ACTION_REWIND:
                     mediaController.getTransportControls().rewind();
                     break;
-                case com.example.davide.letssound.helpers.NotificationHelper.ACTION_PAUSE:
+                case NotificationHelper.ACTION_PAUSE:
                     mediaController.getTransportControls().pause();
                     break;
-                case com.example.davide.letssound.helpers.NotificationHelper.ACTION_STOP:
+                case NotificationHelper.ACTION_STOP:
                     mediaController.getTransportControls().stop();
                     break;
             }
@@ -165,7 +165,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                 .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                 .build();
         mediaSession.setPlaybackState(playbackState);
-        notificationHelper.updateNotification();
+        notificationHelper.updateNotification(new WeakReference<>(playbackState));
     }
 
     /**
@@ -203,12 +203,12 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification();
+                notificationHelper.updateNotification(new WeakReference<>(playbackState));
             }
         }
         @Override
         public void onPlayFromSearch(final String query, final Bundle extras) {
-            Log.e(TAG, "playing");
+            Log.e(TAG, "playing" + playbackState.getState());
             try {
 //                FileDescriptor fd = getFileDescriptorFromBundle(extras);
 //                mediaPlayer.setDataSource(fd);
@@ -218,7 +218,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                 mediaPlayer.prepareAsync();
 
                 PlaybackStateCompat playbackState = new PlaybackStateCompat.Builder()
-                        .setState(PlaybackStateCompat.STATE_CONNECTING, 0, 1.0f)
+                        .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
                 mediaSession.setMetadata(new MediaMetadataCompat.Builder()
@@ -254,7 +254,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification();
+                notificationHelper.updateNotification(new WeakReference<>(playbackState));
             }
         }
 
@@ -266,7 +266,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification();
+                notificationHelper.updateNotification(new WeakReference<>(playbackState));
             }
         }
 
