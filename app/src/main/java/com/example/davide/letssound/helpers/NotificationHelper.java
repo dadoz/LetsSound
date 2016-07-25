@@ -52,19 +52,22 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
      * @param mediaArtUri
      */
     public void updateNotification(WeakReference<PlaybackStateCompat> playbackState, Uri mediaArtUri) {
-        retrieveMediaArtAsync(mediaArtUri); //TODO take care of this
-
+        retrieveMediaArtAsync(mediaArtUri);
         updatePlaybackCallbackState(playbackState);
-        PendingIntent contentIntent = PendingIntent.getActivity(serviceRef.get(), 0,
-                new Intent(serviceRef.get(), MainActivity.class), 0);
-        notificationBuilder = new NotificationCompat
-                .Builder(serviceRef.get().getApplicationContext());
+        if (notificationBuilder == null) {
+            notificationBuilder = new NotificationCompat
+                    .Builder(serviceRef.get().getApplicationContext());
+        }
+
         notificationBuilder
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setCategory(Notification.CATEGORY_TRANSPORT)
-                .setContentIntent(contentIntent)
-                .setColor(ContextCompat.getColor(serviceRef.get().getApplicationContext(), R.color.cardview_dark_background))
-                .setContentTitle(playbackStateRef.get().getState() == PlaybackStateCompat.STATE_PLAYING ? "Playing music" : "Paused @@@@@@@@@")
+                .setContentIntent(PendingIntent.getActivity(serviceRef.get(), 0,
+                        new Intent(serviceRef.get(), MainActivity.class), 0))
+                .setColor(ContextCompat.getColor(serviceRef.get().getApplicationContext(),
+                        R.color.md_violet_custom_1))
+                .setContentTitle(playbackStateRef.get().getState() == PlaybackStateCompat.STATE_PLAYING ?
+                        "Playing music" : "Paused @@@@@@@@@")
                 .setContentText(" - ")
                 .setSmallIcon(R.drawable.sound_track_icon)
                 .addAction(getActionDependingOnState(PlaybackState.STATE_REWINDING))

@@ -6,10 +6,12 @@ package com.example.davide.letssound.models;
 
 import java.io.Serializable;
 
+import io.realm.RealmObject;
+
 /**
  *
  */
-public class ResourceId implements Serializable {
+public class ResourceId extends RealmObject implements Serializable {
     /**
      * The ID that YouTube uses to uniquely identify the referred resource, if that resource is a
      * channel. This property is only present if the resourceId.kind value is youtube#channel.

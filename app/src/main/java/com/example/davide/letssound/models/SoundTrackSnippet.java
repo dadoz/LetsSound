@@ -8,10 +8,12 @@ import com.google.api.client.util.DateTime;
 
 import java.io.Serializable;
 
+import io.realm.RealmObject;
+
 /**
  *
  */
-public class SoundTrackSnippet implements Serializable {
+public class SoundTrackSnippet extends RealmObject implements Serializable {
 
     /**
      * The value that YouTube uses to uniquely identify the channel that published the resource that

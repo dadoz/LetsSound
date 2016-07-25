@@ -110,7 +110,6 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 
         //create media controller
         mediaController = new MediaControllerCompat(getApplicationContext(), mediaSession.getSessionToken());
-
     }
 
     @Nullable
@@ -179,7 +178,6 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         return bundle.getParcelable(PARAM_TRACK_URI);
     }
 
-
     /**
      * @deprecated
      * @param bundle
@@ -189,7 +187,6 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     private Uri getMediaArtUriFromBundle(Bundle bundle) {
         return bundle.getParcelable(PARAM_TRACK_THUMBNAIL);
     }
-
 
     /**
      * @deprecated
@@ -220,6 +217,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                 notificationHelper.updateNotification(new WeakReference<>(playbackState), mediaArtUri);
             }
         }
+
         @Override
         public void onPlayFromSearch(final String query, final Bundle extras) {
             Log.e(TAG, "playing" + playbackState.getState());
@@ -271,7 +269,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification(new WeakReference<>(playbackState), mediaArtUri);
+                notificationHelper.updateNotification(new WeakReference<>(playbackState), null);
             }
         }
 
@@ -298,19 +296,17 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
         }
+
         @Override
         public void onSkipToNext() {
-
         }
 
         @Override
         public void onSkipToPrevious() {
-
         }
 
         @Override
         public void onCustomAction(@NonNull String action, Bundle extras) {
-
         }
     };
 }

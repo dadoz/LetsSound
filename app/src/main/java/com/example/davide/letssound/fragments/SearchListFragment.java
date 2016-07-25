@@ -75,6 +75,8 @@ public class SearchListFragment extends Fragment implements
     private MediaSearchManager searchManager;
     private MusicPlayerManager musicPlayerManager;
     private MediaService boundService;
+    private HistoryManager historyManager;
+    private static final String TAG = "SearchListFragment";
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -131,6 +133,7 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        historyManager = HistoryManager.getInstance(new WeakReference<>(getActivity().getApplicationContext()));
         initView(savedInstanceState);
     }
 
@@ -146,7 +149,10 @@ public class SearchListFragment extends Fragment implements
             initViewFromSavedInstance(savedInstanceState);
             return;
         }
-        initRecyclerView(new ArrayList<SoundTrack>());
+
+        //TODO rm it
+        ArrayList<SoundTrack> reviewList = getReviewListFromHistory();
+        initRecyclerView(reviewList);
     }
 
     /**
@@ -187,9 +193,15 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(int position, View v) {
+        if (trackList.size() < position) {
+            Log.e(TAG, "did u forget to initialize list?");
+            return;
+        }
+
         SoundTrack soundTrack = trackList.get(position);
         musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl());
+        historyManager.saveOnHistory(soundTrack);
     }
 
     @Override
@@ -399,4 +411,13 @@ public class SearchListFragment extends Fragment implements
         ((MainActivity) getActivity()).playMedia(bundle);
     }
 
+    /**
+     * @deprecated
+     * @return
+     */
+    public ArrayList<SoundTrack> getReviewListFromHistory() {
+        trackList = historyManager.getHistory();
+        return trackList == null ?
+                new ArrayList<SoundTrack>() : trackList;
+    }
 }

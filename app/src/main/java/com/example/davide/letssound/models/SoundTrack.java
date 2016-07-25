@@ -1,13 +1,14 @@
 package com.example.davide.letssound.models;
 
-import com.google.api.client.util.DateTime;
 
 import java.io.Serializable;
+
+import io.realm.RealmObject;
 
 /**
  * Created by davide on 16/07/16.
  */
-public class SoundTrack implements Serializable {
+public class SoundTrack extends RealmObject implements Serializable {
     private ResourceId id;
     private String kind;
     private SoundTrackSnippet snippet;
