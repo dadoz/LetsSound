@@ -14,21 +14,13 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.managers.VolleyMediaArtManager;
 import com.example.davide.letssound.services.MediaService;
 
 import java.lang.ref.WeakReference;
-
-import retrofit2.http.GET;
 
 public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaArtCallbackInterface {
     private final static int NOTIFICATION_ID = 999999;
@@ -75,7 +67,6 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
                 .setContentTitle(playbackStateRef.get().getState() == PlaybackStateCompat.STATE_PLAYING ? "Playing music" : "Paused @@@@@@@@@")
                 .setContentText(" - ")
                 .setSmallIcon(R.drawable.sound_track_icon)
-//                .setLargeIcon(retrieveMediaArt())
                 .addAction(getActionDependingOnState(PlaybackState.STATE_REWINDING))
                 .addAction(getActionDependingOnState(PlaybackState.STATE_PLAYING))
                 .addAction(getActionDependingOnState(PlaybackState.STATE_FAST_FORWARDING))
@@ -94,6 +85,10 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
      * @return
      */
     private void retrieveMediaArtAsync(Uri mediaArtUri) {
+        if (mediaArtUri == null) {
+            Log.e(TAG, "no media art required to be retrieved");
+            return;
+        }
         VolleyMediaArtManager.getInstance(new WeakReference<> (serviceRef.get().getApplicationContext()),
                 new WeakReference<VolleyMediaArtManager.OnVolleyMediaArtCallbackInterface>(this))
                 .retrieveMediaArtAsync(mediaArtUri);
@@ -182,10 +177,10 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
     @Override
     public void onVolleyMediaArtSuccess(Bitmap response) {
         if (notificationBuilder != null) {
-            Notification notifcation = notificationBuilder
+            Notification notification = notificationBuilder
                     .setLargeIcon(response)
                     .build();
-            nm.notify(NOTIFICATION_ID, notifcation);
+            nm.notify(NOTIFICATION_ID, notification);
         }
     }
 
