@@ -2,7 +2,6 @@ package com.example.davide.letssound.helpers;
 
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.media.session.PlaybackState;
 import android.support.v4.app.NotificationManagerCompat;
@@ -58,9 +57,6 @@ public class NotificationHelper {
                 .setColor(ContextCompat.getColor(serviceRef.get().getApplicationContext(), R.color.cardview_dark_background))
                 .setContentTitle(playbackStateRef.get().getState() == PlaybackStateCompat.STATE_PLAYING ? "Playing music" : "Paused @@@@@@@@@")
                 .setContentText(" - ")
-                .setOngoing(playbackStateRef.get().getState() != PlaybackStateCompat.STATE_PLAYING)
-                .setWhen(0)
-                .setShowWhen(false)
                 .setSmallIcon(R.drawable.sound_track_icon)
                 .addAction(getActionDependingOnState(PlaybackState.STATE_REWINDING))
                 .addAction(getActionDependingOnState(PlaybackState.STATE_PLAYING))
@@ -81,10 +77,9 @@ public class NotificationHelper {
      * @param builder
      */
     private void setNotificationPlaybackState(NotificationCompat.Builder builder) {
-        Log.d(TAG, "updateNotificationPlaybackState. mPlaybackState=" + playbackStateRef.get());
         if (playbackStateRef.get() == null) {
             Log.d(TAG, "updateNotificationPlaybackState. cancelling notification!");
-            serviceRef.get().stopForeground(true);
+            serviceRef.get().stopSelf();
             return;
         }
 
@@ -102,7 +97,6 @@ public class NotificationHelper {
      * @return
      */
     public NotificationCompat.Action getActionDependingOnState(int state) {
-        Log.e(TAG, "hey->" + playbackStateRef.get().getState()); //always 3
         switch (state) {
             case PlaybackState.STATE_PLAYING:
             case PlaybackState.STATE_PAUSED:
@@ -130,6 +124,9 @@ public class NotificationHelper {
                 .build();
     }
 
+    /**
+     *
+     */
     public void cancel() {
         nm.cancel(NOTIFICATION_ID);
     }
