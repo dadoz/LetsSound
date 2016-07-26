@@ -1,21 +1,12 @@
 package com.example.davide.letssound.fragments;
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -24,14 +15,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
-import com.example.davide.letssound.downloader.DownloadVolleyResponse.DownloadStatusEnum;
 import com.example.davide.letssound.downloader.helper.DownloaderHelper;
-import com.example.davide.letssound.downloader.helper.OnDownloadHelperResultInterface;
 import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.managers.MediaSearchManager;
@@ -49,16 +42,14 @@ import icepick.Icepick;
 import icepick.State;
 
 import static com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter.*;
-import static com.example.davide.letssound.downloader.DownloadVolleyResponse.*;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class SearchListFragment extends Fragment implements
-        View.OnClickListener, OnDownloadHelperResultInterface, SwipeRefreshLayout.OnRefreshListener,
+        SwipeRefreshLayout.OnRefreshListener,
         SearchView.OnQueryTextListener, MediaPlayer.OnErrorListener,
-        MediaPlayer.OnPreparedListener, OnItemClickListenerInterface,
-        OnDownloadCallbackInterface, MediaSearchManager.TrackSearchManagerInterface, MusicPlayerManager.OnMusicPlayerCallback {
+        MediaPlayer.OnPreparedListener, OnItemClickListenerInterface, MediaSearchManager.TrackSearchManagerInterface, MusicPlayerManager.OnMusicPlayerCallback, View.OnFocusChangeListener, AdapterView.OnItemClickListener {
     public static String SEARCH_LIST_FRAG_TAG = "SEARCH_LIST_FRAG_TAG";
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
@@ -80,30 +71,12 @@ public class SearchListFragment extends Fragment implements
     private MediaService boundService;
     private HistoryManager historyManager;
     private static final String TAG = "SearchListFragment";
-
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
-    public static SearchListFragment getInstance(int sectionNumber) {
-        SearchListFragment fragment = new SearchListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private AutoCompleteTextView autoCompleteTextView;
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //init component
-        soundTrackStatus = SoundTrackStatus.getInstance();
-        downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
-                new WeakReference<OnDownloadHelperResultInterface>(this));
-        searchManager = MediaSearchManager.getInstance(new WeakReference<MediaSearchManager.TrackSearchManagerInterface>(this));
-
-        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
-                new WeakReference<>(boundService), new WeakReference<MusicPlayerManager.OnMusicPlayerCallback>(this));
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Icepick.restoreInstanceState(this, savedInstanceState);
     }
 
     @Override
@@ -114,6 +87,7 @@ public class SearchListFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
+        trackList = null;
     }
 
     @Override
@@ -122,8 +96,16 @@ public class SearchListFragment extends Fragment implements
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //init component
+        soundTrackStatus = SoundTrackStatus.getInstance();
+//        downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
+//                new WeakReference<OnDownloadHelperResultInterface>(this));
+        searchManager = MediaSearchManager.getInstance(new WeakReference<MediaSearchManager.TrackSearchManagerInterface>(this));
+
+        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
+                new WeakReference<>(boundService), new WeakReference<MusicPlayerManager.OnMusicPlayerCallback>(this));
     }
 
     @Override
@@ -146,10 +128,9 @@ public class SearchListFragment extends Fragment implements
      */
     public void initView(Bundle savedInstanceState) {
         initSwipeRefresh();
-//        initProgressBar();
         setHasOptionsMenu(true);
         if (savedInstanceState != null) {
-            initViewFromSavedInstance(savedInstanceState);
+            initViewFromSavedInstance();
             return;
         }
 
@@ -160,38 +141,14 @@ public class SearchListFragment extends Fragment implements
 
     /**
      *
-     * @param savedInstanceState
      */
-    private void initViewFromSavedInstance(Bundle savedInstanceState) {
-        //TODO implement this
-//        if (BuildConfig.DEBUG)
+    private void initViewFromSavedInstance() {
         initRecyclerView(trackList);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Icepick.restoreInstanceState(this, savedInstanceState);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
     }
 
     @Override
     public void onRefresh() {
         swipeContainerLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void downloadSoundTrackByUrl(String url) {
-    }
-
-    @Override
-    public void onDownloadCallback(DownloadStatusEnum statusEnum, Exception e) {
-        //download callback
     }
 
     @Override
@@ -208,43 +165,31 @@ public class SearchListFragment extends Fragment implements
     }
 
     @Override
-    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.pausePlayingBoxButtonId:
-//                mp.pause();
-//                setPlayPlayerUI(false);
-//                break;
-//            case R.id.playPlayingBoxButtonId:
-//                mp.start();
-//                setPlayPlayerUI(true);
-//                break;
-//            case R.id.downloadTextId:
-//                downloadAction();
-//                break;
-//            case R.id.shareTextId:
-//                shareAction();
-//                break;
-//        }
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
     }
 
-    @Override
-    public void handleError(Exception e) {
-        swipeContainerLayout.setRefreshing(false);
-//        setOnIdleStatus();
-        Utils.createSnackBarByBackgroundColor(mainView, e.getMessage(), ContextCompat
-                .getColor(getContext(), R.color.md_red_400));
-    }
+//    @Override
+//    public void downloadSoundTrackByUrl(String url) {
+//    }
+//    @Override
+//    public void handleError(Exception e) {
+//        swipeContainerLayout.setRefreshing(false);
+////        setOnIdleStatus();
+//        Utils.createSnackBarByBackgroundColor(mainView, e.getMessage(), ContextCompat
+//                .getColor(getContext(), R.color.md_red_400));
+//    }
+//
+//    @Override
+//    public void handleSuccess(String message) {
+//        Utils.createSnackBarByBackgroundColor(mainView, message,
+//                ContextCompat.getColor(getContext(), R.color.md_teal_400));
+//    }
 
-    @Override
-    public void handleSuccess(String message) {
-        Utils.createSnackBarByBackgroundColor(mainView, message,
-                ContextCompat.getColor(getContext(), R.color.md_teal_400));
-    }
-
-    @Override
-    public void startMediaPlayer(String url) throws Exception {
-    }
-
+//    @Override
+//    public void startMediaPlayer(String url) throws Exception {
+//    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -272,15 +217,6 @@ public class SearchListFragment extends Fragment implements
         return true;
     }
 
-    /**
-     * @deprecated
-     */
-    private void clearList() {
-        historyLabelTextView.setVisibility(View.GONE);
-        trackList.clear();
-        ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView.getAdapter()).clearAll();
-    }
-
     @Override
     public boolean onQueryTextChange(String newText) {
         return false;
@@ -292,7 +228,6 @@ public class SearchListFragment extends Fragment implements
 //        onPlayingStatusPrepareUI();
         mp.start();
     }
-
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -307,11 +242,37 @@ public class SearchListFragment extends Fragment implements
     private void initSearchOptionMenu(Menu menu) {
         searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView.setOnQueryTextFocusChangeListener(this);
+        initAutocompleteTextView();
         SearchManager searchManager = (SearchManager) getActivity()
                 .getSystemService(Activity.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getActivity().getComponentName()));
         searchView.setOnQueryTextListener(this);
+    }
+
+    /**
+     * @TODO move on presenter
+     */
+    private void initAutocompleteTextView() {
+        if (searchView != null) {
+            autoCompleteTextView = (AutoCompleteTextView) searchView
+                    .findViewById(android.support.v7.appcompat.R.id.search_src_text);
+            autoCompleteTextView.setVisibility(View.VISIBLE);
+            autoCompleteTextView.setAdapter(new ArrayAdapter<>(getActivity().getApplicationContext(),
+                    android.R.layout.simple_dropdown_item_1line,
+                    historyManager.getHistoryString()));
+            autoCompleteTextView.setOnItemClickListener(this);
+            autoCompleteTextView.setDropDownBackgroundResource(R.color.md_violet_custom_3);
+            autoCompleteTextView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    autoCompleteTextView.showDropDown();
+                    return true;
+                }
+            });
+        }
+
     }
 
     /**
@@ -351,56 +312,6 @@ public class SearchListFragment extends Fragment implements
         this.trackList = result;
     }
 
-    /**
-     *
-     * @param searchResultList
-     */
-//    private void createSearchResultList(List<SearchResult> searchResultList) {
-//        result.clear();
-//        result.addAll(searchResultList);
-//    }
-
-    /**
-     *
-     * @return
-     */
-    public long getTimestamp() {
-        return System.currentTimeMillis();
-    }
-
-    /**
-     *
-     */
-    private void setOnSelectedActionbar(final boolean isSelected) {
-//        getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                setTopActionbar(isSelected);
-//                getActivity().findViewById(R.id.slidingTabsId).setVisibility(isSelected ?
-//                        View.GONE : View.VISIBLE);
-//                soundTrackPlayingBoxLayoutHeader.setVisibility(isSelected ?
-//                        View.VISIBLE : View.GONE);
-//            }
-//        });
-    }
-
-    /**
-     *
-     * @param isPlaying
-     */
-    private void setTopActionbar(boolean isPlaying) {
-        if (searchMenuItem != null) {
-            searchMenuItem.setVisible(!isPlaying);
-        }
-
-        ActionBar actionbar = ((AppCompatActivity) getActivity())
-                .getSupportActionBar();
-        if (actionbar != null) {
-            actionbar.setDisplayHomeAsUpEnabled(isPlaying);
-            actionbar.setDisplayShowTitleEnabled(!isPlaying);
-        }
-    }
-
     @Override
     public void onTrackSearchSuccess(Object list) {
         //TODO fix this
@@ -414,6 +325,9 @@ public class SearchListFragment extends Fragment implements
     public void onTrackSearchError(String error) {
         setResultOnSavedInstance(new ArrayList<SoundTrack>());
         updateRecyclerViewData(new ArrayList<SoundTrack>());
+        Utils.createSnackBarByBackgroundColor(mainView, error, ContextCompat
+                .getColor(getContext(), R.color.md_red_400));
+
         //TODO rm it
         Log.e("TAG", "add history??");
         historyLabelTextView.setVisibility(View.VISIBLE);
@@ -437,4 +351,39 @@ public class SearchListFragment extends Fragment implements
         return trackList == null ?
                 new ArrayList<SoundTrack>() : trackList;
     }
+
+    /**
+     * @deprecated
+     */
+    private void clearList() {
+        historyLabelTextView.setVisibility(View.GONE);
+        trackList.clear();
+        ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView.getAdapter()).clearAll();
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean isVisible) {
+        if (autoCompleteTextView != null &&
+                isVisible) {
+            autoCompleteTextView.showDropDown();
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        String title = (String) adapterView.getAdapter().getItem(i);
+        SoundTrack soundTrack = historyManager.findSoundTrackByTitle(title);
+        musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
+                soundTrack.getSnippet().getThumbnails().getMedium().getUrl());
+
+        if (autoCompleteTextView != null) {
+            autoCompleteTextView.setText("");
+        }
+
+        if (searchMenuItem != null) {
+            searchMenuItem.collapseActionView();
+
+        }
+    }
+
 }

@@ -31,7 +31,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.davide.letssound.adapters.SectionsPagerAdapter;
 import com.example.davide.letssound.fragments.SearchListFragment;
 import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.services.MediaService;

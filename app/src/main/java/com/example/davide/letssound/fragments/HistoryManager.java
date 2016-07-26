@@ -25,6 +25,10 @@ public class HistoryManager {
     private final static String SCHEMA_NAME = "history_soundtrack_realmio";
     private String TAG = "HistoryManager";
 
+
+
+    public enum ExportTypeEnum { DEFAULT, STRING, SOUND_TRACK_OBJ };
+
     /**
      *
      * @param context
@@ -85,6 +89,19 @@ public class HistoryManager {
     }
 
     /**
+     *
+     * @param title
+     */
+    public SoundTrack findSoundTrackByTitle(String title) {
+        if (realm != null) {
+            return realm.where(SoundTrack.class)
+                    .equalTo("snippet.title", title)
+                    .findFirst();
+        }
+        return null;
+    }
+
+    /**
      * get history with no filter
      */
     public ArrayList<SoundTrack> getHistory() {
@@ -95,6 +112,24 @@ public class HistoryManager {
             for (SoundTrack obj:
                  tmp) {
                 list.add(obj);
+            }
+            return list;
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ArrayList<String> getHistoryString() {
+        if (realm != null) {
+            ArrayList<String> list = new ArrayList<>();
+            RealmResults<SoundTrack> tmp = realm.where(SoundTrack.class)
+                    .findAll();
+            for (SoundTrack obj:
+                 tmp) {
+                list.add(obj.getSnippet().getTitle());
             }
             return list;
         }
