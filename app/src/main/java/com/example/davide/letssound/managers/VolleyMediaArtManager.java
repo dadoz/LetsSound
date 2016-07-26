@@ -27,20 +27,27 @@ public class VolleyMediaArtManager implements Response.Listener<Bitmap>, Respons
     private static VolleyMediaArtManager instance;
     private static WeakReference<OnVolleyMediaArtCallbackInterface> listenerRef;
     private final WeakReference<Context> ctx;
-    private ImageLoader imageLoader;
     private RequestQueue requestQueue;
+    private static final int MAX_HEIGHT = 200;
+    private static final int MAX_WIDTH = 200;
+    private String requestedUrl;
+    private ImageLoader imageLoader;
 
+    /**
+     *
+     * @param context
+     */
     private VolleyMediaArtManager(WeakReference<Context> context) {
         ctx = context;
         init();
     }
 
     /**
-     * init method
+     *
      */
     private void init() {
-        getRequestQueue();
-        imageLoader = new ImageLoader(requestQueue,
+        RequestQueue requestQueueLocal = getRequestQueue();
+        imageLoader = new ImageLoader(requestQueueLocal,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap>
                             cache = new LruCache<String, Bitmap>(20);
@@ -76,13 +83,21 @@ public class VolleyMediaArtManager implements Response.Listener<Bitmap>, Respons
      * @param mediaArtUri
      */
     public void retrieveMediaArtAsync(Uri mediaArtUri) {
-        int maxHeight = 200;
-        int maxWidth = 200;
+        int maxHeight = MAX_HEIGHT;
+        int maxWidth = MAX_WIDTH;
+        requestedUrl = mediaArtUri.toString();
         ImageRequest request = new ImageRequest(mediaArtUri.toString(), this, maxWidth, maxHeight,
             null, null, this);
         addToRequestQueue(request);
     }
 
+    /**
+     *
+     * @return
+     */
+    public ImageLoader getImageLoader() {
+        return imageLoader;
+    }
     /**
      *
      * @return
@@ -103,16 +118,26 @@ public class VolleyMediaArtManager implements Response.Listener<Bitmap>, Respons
 
     @Override
     public void onResponse(Bitmap response) {
-        this.listenerRef.get().onVolleyMediaArtSuccess(response);
+        if (listenerRef != null) {
+            listenerRef.get().onVolleyMediaArtSuccess(response, requestedUrl);
+        }
     }
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        this.listenerRef.get().onVolleyMediaArtError(error);
+        if (listenerRef != null) {
+            listenerRef.get().onVolleyMediaArtError(error);
+        }
     }
 
+    /**
+     *
+     */
     public interface OnVolleyMediaArtCallbackInterface {
-        void onVolleyMediaArtSuccess(Bitmap response);
+        void onVolleyMediaArtSuccess(Bitmap response, String requestedUrl);
         void onVolleyMediaArtError(VolleyError error);
     }
+
+
+
 }

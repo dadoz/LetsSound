@@ -1,25 +1,27 @@
 package com.example.davide.letssound.adapters;
 
-import android.graphics.Color;
-import android.support.v4.app.Fragment;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.NetworkImageView;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.helpers.SoundTrackStatus;
+import com.example.davide.letssound.managers.VolleyMediaArtManager;
 import com.example.davide.letssound.models.SoundTrack;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.youtube.model.SearchResult;
+import com.example.davide.letssound.views.CircularNetworkImageView;
 
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by davide on 30/11/15.
@@ -28,6 +30,7 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
             .Adapter<SoundTrackRecyclerViewAdapter
             .DataObjectHolder> {
     private static final String PUBLISHED_AT = "Published at - ";
+    private final VolleyMediaArtManager volleyMediaArtManager;
     private List<SoundTrack> list;
     private WeakReference<OnItemClickListenerInterface> listener;
     private SoundTrackStatus soundTrackStatus;
@@ -38,10 +41,12 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
      * @param itemClickListenerRef
      */
     public SoundTrackRecyclerViewAdapter(List<SoundTrack> dataset,
-                                         WeakReference<OnItemClickListenerInterface> itemClickListenerRef) {
+                                         WeakReference<OnItemClickListenerInterface> itemClickListenerRef,
+                                         WeakReference<Context> ctx) {
         list = dataset;
         listener = itemClickListenerRef;
         soundTrackStatus = SoundTrackStatus.getInstance();
+        volleyMediaArtManager = VolleyMediaArtManager.getInstance(ctx, null);
     }
 
     @Override
@@ -53,8 +58,15 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, final int position) {
-        holder.title.setText(list.get(position).getSnippet().getTitle());
+        SoundTrack selectedItem = list.get(position);
+        holder.title.setText(selectedItem.getSnippet().getTitle());
         holder.url.setText("url");
+        if (selectedItem.getSnippet().getThumbnails().getHigh() != null) {
+            holder.mediaArtImageView.setImageUrl(selectedItem.getSnippet().getThumbnails().getHigh().getUrl(),
+                    volleyMediaArtManager.getImageLoader());
+        }
+//        holder.songIcon.setImageBitmap();
+
 //        DateTime publishedAt = list.get(position).getSnippet().getPublishedAt();
 //        holder.url.setText(publishedAt != null ?
 //                new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
@@ -62,6 +74,15 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
 //                " - ");
         holder.durationTime.setText("00:00");
 //        setSelectedItem(holder, position);
+    }
+
+    /**
+     *
+     * @param songIcon
+     * @param url
+     */
+    private void setTrackMediaArtByUrl(ImageView songIcon, String url) {
+        volleyMediaArtManager.retrieveMediaArtAsync(Uri.parse(url));
     }
 
     @Override
@@ -135,37 +156,30 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
      */
     public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        //TODO weakRef please
         private final WeakReference<OnItemClickListenerInterface> listenerRef;
         private final View itemView;
         private final TextView title;
         private final TextView durationTime;
         private final TextView url;
-        //        private final View playButton;
-//        private final View pauseButton;
         private final View mainSelectedView;
         private final View shareTextView;
         private final View downloadTextView;
-        private final View mainView;
-        private final View songIcon;
+        private final CircularNetworkImageView mediaArtImageView;
 
-        public DataObjectHolder(View itemView, WeakReference<OnItemClickListenerInterface> itemClickListenerRef) {
-            super(itemView);
-            this.listenerRef = itemClickListenerRef;
+        public DataObjectHolder(View view, WeakReference<OnItemClickListenerInterface> itemClickListenerRef) {
+            super(view);
+            itemView = view;
+            listenerRef = itemClickListenerRef;
             title = (TextView) itemView.findViewById(R.id.titleTextId);
             url = (TextView) itemView.findViewById(R.id.urlTextId);
             durationTime = (TextView) itemView.findViewById(R.id.durationTimeTextId);
-//            playButton = itemView.findViewById(R.id.playButtonId);
-//            pauseButton = itemView.findViewById(R.id.pauseButtonId);
             mainSelectedView = itemView.findViewById(R.id.resultItemSelectLayoutId);
-            mainView = itemView.findViewById(R.id.resultItemLayoutId);
+//            mainView = itemView.findViewById(R.id.resultItemLayoutId);
             shareTextView = itemView.findViewById(R.id.shareTextId);
             downloadTextView = itemView.findViewById(R.id.downloadTextId);
-            songIcon = itemView.findViewById(R.id.songIconId);
-            this.itemView = itemView;
+            mediaArtImageView = (CircularNetworkImageView) itemView.findViewById(R.id.mediaArtImageViewId);
 
             itemView.setOnClickListener(this);
-
 //            shareTextView.setOnClickListener(this);
 //            downloadTextView.setOnClickListener(this);
 //            playButton.setOnClickListener(this);

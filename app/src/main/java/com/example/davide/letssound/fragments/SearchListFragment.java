@@ -142,7 +142,7 @@ public class SearchListFragment extends Fragment implements
      * @param savedInstanceState
      */
     public void initView(Bundle savedInstanceState) {
-//        initSwipeRefresh();
+        initSwipeRefresh();
 //        initProgressBar();
         setHasOptionsMenu(true);
         if (savedInstanceState != null) {
@@ -309,7 +309,8 @@ public class SearchListFragment extends Fragment implements
     private void initRecyclerView(final ArrayList<SoundTrack> result) {
         soundTrackRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         soundTrackRecyclerView.setAdapter(new SoundTrackRecyclerViewAdapter(result,
-                new WeakReference<OnItemClickListenerInterface >(this)));
+                new WeakReference<OnItemClickListenerInterface >(this),
+                new WeakReference<>(getActivity().getApplicationContext())));
     }
 
     /**

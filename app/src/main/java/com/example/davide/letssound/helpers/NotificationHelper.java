@@ -2,7 +2,6 @@ package com.example.davide.letssound.helpers;
 
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.session.PlaybackState;
@@ -54,11 +53,7 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
     public void updateNotification(WeakReference<PlaybackStateCompat> playbackState, Uri mediaArtUri) {
         retrieveMediaArtAsync(mediaArtUri);
         updatePlaybackCallbackState(playbackState);
-        if (notificationBuilder == null) {
-            notificationBuilder = new NotificationCompat
-                    .Builder(serviceRef.get().getApplicationContext());
-        }
-
+        notificationBuilder = new NotificationCompat.Builder(serviceRef.get().getApplicationContext());
         notificationBuilder
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setCategory(Notification.CATEGORY_TRANSPORT)
@@ -178,7 +173,7 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
     }
 
     @Override
-    public void onVolleyMediaArtSuccess(Bitmap response) {
+    public void onVolleyMediaArtSuccess(Bitmap response, String requestedUrl) {
         if (notificationBuilder != null) {
             Notification notification = notificationBuilder
                     .setLargeIcon(response)
