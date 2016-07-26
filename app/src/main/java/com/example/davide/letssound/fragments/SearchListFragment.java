@@ -59,10 +59,13 @@ public class SearchListFragment extends Fragment implements
         SearchView.OnQueryTextListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnPreparedListener, OnItemClickListenerInterface,
         OnDownloadCallbackInterface, MediaSearchManager.TrackSearchManagerInterface, MusicPlayerManager.OnMusicPlayerCallback {
+    public static String SEARCH_LIST_FRAG_TAG = "SEARCH_LIST_FRAG_TAG";
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
     @Bind(R.id.swipeContainerLayoutId)
     SwipeRefreshLayout swipeContainerLayout;
+    @Bind(R.id.historyLabelTextViewId)
+    View historyLabelTextView;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private SearchView searchView;
@@ -206,7 +209,7 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+//        switch (v.getId()) {
 //            case R.id.pausePlayingBoxButtonId:
 //                mp.pause();
 //                setPlayPlayerUI(false);
@@ -215,13 +218,13 @@ public class SearchListFragment extends Fragment implements
 //                mp.start();
 //                setPlayPlayerUI(true);
 //                break;
-            case R.id.downloadTextId:
+//            case R.id.downloadTextId:
 //                downloadAction();
-                break;
-            case R.id.shareTextId:
+//                break;
+//            case R.id.shareTextId:
 //                shareAction();
-                break;
-        }
+//                break;
+//        }
     }
 
     @Override
@@ -240,7 +243,6 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void startMediaPlayer(String url) throws Exception {
-        //startMediaPlayer(url);
     }
 
 
@@ -263,10 +265,20 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        clearList();
         searchMenuItem.collapseActionView();
         soundTrackStatus.setIdleStatus();
         searchManager.onSearchAsync(query);
         return true;
+    }
+
+    /**
+     * @deprecated
+     */
+    private void clearList() {
+        historyLabelTextView.setVisibility(View.GONE);
+        trackList.clear();
+        ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView.getAdapter()).clearAll();
     }
 
     @Override
@@ -360,17 +372,16 @@ public class SearchListFragment extends Fragment implements
      *
      */
     private void setOnSelectedActionbar(final boolean isSelected) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                setTopActionbar(isSelected);
-                getActivity().findViewById(R.id.slidingTabsId).setVisibility(isSelected ?
-                        View.GONE : View.VISIBLE);
+//        getActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                setTopActionbar(isSelected);
+//                getActivity().findViewById(R.id.slidingTabsId).setVisibility(isSelected ?
+//                        View.GONE : View.VISIBLE);
 //                soundTrackPlayingBoxLayoutHeader.setVisibility(isSelected ?
 //                        View.VISIBLE : View.GONE);
-
-            }
-        });
+//            }
+//        });
     }
 
     /**
@@ -403,6 +414,11 @@ public class SearchListFragment extends Fragment implements
     public void onTrackSearchError(String error) {
         setResultOnSavedInstance(new ArrayList<SoundTrack>());
         updateRecyclerViewData(new ArrayList<SoundTrack>());
+        //TODO rm it
+        Log.e("TAG", "add history??");
+        historyLabelTextView.setVisibility(View.VISIBLE);
+        trackList = getReviewListFromHistory();
+        initRecyclerView(trackList);
     }
 
 

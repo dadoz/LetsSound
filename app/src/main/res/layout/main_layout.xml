@@ -18,48 +18,53 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
-        <include
-            android:id="@+id/soundTrackPlayingBoxLayoutId"
-            layout="@layout/sound_track_playing_box_header_layout"/>
-        <android.support.design.widget.TabLayout
-            android:id="@+id/slidingTabsId"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabMode="fixed"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@color/md_red_custom_1"/>
+        <!--<include-->
+            <!--android:id="@+id/soundTrackPlayingBoxLayoutId"-->
+            <!--layout="@layout/sound_track_playing_box_header_layout"/>-->
+        <!--<android.support.design.widget.TabLayout-->
+            <!--android:id="@+id/slidingTabsId"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:tabMode="fixed"-->
+            <!--app:tabGravity="fill"-->
+            <!--app:tabIndicatorColor="@color/md_red_custom_1"/>-->
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/playPlayingBoxButtonId"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/medium_large_padding"
-        android:src="@drawable/play_icon"
-        app:backgroundTint="@color/md_violet_custom_0"
-        app:layout_anchor="@id/soundTrackPlayingBoxLayoutId"
-        app:layout_anchorGravity="bottom|right|end"
-        app:elevation="10dp"/>
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/pausePlayingBoxButtonId"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/medium_large_padding"
-        android:src="@drawable/pause_icon"
-        app:backgroundTint="@color/md_blue_grey_400"
-        app:layout_anchor="@id/soundTrackPlayingBoxLayoutId"
-        app:layout_anchorGravity="bottom|right|end"
-        app:elevation="10dp"/>
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/playPlayingBoxButtonId"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginRight="@dimen/medium_large_padding"-->
+        <!--android:src="@drawable/play_icon"-->
+        <!--app:backgroundTint="@color/md_violet_custom_0"-->
+        <!--app:layout_anchor="@id/soundTrackPlayingBoxLayoutId"-->
+        <!--app:layout_anchorGravity="bottom|right|end"-->
+        <!--app:elevation="10dp"/>-->
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/pausePlayingBoxButtonId"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginRight="@dimen/medium_large_padding"-->
+        <!--android:src="@drawable/pause_icon"-->
+        <!--app:backgroundTint="@color/md_blue_grey_400"-->
+        <!--app:layout_anchor="@id/soundTrackPlayingBoxLayoutId"-->
+        <!--app:layout_anchorGravity="bottom|right|end"-->
+        <!--app:elevation="10dp"/>-->
+    <!--<android.support.v4.view.ViewPager-->
+        <!--android:id="@+id/pagerId"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:background="@color/md_violet_custom_1"-->
+        <!--tools:context=".MainActivity"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pagerId"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/md_violet_custom_1"
-        tools:context=".MainActivity"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
+<FrameLayout
+    android:id="@+id/mainFragmentContainerId"
+    android:background="@color/md_violet_custom_1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </android.support.design.widget.CoordinatorLayout>

@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -31,13 +32,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.davide.letssound.adapters.SectionsPagerAdapter;
+import com.example.davide.letssound.fragments.SearchListFragment;
 import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.services.MediaService;
 
+import icepick.State;
+
 public class MainActivity extends AppCompatActivity {
-    SectionsPagerAdapter mSectionsPagerAdapter;
-    ViewPager viewPager;
+//    SectionsPagerAdapter mSectionsPagerAdapter;
+//    ViewPager viewPager;
     private String TAG = "MainActivity";
+    @State
+    public String currentFragmentTag = SearchListFragment.SEARCH_LIST_FRAG_TAG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +109,28 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initView() {
         initActionBar();
-        initViewPager();
+        initFragment();
+//        initViewPager();
+    }
+
+    /**
+     *
+     */
+    private void initFragment() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.mainFragmentContainerId, getSuitableFragment(), currentFragmentTag)
+                .commit();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Fragment getSuitableFragment() {
+        Fragment frag;
+        return (frag = getSupportFragmentManager().findFragmentByTag(this.currentFragmentTag)) == null ?
+                new SearchListFragment() : frag;
     }
 
     /**
@@ -117,23 +144,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * TODO move in a base class
-     */
-    private void initViewPager() {
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
-                new WeakReference<Activity>(this));
-        viewPager = (ViewPager) findViewById(R.id.pagerId);
-        if (viewPager != null) {
-            viewPager.setAdapter(mSectionsPagerAdapter);
-        }
-
-        // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.slidingTabsId);
-        if (tabLayout != null) {
-            tabLayout.setupWithViewPager(viewPager);
-        }
-    }
+//    /**
+//     * TODO move in a base class
+//     */
+//    private void initViewPager() {
+//        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
+//                new WeakReference<Activity>(this));
+//        viewPager = (ViewPager) findViewById(R.id.pagerId);
+//        if (viewPager != null) {
+//            viewPager.setAdapter(mSectionsPagerAdapter);
+//        }
+//
+//        // Give the TabLayout the ViewPager
+//        TabLayout tabLayout = (TabLayout) findViewById(R.id.slidingTabsId);
+//        if (tabLayout != null) {
+//            tabLayout.setupWithViewPager(viewPager);
+//        }
+//    }
 
 
     /**

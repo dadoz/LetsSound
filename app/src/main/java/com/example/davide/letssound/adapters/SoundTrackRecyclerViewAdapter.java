@@ -105,6 +105,13 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         list.clear();
     }
 
+    /**
+     *
+     */
+    public void clearAll() {
+        list.clear();
+    }
+
 //    public SoundTrack getItemByPosition(int position) {
 //        return list.get(position);
 //    }

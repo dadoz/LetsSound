@@ -11,4 +11,6 @@
     <dimen name="extra_large_padding">40dp</dimen>
     <dimen name="sound_track_playing_min_height">40dp</dimen>
     <dimen name="medium_icon_size">50dp</dimen>
+    <dimen name="small_margin_16">16dp</dimen>
+    <dimen name="min_item_height">72dp</dimen>
 </resources>
