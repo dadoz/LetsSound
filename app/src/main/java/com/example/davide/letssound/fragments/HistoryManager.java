@@ -3,6 +3,7 @@ package com.example.davide.letssound.fragments;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.davide.letssound.models.HistoryResult;
 import com.example.davide.letssound.models.SoundTrack;
 
 import java.lang.ref.WeakReference;
@@ -66,6 +67,7 @@ public class HistoryManager {
     public void saveOnHistory(SoundTrack soundTrack) {
         if (realm != null &&
                 isNotInList(soundTrack.getId().getVideoId())) {
+            soundTrack.setTimestamp();
             realm.beginTransaction();
             realm.copyToRealm(soundTrack);
             realm.commitTransaction();
@@ -104,14 +106,14 @@ public class HistoryManager {
     /**
      * get history with no filter
      */
-    public ArrayList<SoundTrack> getHistory() {
+    public ArrayList<HistoryResult> getHistory() {
         if (realm != null) {
-            ArrayList<SoundTrack> list = new ArrayList<>();
+            ArrayList<HistoryResult> list = new ArrayList<>();
             RealmResults<SoundTrack> tmp = realm.where(SoundTrack.class)
                     .findAll();
             for (SoundTrack obj:
                  tmp) {
-                list.add(obj);
+                list.add(new HistoryResult(obj.getSnippet().getTitle(), obj.getTimestamp()));
             }
             return list;
         }

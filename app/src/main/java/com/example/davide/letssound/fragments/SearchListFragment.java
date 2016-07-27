@@ -24,11 +24,13 @@ import android.widget.AutoCompleteTextView;
 
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.adapters.HistoryAdapter;
 import com.example.davide.letssound.downloader.helper.DownloaderHelper;
 import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.example.davide.letssound.managers.MediaSearchManager;
 import com.example.davide.letssound.managers.MusicPlayerManager;
+import com.example.davide.letssound.models.HistoryResult;
 import com.example.davide.letssound.models.SoundTrack;
 import com.example.davide.letssound.services.MediaService;
 import com.example.davide.letssound.utils.Utils;
@@ -49,14 +51,14 @@ import static com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapte
 public class SearchListFragment extends Fragment implements
         SwipeRefreshLayout.OnRefreshListener,
         SearchView.OnQueryTextListener, MediaPlayer.OnErrorListener,
-        MediaPlayer.OnPreparedListener, OnItemClickListenerInterface, MediaSearchManager.TrackSearchManagerInterface, MusicPlayerManager.OnMusicPlayerCallback, View.OnFocusChangeListener, AdapterView.OnItemClickListener {
+        MediaPlayer.OnPreparedListener, OnItemClickListenerInterface,
+        MediaSearchManager.TrackSearchManagerInterface, MusicPlayerManager.OnMusicPlayerCallback,
+        View.OnFocusChangeListener, AdapterView.OnItemClickListener {
     public static String SEARCH_LIST_FRAG_TAG = "SEARCH_LIST_FRAG_TAG";
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
     @Bind(R.id.swipeContainerLayoutId)
     SwipeRefreshLayout swipeContainerLayout;
-    @Bind(R.id.historyLabelTextViewId)
-    View historyLabelTextView;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private SearchView searchView;
@@ -134,9 +136,7 @@ public class SearchListFragment extends Fragment implements
             return;
         }
 
-        //TODO rm it
-        ArrayList<SoundTrack> reviewList = getReviewListFromHistory();
-        initRecyclerView(reviewList);
+        initRecyclerView(new ArrayList<SoundTrack>());
     }
 
     /**
@@ -162,6 +162,7 @@ public class SearchListFragment extends Fragment implements
         musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl());
         historyManager.saveOnHistory(soundTrack);
+        setAutocompleteTextViewAdapter();
     }
 
     @Override
@@ -258,21 +259,28 @@ public class SearchListFragment extends Fragment implements
         if (searchView != null) {
             autoCompleteTextView = (AutoCompleteTextView) searchView
                     .findViewById(android.support.v7.appcompat.R.id.search_src_text);
+            setAutocompleteTextViewAdapter();
             autoCompleteTextView.setVisibility(View.VISIBLE);
-            autoCompleteTextView.setAdapter(new ArrayAdapter<>(getActivity().getApplicationContext(),
-                    android.R.layout.simple_dropdown_item_1line,
-                    historyManager.getHistoryString()));
             autoCompleteTextView.setOnItemClickListener(this);
             autoCompleteTextView.setDropDownBackgroundResource(R.color.md_violet_custom_3);
-            autoCompleteTextView.setOnTouchListener(new View.OnTouchListener() {
+            autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
+                public void onClick(View view) {
                     autoCompleteTextView.showDropDown();
-                    return true;
                 }
             });
         }
 
+    }
+
+    /**
+     *
+     */
+    private void setAutocompleteTextViewAdapter() {
+        HistoryAdapter historyAdapter = new HistoryAdapter(getActivity().getApplicationContext(),
+                R.layout.history_item,
+                historyManager.getHistory());
+        autoCompleteTextView.setAdapter(historyAdapter);
     }
 
     /**
@@ -327,12 +335,6 @@ public class SearchListFragment extends Fragment implements
         updateRecyclerViewData(new ArrayList<SoundTrack>());
         Utils.createSnackBarByBackgroundColor(mainView, error, ContextCompat
                 .getColor(getContext(), R.color.md_red_400));
-
-        //TODO rm it
-        Log.e("TAG", "add history??");
-        historyLabelTextView.setVisibility(View.VISIBLE);
-        trackList = getReviewListFromHistory();
-        initRecyclerView(trackList);
     }
 
 
@@ -346,17 +348,16 @@ public class SearchListFragment extends Fragment implements
      * @deprecated
      * @return
      */
-    public ArrayList<SoundTrack> getReviewListFromHistory() {
-        trackList = historyManager.getHistory();
-        return trackList == null ?
-                new ArrayList<SoundTrack>() : trackList;
-    }
+//    public ArrayList<SoundTrack> getReviewListFromHistory() {
+//        trackList = historyManager.getHistory();
+//        return trackList == null ?
+//                new ArrayList<SoundTrack>() : trackList;
+//    }
 
     /**
      * @deprecated
      */
     private void clearList() {
-        historyLabelTextView.setVisibility(View.GONE);
         trackList.clear();
         ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView.getAdapter()).clearAll();
     }
@@ -371,18 +372,15 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        String title = (String) adapterView.getAdapter().getItem(i);
-        SoundTrack soundTrack = historyManager.findSoundTrackByTitle(title);
+        HistoryResult historyResult = (HistoryResult) adapterView.getAdapter().getItem(i);
+        SoundTrack soundTrack = historyManager.findSoundTrackByTitle(historyResult.getTitle());
         musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl());
 
-        if (autoCompleteTextView != null) {
-            autoCompleteTextView.setText("");
-        }
-
-        if (searchMenuItem != null) {
+        if (autoCompleteTextView != null &&
+                searchMenuItem != null) {
             searchMenuItem.collapseActionView();
-
+            autoCompleteTextView.setText("");
         }
     }
 

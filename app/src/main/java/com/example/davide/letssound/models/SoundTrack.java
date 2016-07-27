@@ -12,7 +12,16 @@ public class SoundTrack extends RealmObject implements Serializable {
     private ResourceId id;
     private String kind;
     private SoundTrackSnippet snippet;
+    private long timestamp;
 
+
+    public void setTimestamp() {
+        this.timestamp = System.currentTimeMillis()/1000;
+    }
+
+    public long getTimestamp() {
+        return this.timestamp;
+    }
     /**
      *
      * @return

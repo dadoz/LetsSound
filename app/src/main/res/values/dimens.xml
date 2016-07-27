@@ -3,7 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="small_padding">5dip</dimen>
-    <dimen name="title_text_medium">12sp</dimen>
+    <dimen name="title_text_medium">16sp</dimen>
     <dimen name="large_padding">20dip</dimen>
     <dimen name="medium_padding">10dip</dimen>
     <dimen name="medium_large_padding">15dip</dimen>
@@ -11,6 +11,8 @@
     <dimen name="extra_large_padding">40dp</dimen>
     <dimen name="sound_track_playing_min_height">40dp</dimen>
     <dimen name="medium_icon_size">50dp</dimen>
+    <dimen name="small_icon_size">24dp</dimen>
     <dimen name="small_margin_16">16dp</dimen>
     <dimen name="min_item_height">72dp</dimen>
+    <dimen name="title_text_small">12sp</dimen>
 </resources>
