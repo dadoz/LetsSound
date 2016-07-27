@@ -59,8 +59,9 @@ public class SearchListFragment extends Fragment implements
     RecyclerView soundTrackRecyclerView;
     @Bind(R.id.swipeContainerLayoutId)
     SwipeRefreshLayout swipeContainerLayout;
+    @Bind(R.id.searchNoItemLayoutId)
+    View searchNoItemLayout;
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
     private SearchView searchView;
     @State
     ArrayList<SoundTrack> trackList = new ArrayList<>();
@@ -288,10 +289,14 @@ public class SearchListFragment extends Fragment implements
      * @param result
      */
     private void initRecyclerView(final ArrayList<SoundTrack> result) {
+        SoundTrackRecyclerViewAdapter adapter = new SoundTrackRecyclerViewAdapter(result,
+                new WeakReference<OnItemClickListenerInterface>(this),
+                new WeakReference<>(getActivity().getApplicationContext()));
+        adapter.registerAdapterDataObserver(new SoundTrackSearchObserver(new WeakReference<>(adapter),
+                searchNoItemLayout));
         soundTrackRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        soundTrackRecyclerView.setAdapter(new SoundTrackRecyclerViewAdapter(result,
-                new WeakReference<OnItemClickListenerInterface >(this),
-                new WeakReference<>(getActivity().getApplicationContext())));
+        soundTrackRecyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -300,7 +305,7 @@ public class SearchListFragment extends Fragment implements
     private void updateRecyclerViewData(ArrayList<SoundTrack> list) {
         SoundTrackRecyclerViewAdapter adapter = ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView
                 .getAdapter());
-        adapter.removeAll();
+        adapter.clearAll();
         adapter.addAll(list);
         adapter.notifyDataSetChanged();
     }
@@ -346,19 +351,11 @@ public class SearchListFragment extends Fragment implements
 
     /**
      * @deprecated
-     * @return
-     */
-//    public ArrayList<SoundTrack> getReviewListFromHistory() {
-//        trackList = historyManager.getHistory();
-//        return trackList == null ?
-//                new ArrayList<SoundTrack>() : trackList;
-//    }
-
-    /**
-     * @deprecated
      */
     private void clearList() {
-        trackList.clear();
+        if (trackList != null) {
+            trackList.clear();
+        }
         ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView.getAdapter()).clearAll();
     }
 
@@ -373,6 +370,14 @@ public class SearchListFragment extends Fragment implements
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         HistoryResult historyResult = (HistoryResult) adapterView.getAdapter().getItem(i);
+        handleItemClick(historyResult);
+    }
+
+    /**
+     *
+     * @param historyResult
+     */
+    private void handleItemClick(HistoryResult historyResult) {
         SoundTrack soundTrack = historyManager.findSoundTrackByTitle(historyResult.getTitle());
         musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl());
@@ -382,6 +387,7 @@ public class SearchListFragment extends Fragment implements
             searchMenuItem.collapseActionView();
             autoCompleteTextView.setText("");
         }
+
     }
 
 }

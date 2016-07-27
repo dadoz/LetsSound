@@ -29,11 +29,9 @@ import java.util.List;
 public class SoundTrackRecyclerViewAdapter extends RecyclerView
             .Adapter<SoundTrackRecyclerViewAdapter
             .DataObjectHolder> {
-    private static final String PUBLISHED_AT = "Published at - ";
     private final VolleyMediaArtManager volleyMediaArtManager;
     private List<SoundTrack> list;
     private WeakReference<OnItemClickListenerInterface> listener;
-    private SoundTrackStatus soundTrackStatus;
 
     /**
      *
@@ -45,7 +43,6 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
                                          WeakReference<Context> ctx) {
         list = dataset;
         listener = itemClickListenerRef;
-        soundTrackStatus = SoundTrackStatus.getInstance();
         volleyMediaArtManager = VolleyMediaArtManager.getInstance(ctx, null);
     }
 
@@ -60,34 +57,19 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
     public void onBindViewHolder(DataObjectHolder holder, final int position) {
         SoundTrack selectedItem = list.get(position);
         holder.title.setText(selectedItem.getSnippet().getTitle());
-        holder.url.setText("url");
+        holder.url.setText("Author: " + selectedItem.getSnippet().getChannelId());
+        holder.durationTime.setText("00:00");
+
         if (selectedItem.getSnippet().getThumbnails().getHigh() != null) {
-            holder.mediaArtImageView.setImageUrl(selectedItem.getSnippet().getThumbnails().getHigh().getUrl(),
+            holder.mediaArtImageView.setImageUrl(selectedItem.getSnippet()
+                    .getThumbnails().getHigh().getUrl(),
                     volleyMediaArtManager.getImageLoader());
         }
-//        holder.songIcon.setImageBitmap();
-
-//        DateTime publishedAt = list.get(position).getSnippet().getPublishedAt();
-//        holder.url.setText(publishedAt != null ?
-//                new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
-//                    .format(new Date(publishedAt.getValue())) :
-//                " - ");
-        holder.durationTime.setText("00:00");
-//        setSelectedItem(holder, position);
-    }
-
-    /**
-     *
-     * @param songIcon
-     * @param url
-     */
-    private void setTrackMediaArtByUrl(ImageView songIcon, String url) {
-        volleyMediaArtManager.retrieveMediaArtAsync(Uri.parse(url));
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list != null ? list.size() : 0;
     }
 
     /**
@@ -101,61 +83,15 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
     /**
      *
      */
-    public void removeAll() {
-        list.clear();
-    }
-
-    /**
-     *
-     */
     public void clearAll() {
         list.clear();
     }
-
-//    public SoundTrack getItemByPosition(int position) {
-//        return list.get(position);
-//    }
-
-    /**
-     *
-     * @param holder
-     * @param position
-     */
-//    private void setPlayingItem(DataObjectHolder holder, final int position) {
-//        boolean isPlaying = soundTrackStatus.isPlayStatus() &&
-//                soundTrackStatus.getCurrentPosition() == position;
-//        holder.itemView.setBackgroundColor(isPlaying ?
-//                ((Fragment) listener.get())
-//                        .getActivity().getResources().getColor(R.color.md_violet_custom_2) :
-//                Color.TRANSPARENT);
-//    }
-
-    /**
-     *
-     * @param holder
-     * @param position
-     */
-//    private void setSelectedItem(DataObjectHolder holder, int position) {
-//        boolean isSelected = (soundTrackStatus.isSelectStatus() || soundTrackStatus.isPlayStatus()) &&
-//                soundTrackStatus.getCurrentPosition() == position;
-//        holder.itemView.setBackgroundColor(isSelected ?
-//                ((Fragment) listener.get())
-//                        .getActivity().getResources().getColor(R.color.md_violet_custom_2) :
-//                Color.TRANSPARENT);
-//    }
 
     /**
      *
      */
     public interface OnItemClickListenerInterface {
         void onItemClick(int position, View v);
-    }
-
-    /**
-     *
-     */
-    public interface OnClickListenerInterface {
-        void onClick(int position, View v);
     }
 
     /**
@@ -168,30 +104,24 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         private final TextView title;
         private final TextView durationTime;
         private final TextView url;
-        private final View mainSelectedView;
-        private final View shareTextView;
-        private final View downloadTextView;
         private final CircularNetworkImageView mediaArtImageView;
 
-        public DataObjectHolder(View view, WeakReference<OnItemClickListenerInterface> itemClickListenerRef) {
+        /**
+         *
+         * @param view
+         * @param itemClickListenerRef
+         */
+        public DataObjectHolder(View view,
+                                WeakReference<OnItemClickListenerInterface> itemClickListenerRef) {
             super(view);
             itemView = view;
             listenerRef = itemClickListenerRef;
             title = (TextView) itemView.findViewById(R.id.titleTextId);
             url = (TextView) itemView.findViewById(R.id.urlTextId);
             durationTime = (TextView) itemView.findViewById(R.id.durationTimeTextId);
-            mainSelectedView = itemView.findViewById(R.id.resultItemSelectLayoutId);
-//            mainView = itemView.findViewById(R.id.resultItemLayoutId);
-            shareTextView = itemView.findViewById(R.id.shareTextId);
-            downloadTextView = itemView.findViewById(R.id.downloadTextId);
             mediaArtImageView = (CircularNetworkImageView) itemView.findViewById(R.id.mediaArtImageViewId);
 
             itemView.setOnClickListener(this);
-//            shareTextView.setOnClickListener(this);
-//            downloadTextView.setOnClickListener(this);
-//            playButton.setOnClickListener(this);
-//            pauseButton.setOnClickListener(this);
-
         }
 
         @Override

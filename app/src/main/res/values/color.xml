@@ -298,6 +298,7 @@
     <color name="md_blue_grey_800">#37474F</color>
     <color name="md_blue_grey_900">#263238</color>
 
+    <color name="md_yellow_custom_0">#eacb51</color>
     <color name="md_yellow_custom_1">#f5d865</color>
     <color name="md_yellow_custom_2">#fbe282</color>
     <color name="md_violet_custom_0">#33527c</color>

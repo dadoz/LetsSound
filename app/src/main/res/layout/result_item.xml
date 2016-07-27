@@ -4,13 +4,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/small_margin_16"
-    android:paddingRight="@dimen/small_margin_16"
+    android:padding="@dimen/small_margin_16"
     android:minHeight="@dimen/min_item_height"
-    android:background="?android:attr/selectableItemBackground">
+    android:gravity="center">
+    <!--android:background="?android:attr/selectableItemBackground">-->
     <com.example.davide.letssound.views.CircularNetworkImageView
         android:id="@+id/mediaArtImageViewId"
-        android:layout_centerVertical="true"
         android:layout_width="@dimen/medium_icon_size"
         android:layout_height="@dimen/medium_icon_size"
         android:scaleType="fitXY"
@@ -29,9 +28,11 @@
     <TextView
         android:id="@+id/titleTextId"
         android:layout_toRightOf="@id/mediaArtImageViewId"
+        android:layout_toLeftOf="@id/durationTimeTextId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
+        android:maxLines="2"
         android:layout_marginLeft="@dimen/small_margin_16"
         android:layout_marginRight="@dimen/small_margin_16"
         android:textColor="@color/md_blue_grey_50"
@@ -40,12 +41,14 @@
     <TextView
         android:id="@+id/urlTextId"
         android:layout_toRightOf="@id/mediaArtImageViewId"
+        android:layout_toLeftOf="@id/durationTimeTextId"
         android:layout_below="@id/titleTextId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/small_padding"
         android:layout_marginLeft="@dimen/small_margin_16"
         android:layout_marginRight="@dimen/small_margin_16"
+        android:maxLines="1"
         android:textSize="@dimen/title_text_medium"
         android:textStyle="italic"
         android:textColor="@color/md_blue_grey_300"

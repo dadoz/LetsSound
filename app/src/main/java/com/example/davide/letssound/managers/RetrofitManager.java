@@ -26,6 +26,7 @@ import rx.functions.Func1;
 public class RetrofitManager {
 
     private static final String BASE_URL = "https://www.googleapis.com/youtube/v3/";
+    private static final int MAX_RESULTS = 25;
     private final YoutubeService service;
     private static final String YOUTUBE_PART = "snippet";
     private static RetrofitManager instance;
@@ -54,7 +55,7 @@ public class RetrofitManager {
      * @return
      */
     public Observable<ArrayList<Object>> searchList(String query) {
-        return service.searchList(query, YOUTUBE_PART).map(new Func1<ArrayList<SoundTrack>, ArrayList<Object>>() {
+        return service.searchList(query, YOUTUBE_PART, MAX_RESULTS).map(new Func1<ArrayList<SoundTrack>, ArrayList<Object>>() {
             @Override
             public ArrayList<Object> call(ArrayList<SoundTrack> soundTracks) {
                 return new ArrayList<Object>(soundTracks);
@@ -79,6 +80,6 @@ public class RetrofitManager {
     public interface YoutubeService {
         //part=snippet
         @GET("search?key=" + AuthCustom.API_KEY)
-        Observable<ArrayList<SoundTrack>> searchList(@Query("q") String query, @Query("part") String part);
+        Observable<ArrayList<SoundTrack>> searchList(@Query("q") String query, @Query("part") String part, @Query("maxResults") int maxResults);
     }
 }

@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     private void initActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarId);
         if (toolbar != null) {
-            toolbar.setTitle(R.string.app_name);
+            toolbar.setTitle(R.string.search_title);
             setSupportActionBar(toolbar);
         }
     }
