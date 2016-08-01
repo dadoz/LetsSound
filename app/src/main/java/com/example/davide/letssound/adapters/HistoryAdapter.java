@@ -27,10 +27,8 @@ public class HistoryAdapter extends ArrayAdapter<HistoryResult> implements View.
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = ((LayoutInflater) getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE));
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.history_item, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_item, parent, false);
         }
 
         HistoryResult item = itemList.get(position);

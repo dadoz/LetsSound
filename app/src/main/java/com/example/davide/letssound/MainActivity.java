@@ -37,6 +37,7 @@ import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.services.MediaService;
 
 import icepick.State;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
 //    SectionsPagerAdapter mSectionsPagerAdapter;
@@ -50,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     @Override

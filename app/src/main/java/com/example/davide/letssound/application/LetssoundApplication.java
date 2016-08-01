@@ -16,15 +16,20 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
+import com.example.davide.letssound.R;
 import com.example.davide.letssound.services.MediaService;
 
 import java.util.List;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by davide on 01/08/16.
  */
 public class LetssoundApplication extends Application {
     private static final String TAG = "LetssoundApplication";
+    private static final String FONT_PATH = "fonts/Words-and-Music-JNL.ttf";
 
     @Override
     public void onCreate() {
@@ -36,11 +41,11 @@ public class LetssoundApplication extends Application {
      *
      */
     private void initCalligraph() {
-//        CalligraphyConfig.initDefault(new CalligraphyConfig
-//                .Builder()
-//                .setDefaultFontPath(FONT_PATH)
-//                .setFontAttrId(R.attr.fontPath)
-//                .build());
+        CalligraphyConfig.initDefault(new CalligraphyConfig
+                .Builder()
+                .setDefaultFontPath(FONT_PATH)
+                .setFontAttrId(R.attr.fontPath)
+                .build());
     }
 
     /**

@@ -43,10 +43,8 @@ public class SettingsAdapter extends ArrayAdapter<Setting> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         Setting settingObj = settingList.get(position);
 
-        LayoutInflater inflater = (LayoutInflater) getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.setting_item, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.setting_item, parent, false);
         }
         TextView label = (TextView) convertView.findViewById(R.id.settingLabelTextId);
         TextView description = ((TextView) convertView.findViewById(R.id.settingDescriptionTextId));
