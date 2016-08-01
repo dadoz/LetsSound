@@ -1,6 +1,7 @@
 package com.example.davide.letssound.fragments;
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import android.widget.AutoCompleteTextView;
 
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.SoundTrackPlayerActivity;
 import com.example.davide.letssound.adapters.HistoryAdapter;
 import com.example.davide.letssound.downloader.helper.DownloaderHelper;
 import com.example.davide.letssound.helpers.SoundTrackStatus;
@@ -154,14 +156,16 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(int position, View v) {
-        if (trackList.size() < position) {
+        if (trackList == null ||
+                trackList.size() < position) {
             Log.e(TAG, "did u forget to initialize list?");
             return;
         }
 
         SoundTrack soundTrack = trackList.get(position);
         musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
-                soundTrack.getSnippet().getThumbnails().getMedium().getUrl());
+                soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
+                soundTrack.getSnippet().getTitle());
         historyManager.saveOnHistory(soundTrack);
         setAutocompleteTextViewAdapter();
     }
@@ -347,6 +351,9 @@ public class SearchListFragment extends Fragment implements
     public void onPlayMediaCallback(Bundle bundle) {
         //TODO fix it big leak
         ((MainActivity) getActivity()).playMedia(bundle);
+        Intent intent = new Intent(getContext(), SoundTrackPlayerActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     /**
@@ -369,18 +376,19 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        HistoryResult historyResult = (HistoryResult) adapterView.getAdapter().getItem(i);
-        handleItemClick(historyResult);
+        HistoryResult HistoryResult = (HistoryResult) adapterView.getAdapter().getItem(i);
+        handleItemClick(HistoryResult);
     }
 
     /**
      *
-     * @param historyResult
+     * @param HistoryResult
      */
-    private void handleItemClick(HistoryResult historyResult) {
-        SoundTrack soundTrack = historyManager.findSoundTrackByTitle(historyResult.getTitle());
+    private void handleItemClick(HistoryResult HistoryResult) {
+        SoundTrack soundTrack = historyManager.findSoundTrackByTitle(HistoryResult.getTitle());
         musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
-                soundTrack.getSnippet().getThumbnails().getMedium().getUrl());
+                soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
+                soundTrack.getSnippet().getTitle());
 
         if (autoCompleteTextView != null &&
                 searchMenuItem != null) {

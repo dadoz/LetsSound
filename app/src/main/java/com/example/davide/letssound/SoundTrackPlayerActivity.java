@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.davide.letssound.fragments.SoundTrackPlayerFragment;
+import com.example.davide.letssound.services.MediaService;
 
-import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,17 +43,20 @@ public class SoundTrackPlayerActivity extends AppCompatActivity {
      *
      */
     private void initView() {
-        inflateFragment();
+        inflateFragment(getIntent().getExtras());
         initActionbar();
     }
 
     /**
      *
+     * @param extras
      */
-    private void inflateFragment() {
+    private void inflateFragment(Bundle extras) {
+        Fragment frag = getSuitableFragment();
+        frag.setArguments(extras);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragmentContainerId, getSuitableFragment())
+                .replace(R.id.fragmentContainerId, frag)
                 .commit();
     }
 

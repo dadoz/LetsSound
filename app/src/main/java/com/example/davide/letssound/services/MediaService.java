@@ -28,6 +28,7 @@ import java.lang.ref.WeakReference;
  */
 public class MediaService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
     private static final String TAG = "MediaService";
+    public static final String PARAM_TRACK_TITLE = "TITLE";
     public static String PARAM_TRACK_THUMBNAIL = "PARAM_TRACK_THUMBNAIL";
     private MediaSessionCompat mediaSession;
 

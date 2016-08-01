@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:circular="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="@dimen/small_margin_16"
+    android:paddingRight="@dimen/small_margin_16"
     android:background="@color/md_violet_custom_1">
     <com.example.davide.letssound.views.CircularNetworkImageView
         android:id="@+id/playerMediaArtImageViewId"
@@ -13,7 +15,7 @@
         android:layout_centerHorizontal="true"
         android:src="@drawable/sound_track_icon_dark"/>
     <me.angrybyte.circularslider.CircularSlider
-        android:id="@+id/circular"
+        android:id="@+id/playerSoundTrackSeekbarId"
         android:layout_width="240dp"
         android:layout_height="240dp"
         android:layout_marginTop="60dp"
@@ -46,43 +48,46 @@
         android:layout_centerHorizontal="true"
         android:text="info - duration"/>
 
-    <ImageView
-        android:id="@+id/playerPlayButtonId"
-        android:layout_width="@dimen/medium_icon_size"
-        android:layout_height="@dimen/medium_icon_size"
-        android:layout_below="@id/playerTrackInfoTextId"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_play_circle_outline_white_24dp"/>
-    <ImageView
-        android:visibility="gone"
-        android:id="@+id/playerPauseButtonId"
-        android:layout_width="@dimen/medium_icon_size"
-        android:layout_height="@dimen/medium_icon_size"
-        android:layout_below="@id/playerTrackInfoTextId"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_pause_circle_outline_white_24dp"/>
-    <ImageView
-        android:id="@+id/playerFastRewindButtonId"
-        android:layout_toLeftOf="@id/playerPlayButtonId"
-        android:layout_width="@dimen/medium_icon_size"
-        android:layout_height="@dimen/medium_icon_size"
-        android:layout_below="@id/playerTrackInfoTextId"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_fast_rewind_white_24dp"/>
-    <ImageView
-        android:id="@+id/playerFastForwardButtonId"
-        android:layout_toRightOf="@id/playerPlayButtonId"
-        android:layout_width="@dimen/medium_icon_size"
-        android:layout_height="@dimen/medium_icon_size"
-        android:layout_below="@id/playerTrackInfoTextId"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_fast_forward_white_24dp"/>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/small_margin_16">
+        <ImageView
+            android:id="@+id/playerFastRewindButtonId"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:src="@drawable/ic_fast_rewind_white_24dp"/>
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/playerPlayButtonId"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_play_circle_outline_white_24dp"/>
+        <ImageView
+            android:id="@+id/playerPauseButtonId"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_pause_circle_outline_white_24dp"/>
+        <ImageView
+            android:id="@+id/playerFastForwardButtonId"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:src="@drawable/ic_fast_forward_white_24dp"/>
+    </LinearLayout>
     <ImageView
         android:id="@+id/playerRepeatButtonId"
         android:layout_width="@dimen/medium_icon_size"
         android:layout_height="@dimen/medium_icon_size"
-        android:layout_below="@id/playerTrackInfoTextId"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/small_margin_16"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/small_margin_16"
         android:src="@drawable/ic_repeat_one_white_24dp"/>
+
+
 </RelativeLayout>
