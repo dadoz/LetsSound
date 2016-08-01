@@ -1,4 +1,4 @@
-package com.example.davide.letssound.fragments;
+package com.example.davide.letssound.managers;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,8 +8,6 @@ import com.example.davide.letssound.models.SoundTrack;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Observable;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;

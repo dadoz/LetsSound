@@ -15,11 +15,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 import com.example.davide.letssound.MainActivity;
@@ -28,10 +26,12 @@ import com.example.davide.letssound.adapters.HistoryAdapter;
 import com.example.davide.letssound.downloader.helper.DownloaderHelper;
 import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
+import com.example.davide.letssound.managers.HistoryManager;
 import com.example.davide.letssound.managers.MediaSearchManager;
 import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.models.HistoryResult;
 import com.example.davide.letssound.models.SoundTrack;
+import com.example.davide.letssound.observer.SoundTrackSearchObserver;
 import com.example.davide.letssound.services.MediaService;
 import com.example.davide.letssound.utils.Utils;
 

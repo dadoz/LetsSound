@@ -1,12 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/medium_padding">
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textColor="@color/md_blue_grey_400"
-    android:text="hey playing song"/>
-</LinearLayout>
+    xmlns:circular="http://schemas.android.com/apk/res-auto"
+    android:background="@color/md_violet_custom_1">
+    <com.example.davide.letssound.views.CircularNetworkImageView
+        android:id="@+id/playerMediaArtImageViewId"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:scaleType="fitXY"
+        android:layout_marginTop="80dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/sound_track_icon_dark"/>
+    <me.angrybyte.circularslider.CircularSlider
+        android:id="@+id/circular"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+
+        circular:angle="3.14"
+        circular:border_color="@color/md_grey_50"
+        circular:border_thickness="4dp"
+        circular:thumb_color="@color/md_violet_custom_3"
+        circular:thumb_size="8dp" />
+    <TextView
+        android:id="@+id/playerTrackTitleTextId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/playerMediaArtImageViewId"
+        android:textColor="@color/md_grey_50"
+        android:textSize="@dimen/title_text_extra_large"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="@dimen/small_padding"
+        android:layout_centerHorizontal="true"
+        android:text="Sound Track Title"/>
+    <TextView
+        android:id="@+id/playerTrackInfoTextId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/playerTrackTitleTextId"
+        android:layout_marginBottom="40dp"
+        android:textColor="@color/md_violet_custom_3"
+        android:textSize="@dimen/title_text_medium"
+        android:layout_centerHorizontal="true"
+        android:text="info - duration"/>
+
+    <ImageView
+        android:id="@+id/playerPlayButtonId"
+        android:layout_width="@dimen/medium_icon_size"
+        android:layout_height="@dimen/medium_icon_size"
+        android:layout_below="@id/playerTrackInfoTextId"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_play_circle_outline_white_24dp"/>
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/playerPauseButtonId"
+        android:layout_width="@dimen/medium_icon_size"
+        android:layout_height="@dimen/medium_icon_size"
+        android:layout_below="@id/playerTrackInfoTextId"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_pause_circle_outline_white_24dp"/>
+    <ImageView
+        android:id="@+id/playerFastRewindButtonId"
+        android:layout_toLeftOf="@id/playerPlayButtonId"
+        android:layout_width="@dimen/medium_icon_size"
+        android:layout_height="@dimen/medium_icon_size"
+        android:layout_below="@id/playerTrackInfoTextId"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_fast_rewind_white_24dp"/>
+    <ImageView
+        android:id="@+id/playerFastForwardButtonId"
+        android:layout_toRightOf="@id/playerPlayButtonId"
+        android:layout_width="@dimen/medium_icon_size"
+        android:layout_height="@dimen/medium_icon_size"
+        android:layout_below="@id/playerTrackInfoTextId"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_fast_forward_white_24dp"/>
+    <ImageView
+        android:id="@+id/playerRepeatButtonId"
+        android:layout_width="@dimen/medium_icon_size"
+        android:layout_height="@dimen/medium_icon_size"
+        android:layout_below="@id/playerTrackInfoTextId"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/small_margin_16"
+        android:src="@drawable/ic_repeat_one_white_24dp"/>
+</RelativeLayout>

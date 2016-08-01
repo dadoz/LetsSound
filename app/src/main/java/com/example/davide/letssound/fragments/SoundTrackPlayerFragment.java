@@ -17,24 +17,36 @@ import butterknife.ButterKnife;
  * A placeholder fragment containing a simple view.
  */
 public class SoundTrackPlayerFragment extends Fragment {
-    private View mRootView;
     public SoundTrackPlayerFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_sound_track_player_layout, container, false);
+        View mRootView = inflater.inflate(R.layout.fragment_sound_track_player_layout, container, false);
         ButterKnife.bind(this, mRootView);
-        initView();
         return mRootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        initView();
     }
 
     /**
      *
      */
     public void initView() {
-//        setHasOptionsMenu(true);
     }
 
 }

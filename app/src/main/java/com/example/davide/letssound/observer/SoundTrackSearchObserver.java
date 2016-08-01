@@ -1,4 +1,4 @@
-package com.example.davide.letssound.fragments;
+package com.example.davide.letssound.observer;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
