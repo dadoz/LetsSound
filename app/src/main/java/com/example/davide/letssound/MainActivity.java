@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.fragments.SearchListFragment;
 import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.services.MediaService;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        doBindService();
+        ((LetssoundApplication) getApplication()).doBindService();
     }
 
     @Override
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        doUnbindService();
+        ((LetssoundApplication) getApplication()).doUnbindService();
     }
 
     /**
@@ -162,81 +163,5 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
-    /**
-     * start service and bind it
-     */
-    private void doBindService() {
-        bindService(new Intent(this, MediaService.class),
-                serviceConnection, Context.BIND_AUTO_CREATE);
-    }
 
-    /**
-     * undbind service
-     */
-    private void doUnbindService() {
-        unbindService(serviceConnection);
-    }
-    public MediaControllerCompat mediaController;
-
-    public MediaControllerCompat.Callback mcCallback = new MediaControllerCompat.Callback () {
-
-        @Override
-        public void onSessionEvent(String event, Bundle extras) {
-        }
-
-        @Override
-        public void onPlaybackStateChanged(PlaybackStateCompat state) {
-            switch (state.getState()) {
-                case PlaybackState.STATE_NONE:
-                    break;
-                case PlaybackState.STATE_PLAYING:
-                    Log.e(TAG, "Hey playing");
-                    break;
-                case PlaybackState.STATE_PAUSED:
-                    break;
-                case PlaybackState.STATE_REWINDING:
-                    break;
-            }
-        }
-
-        @Override
-        public void onMetadataChanged(MediaMetadataCompat metadata) {
-        }
-
-        @Override
-        public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
-        }
-
-        @Override
-        public void onAudioInfoChanged(MediaControllerCompat.PlaybackInfo info) {
-        }
-    };
-    /**
-     *
-     */
-    public ServiceConnection serviceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            try {
-                mediaController = new MediaControllerCompat(MainActivity.this,
-                        ((MediaService.MediaBinder) iBinder).getMediaSessionToken());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-            mediaController.registerCallback(mcCallback);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mediaController = null;
-        }
-    };
-
-    /**
-     * @deprecated
-     */
-    public void playMedia(Bundle bundle) {
-        mediaController.getTransportControls().playFromSearch("", bundle);
-    }
 }

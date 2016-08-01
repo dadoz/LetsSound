@@ -4,6 +4,7 @@ package com.example.davide.letssound.fragments;
  * Created by davide on 26/11/15.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.managers.MusicPlayerControllerManager;
+import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.managers.VolleyMediaArtManager;
 import com.example.davide.letssound.services.MediaService;
 import com.example.davide.letssound.views.CircularNetworkImageView;
@@ -29,7 +32,7 @@ import me.angrybyte.circularslider.CircularSlider;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class SoundTrackPlayerFragment extends Fragment {
+public class SoundTrackPlayerFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "SoundTrackPlayerFragment";
     private Uri mediaArtUri;
     private String title;
@@ -39,7 +42,15 @@ public class SoundTrackPlayerFragment extends Fragment {
     CircularNetworkImageView playerMediaArtImageView;
     @Bind(R.id.playerTrackTitleTextId)
     TextView playerTrackTitleText;
+    @Bind(R.id.playerPlayButtonId)
+    View playerPlayButton;
+    @Bind(R.id.playerPauseButtonId)
+    View playerPauseButton;
+    @Bind(R.id.playerRepeatButtonId)
+    View playerRepeatButton;
+
     private VolleyMediaArtManager volleyMediaArtManager;
+    private MusicPlayerControllerManager musicPlayerControllerManager;
 
     public SoundTrackPlayerFragment() {
     }
@@ -57,6 +68,9 @@ public class SoundTrackPlayerFragment extends Fragment {
         volleyMediaArtManager = VolleyMediaArtManager
                 .getInstance(new WeakReference<>(getActivity().getApplicationContext()), null);
 
+        musicPlayerControllerManager = MusicPlayerControllerManager.getInstance(new WeakReference<Activity>(getActivity()),
+                new View[] {playerPlayButton, playerPauseButton});
+        musicPlayerControllerManager.initMediaController();
         return mRootView;
     }
 
@@ -79,6 +93,9 @@ public class SoundTrackPlayerFragment extends Fragment {
 //        playerMediaArtImageView
 //                .setImageUrl(mediaArtUri.toString(), volleyMediaArtManager.getImageLoader());
         playerTrackTitleText.setText(title);
+        playerPlayButton.setOnClickListener(this);
+        playerPauseButton.setOnClickListener(this);
+        playerRepeatButton.setOnClickListener(this);
         initSeekbar();
     }
 
@@ -100,4 +117,18 @@ public class SoundTrackPlayerFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.playerPlayButtonId:
+                musicPlayerControllerManager.play();
+                break;
+            case R.id.playerPauseButtonId:
+                musicPlayerControllerManager.pause();
+                break;
+            case R.id.playerRepeatButtonId:
+                musicPlayerControllerManager.repeatOne();
+                break;
+        }
+    }
 }

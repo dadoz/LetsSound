@@ -25,6 +25,7 @@ import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.SoundTrackPlayerActivity;
 import com.example.davide.letssound.adapters.HistoryAdapter;
+import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.downloader.helper.DownloaderHelper;
 import com.example.davide.letssound.helpers.SoundTrackStatus;
 import com.example.davide.letssound.adapters.SoundTrackRecyclerViewAdapter;
@@ -103,14 +104,7 @@ public class SearchListFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //init component
-        soundTrackStatus = SoundTrackStatus.getInstance();
-//        downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
-//                new WeakReference<OnDownloadHelperResultInterface>(this));
-        searchManager = MediaSearchManager.getInstance(new WeakReference<MediaSearchManager.TrackSearchManagerInterface>(this));
-
-        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
-                new WeakReference<>(boundService), new WeakReference<MusicPlayerManager.OnMusicPlayerCallback>(this));
+        initComponents();
     }
 
     @Override
@@ -125,6 +119,18 @@ public class SearchListFragment extends Fragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         historyManager = HistoryManager.getInstance(new WeakReference<>(getActivity().getApplicationContext()));
         initView(savedInstanceState);
+    }
+
+    /**
+     * init components
+     */
+    private void initComponents() {
+        soundTrackStatus = SoundTrackStatus.getInstance();
+//        downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
+//                new WeakReference<OnDownloadHelperResultInterface>(this));
+        searchManager = MediaSearchManager.getInstance(new WeakReference<MediaSearchManager.TrackSearchManagerInterface>(this));
+
+        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<MusicPlayerManager.OnMusicPlayerCallback>(this));
     }
 
     /**
@@ -350,7 +356,7 @@ public class SearchListFragment extends Fragment implements
     @Override
     public void onPlayMediaCallback(Bundle bundle) {
         //TODO fix it big leak
-        ((MainActivity) getActivity()).playMedia(bundle);
+        ((LetssoundApplication) getActivity().getApplication()).playMedia(bundle);
         Intent intent = new Intent(getContext(), SoundTrackPlayerActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -395,7 +401,6 @@ public class SearchListFragment extends Fragment implements
             searchMenuItem.collapseActionView();
             autoCompleteTextView.setText("");
         }
-
     }
 
 }

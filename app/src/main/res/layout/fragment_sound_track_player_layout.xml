@@ -59,26 +59,31 @@
             android:id="@+id/playerFastRewindButtonId"
             android:layout_width="@dimen/medium_icon_size"
             android:layout_height="@dimen/medium_icon_size"
-            android:src="@drawable/ic_fast_rewind_white_24dp"/>
-
+            android:src="@drawable/ic_fast_rewind_white_24dp"
+            android:background="?attr/selectableItemBackground"/>
         <ImageView
             android:visibility="gone"
             android:id="@+id/playerPlayButtonId"
             android:layout_width="@dimen/medium_icon_size"
             android:layout_height="@dimen/medium_icon_size"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_play_circle_outline_white_24dp"/>
+            android:src="@drawable/ic_play_circle_outline_white_24dp"
+            android:background="?attr/selectableItemBackground"/>
         <ImageView
             android:id="@+id/playerPauseButtonId"
             android:layout_width="@dimen/medium_icon_size"
             android:layout_height="@dimen/medium_icon_size"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_pause_circle_outline_white_24dp"/>
+            android:src="@drawable/ic_pause_circle_outline_white_24dp"
+            android:background="?attr/selectableItemBackground"/>
+
         <ImageView
             android:id="@+id/playerFastForwardButtonId"
             android:layout_width="@dimen/medium_icon_size"
             android:layout_height="@dimen/medium_icon_size"
-            android:src="@drawable/ic_fast_forward_white_24dp"/>
+            android:src="@drawable/ic_fast_forward_white_24dp"
+            android:background="?attr/selectableItemBackground"/>
+
     </LinearLayout>
     <ImageView
         android:id="@+id/playerRepeatButtonId"
@@ -87,7 +92,9 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/small_margin_16"
-        android:src="@drawable/ic_repeat_one_white_24dp"/>
+        android:src="@drawable/ic_repeat_one_white_24dp"
+        android:background="?attr/selectableItemBackground"/>
+
 
 
 </RelativeLayout>

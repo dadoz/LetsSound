@@ -24,6 +24,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/md_violet_custom_1"
+        android:layout_marginBottom="?attr/actionBarSize"
         tools:context=".PlayerActivity"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
