@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/small_margin_16"
     android:minHeight="@dimen/min_item_height"
-    android:gravity="center">
-    <!--android:background="?android:attr/selectableItemBackground">-->
+    android:gravity="center"
+    android:background="?android:attr/selectableItemBackground">
     <com.example.davide.letssound.views.CircularNetworkImageView
         android:id="@+id/mediaArtImageViewId"
         android:layout_width="@dimen/medium_icon_size"
