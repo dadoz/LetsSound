@@ -24,10 +24,6 @@ public class HistoryManager {
     private final static String SCHEMA_NAME = "history_soundtrack_realmio";
     private String TAG = "HistoryManager";
 
-
-
-    public enum ExportTypeEnum { DEFAULT, STRING, SOUND_TRACK_OBJ };
-
     /**
      *
      * @param context

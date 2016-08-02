@@ -274,8 +274,6 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification(new WeakReference<>(playbackState),
-                        soundTrackTitle, soundTrackUrl, null);
             }
         }
 

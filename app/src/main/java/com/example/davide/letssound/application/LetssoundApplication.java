@@ -62,6 +62,7 @@ public class LetssoundApplication extends Application {
     public void doUnbindService() {
         unbindService(serviceConnection);
     }
+
     public MediaControllerCompat mediaController;
 
     /**

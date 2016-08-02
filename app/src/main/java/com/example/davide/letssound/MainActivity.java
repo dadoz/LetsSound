@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ((LetssoundApplication) getApplication()).doUnbindService();
+        ((LetssoundApplication) getApplication()).doUnbindService(); //TODO this callback destroy service
     }
 
     /**
