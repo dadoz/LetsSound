@@ -98,7 +98,7 @@ public class SearchListFragment extends Fragment implements
     @Override
     public void onStop() {
         super.onStop();
-        trackList = null;
+//        trackList = null;
     }
 
     @Override

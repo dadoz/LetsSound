@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,6 +42,9 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     private MediaControllerCompat mediaController;
     private NotificationHelper notificationHelper;
     public int SEEKTO_MIN = 10000;
+    private Uri mediaArtUri;
+    private String soundTrackTitle;
+    private Uri soundTrackUrl;
 
 
     /**
@@ -171,41 +175,24 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                 .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                 .build();
         mediaSession.setPlaybackState(playbackState);
-        notificationHelper.updateNotification(new WeakReference<>(playbackState), mediaArtUri);
+        notificationHelper
+                .updateNotification(new WeakReference<>(playbackState),
+                        soundTrackTitle, soundTrackUrl, mediaArtUri);
     }
 
     /**
      * @deprecated
-     * @param bundle
+     * @param extras
      * @return
-     * @throws IOException
      */
-    private Uri getUriFromBundle(Bundle bundle) {
-        return bundle.getParcelable(PARAM_TRACK_URI);
+    private void initSoundTrackFromBundle(Bundle extras) {
+        //TODO fix it
+        soundTrackUrl = extras.getParcelable(PARAM_TRACK_URI);
+        mediaArtUri = extras.getParcelable(PARAM_TRACK_THUMBNAIL);
+        soundTrackTitle = extras.getParcelable(PARAM_TRACK_TITLE);
     }
 
-    /**
-     * @deprecated
-     * @param bundle
-     * @return
-     * @throws IOException
-     */
-    private Uri getMediaArtUriFromBundle(Bundle bundle) {
-        return bundle.getParcelable(PARAM_TRACK_THUMBNAIL);
-    }
 
-    /**
-     * @deprecated
-     * @param bundle
-     * @return
-     * @throws IOException
-     */
-    public FileDescriptor getFileDescriptorFromBundle(Bundle bundle) throws IOException {
-        String fileName = bundle.getString(PARAM_TRACK_URI);
-        return getApplicationContext().getAssets().openFd(fileName).getFileDescriptor();
-    }
-
-    private Uri mediaArtUri;
     /**
      *
      */
@@ -220,7 +207,8 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification(new WeakReference<>(playbackState), mediaArtUri);
+                notificationHelper.updateNotification(new WeakReference<>(playbackState),
+                        soundTrackTitle, soundTrackUrl, mediaArtUri);
             }
         }
 
@@ -230,11 +218,9 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
             try {
 //                FileDescriptor fd = getFileDescriptorFromBundle(extras);
 //                mediaPlayer.setDataSource(fd);
-                Uri url = getUriFromBundle(extras);
-                //TODO fix it
-                mediaArtUri = getMediaArtUriFromBundle(extras);
+                initSoundTrackFromBundle(extras);
                 mediaPlayer.reset();
-                mediaPlayer.setDataSource(MediaService.this, url);
+                mediaPlayer.setDataSource(MediaService.this, soundTrackUrl);
                 mediaPlayer.prepareAsync();
 
                 PlaybackStateCompat playbackState = new PlaybackStateCompat.Builder()
@@ -275,7 +261,8 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification(new WeakReference<>(playbackState), mediaArtUri);
+                notificationHelper.updateNotification(new WeakReference<>(playbackState),
+                        soundTrackTitle, soundTrackUrl, mediaArtUri);
             }
         }
 
@@ -287,7 +274,8 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1.0f)
                         .build();
                 mediaSession.setPlaybackState(playbackState);
-                notificationHelper.updateNotification(new WeakReference<>(playbackState), null);
+                notificationHelper.updateNotification(new WeakReference<>(playbackState),
+                        soundTrackTitle, soundTrackUrl, null);
             }
         }
 
@@ -315,4 +303,5 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         public void onCustomAction(@NonNull String action, Bundle extras) {
         }
     };
+
 }

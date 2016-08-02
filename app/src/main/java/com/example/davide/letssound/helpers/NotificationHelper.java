@@ -4,9 +4,12 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
 import android.media.session.PlaybackState;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -16,6 +19,7 @@ import android.util.Log;
 import com.android.volley.VolleyError;
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.managers.VolleyMediaArtManager;
 import com.example.davide.letssound.services.MediaService;
 
@@ -36,6 +40,9 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
     private static WeakReference<MediaSessionCompat> mediaSessionRef;
     private NotificationManagerCompat nm;
     private NotificationCompat.Builder notificationBuilder;
+    private Uri mediaArtUri;
+    private Uri soundTrackUri;
+    private String title;
 
     public NotificationHelper(WeakReference<MediaService> srv, WeakReference<MediaSessionCompat> ms,
                               WeakReference<PlaybackStateCompat> ps) {
@@ -50,19 +57,21 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
      * @param playbackState
      * @param mediaArtUri
      */
-    public void updateNotification(WeakReference<PlaybackStateCompat> playbackState, Uri mediaArtUri) {
+    public void updateNotification(WeakReference<PlaybackStateCompat> playbackState, String title,
+                                   Uri soundTrackUri, Uri mediaArtUri) {
         retrieveMediaArtAsync(mediaArtUri);
         updatePlaybackCallbackState(playbackState);
+        setSoundTrackInfo(title, soundTrackUri, mediaArtUri);
         notificationBuilder = new NotificationCompat.Builder(serviceRef.get().getApplicationContext());
         notificationBuilder
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setCategory(Notification.CATEGORY_TRANSPORT)
-                .setContentIntent(PendingIntent.getActivity(serviceRef.get(), 0,
-                        new Intent(serviceRef.get(), MainActivity.class), 0))
+                .setContentIntent(getContentIntent())
+//                .setContentIntent(PendingIntent.getActivity(serviceRef.get(), 0,
+//                        getContentIntent(), 0))
                 .setColor(ContextCompat.getColor(serviceRef.get().getApplicationContext(),
                         R.color.md_violet_custom_1))
-                .setContentTitle(playbackStateRef.get().getState() == PlaybackStateCompat.STATE_PLAYING ?
-                        "Playing music" : "Paused @@@@@@@@@")
+                .setContentTitle(title)
                 .setContentText(" - ")
                 .setSmallIcon(R.drawable.sound_track_icon)
                 .addAction(getActionDependingOnState(PlaybackState.STATE_REWINDING))
@@ -75,6 +84,18 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
                         .setCancelButtonIntent(getPendingIntent(ACTION_STOP)));
         setNotificationPlaybackState(notificationBuilder);
         nm.notify(NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+    /**
+     *
+     * @param title
+     * @param soundTrackUri
+     * @param mediaArtUri
+     */
+    private void setSoundTrackInfo(String title, Uri soundTrackUri, Uri mediaArtUri) {
+        this.title = title;
+        this.soundTrackUri = soundTrackUri;
+        this.mediaArtUri = mediaArtUri;
     }
 
     /**
@@ -185,5 +206,25 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
     @Override
     public void onVolleyMediaArtError(VolleyError error) {
         Log.e(TAG, "VOLLEY - " + error.getMessage());
+    }
+
+    /**
+     *
+     * @return
+     */
+    public PendingIntent getContentIntent() {
+        Intent resultIntent = new Intent(serviceRef.get(), SoundTrackStatus.class);
+        if (soundTrackUri != null &&
+                mediaArtUri != null &&
+                title != null) {
+            resultIntent.putExtras(MusicPlayerManager
+                    .buildPlayBundle(soundTrackUri.toString(), mediaArtUri.toString(), title));
+        }
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(serviceRef.get());
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+//        Intent intent = new Intent(serviceRef.get(), SoundTrackStatus.class);
     }
 }
