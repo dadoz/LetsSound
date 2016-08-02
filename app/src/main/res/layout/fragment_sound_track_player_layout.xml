@@ -20,7 +20,7 @@
         android:layout_height="240dp"
         android:layout_marginTop="60dp"
         android:layout_centerHorizontal="true"
-
+        circular:start_angle="0"
         circular:angle="3.14"
         circular:border_color="@color/md_grey_50"
         circular:border_thickness="4dp"

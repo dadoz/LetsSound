@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.managers.MusicPlayerControllerManager;
 import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.managers.VolleyMediaArtManager;
@@ -127,7 +128,8 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
                 musicPlayerControllerManager.pause();
                 break;
             case R.id.playerRepeatButtonId:
-                musicPlayerControllerManager.repeatOne();
+                Bundle bundle = getArguments();
+                musicPlayerControllerManager.repeatOne(bundle);
                 break;
         }
     }

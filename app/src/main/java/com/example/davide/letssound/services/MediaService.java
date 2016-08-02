@@ -26,7 +26,8 @@ import java.lang.ref.WeakReference;
 /**
  * Created by davide on 13/07/16.
  */
-public class MediaService extends Service implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
+public class MediaService extends Service implements MediaPlayer.OnBufferingUpdateListener,
+        MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
     private static final String TAG = "MediaService";
     public static final String PARAM_TRACK_TITLE = "TITLE";
     public static String PARAM_TRACK_THUMBNAIL = "PARAM_TRACK_THUMBNAIL";
@@ -156,6 +157,10 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
+        mediaController.getTransportControls().stop();
+        notificationHelper.cancel();
+        //send broadcast event
+//        sendBroadcast(new Intent());
     }
 
     @Override

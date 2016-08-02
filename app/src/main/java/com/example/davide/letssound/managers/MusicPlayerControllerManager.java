@@ -2,6 +2,7 @@ package com.example.davide.letssound.managers;
 
 import android.app.Activity;
 import android.media.session.PlaybackState;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.media.MediaMetadataCompat;
@@ -91,11 +92,10 @@ public class MusicPlayerControllerManager {
     }
     /**
      *
+     * @param bundle
      */
-    public void repeatOne() {
-        if (mediaControllerRef != null) {
-            mediaControllerRef.getTransportControls().seekTo(0);
-        }
+    public void repeatOne(Bundle bundle) {
+        ((LetssoundApplication) activityRef.get().getApplication()).playMedia(bundle);
     }
 
     /**
