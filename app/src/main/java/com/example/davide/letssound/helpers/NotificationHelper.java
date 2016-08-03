@@ -19,9 +19,12 @@ import android.util.Log;
 import com.android.volley.VolleyError;
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.SoundTrackPlayerActivity;
 import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.managers.VolleyMediaArtManager;
+import com.example.davide.letssound.models.Setting;
 import com.example.davide.letssound.services.MediaService;
+import com.example.davide.letssound.utils.Utils;
 
 import java.lang.ref.WeakReference;
 
@@ -67,8 +70,6 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setCategory(Notification.CATEGORY_TRANSPORT)
                 .setContentIntent(getContentIntent())
-//                .setContentIntent(PendingIntent.getActivity(serviceRef.get(), 0,
-//                        getContentIntent(), 0))
                 .setColor(ContextCompat.getColor(serviceRef.get().getApplicationContext(),
                         R.color.md_violet_custom_1))
                 .setContentTitle(title)
@@ -174,6 +175,33 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
         nm.cancel(NOTIFICATION_ID);
     }
 
+
+    /**
+     *
+     * @return
+     */
+    public PendingIntent getContentIntent() {
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(serviceRef.get());
+        stackBuilder.addParentStack(SoundTrackPlayerActivity.class);
+        stackBuilder.addNextIntent(getNextIntent());
+        return stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Intent getNextIntent() {
+        Intent resultIntent = new Intent(serviceRef.get(), SoundTrackPlayerActivity.class);
+        if (soundTrackUri != null &&
+                mediaArtUri != null &&
+                title != null) {
+            resultIntent.putExtras(Utils
+                    .buildPlayBundle(soundTrackUri.toString(), mediaArtUri.toString(), title));
+        }
+        return resultIntent;
+    }
+
     /**
      *
      * @param action
@@ -208,23 +236,5 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
         Log.e(TAG, "VOLLEY - " + error.getMessage());
     }
 
-    /**
-     *
-     * @return
-     */
-    public PendingIntent getContentIntent() {
-        Intent resultIntent = new Intent(serviceRef.get(), SoundTrackStatus.class);
-        if (soundTrackUri != null &&
-                mediaArtUri != null &&
-                title != null) {
-            resultIntent.putExtras(MusicPlayerManager
-                    .buildPlayBundle(soundTrackUri.toString(), mediaArtUri.toString(), title));
-        }
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(serviceRef.get());
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-//        Intent intent = new Intent(serviceRef.get(), SoundTrackStatus.class);
-    }
 }

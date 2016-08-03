@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.davide.letssound.helpers.ObservableHelper;
 import com.example.davide.letssound.services.MediaService;
+import com.example.davide.letssound.utils.Utils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -96,24 +97,10 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
      */
     private void playMedia(String videoUrl) {
         //TODO pay attention on this
-        Bundle bundle = buildPlayBundle(videoUrl, thumbnailUrl, title);
+        Bundle bundle = Utils.buildPlayBundle(videoUrl, thumbnailUrl, title);
         listener.get().onPlayMediaCallback(bundle);
     }
 
-    /**
-     *
-     * @param videoUrl
-     * @param thumbnailUrl
-     * @param title
-     * @return
-     */
-    public static Bundle buildPlayBundle(String videoUrl, String thumbnailUrl, String title) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(MediaService.PARAM_TRACK_URI, Uri.parse(videoUrl));
-        bundle.putParcelable(MediaService.PARAM_TRACK_THUMBNAIL, Uri.parse(thumbnailUrl));
-        bundle.putString(MediaService.PARAM_TRACK_TITLE, title);
-        return bundle;
-    }
 
     public interface OnMusicPlayerCallback {
         void onPlayMediaCallback(Bundle bundle);

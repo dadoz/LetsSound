@@ -225,6 +225,8 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 //                FileDescriptor fd = getFileDescriptorFromBundle(extras);
 //                mediaPlayer.setDataSource(fd);
                 initSoundTrackFromBundle(extras);
+                Log.e(TAG, soundTrackUrl.toString());
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.reset();
                 mediaPlayer.setDataSource(MediaService.this, soundTrackUrl);
                 mediaPlayer.prepareAsync();

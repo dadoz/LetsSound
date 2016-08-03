@@ -1,7 +1,11 @@
 package com.example.davide.letssound.utils;
 
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.View;
+
+import com.example.davide.letssound.services.MediaService;
 
 /**
  * Created by davide on 14/07/16.
@@ -17,6 +21,21 @@ public class Utils {
                 .make(view, message, Snackbar.LENGTH_SHORT);
         snackbar.getView().setBackgroundColor(color);
         snackbar.show();
+    }
+
+    /**
+     *
+     * @param videoUrl
+     * @param thumbnailUrl
+     * @param title
+     * @return
+     */
+    public static Bundle buildPlayBundle(String videoUrl, String thumbnailUrl, String title) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(MediaService.PARAM_TRACK_URI, Uri.parse(videoUrl));
+        bundle.putParcelable(MediaService.PARAM_TRACK_THUMBNAIL, Uri.parse(thumbnailUrl));
+        bundle.putString(MediaService.PARAM_TRACK_TITLE, title);
+        return bundle;
     }
 
 }
