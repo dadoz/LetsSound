@@ -1,47 +1,19 @@
 package com.example.davide.letssound;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.media.MediaMetadata;
-import android.media.session.MediaController;
-import android.media.session.MediaController.Callback;
-import android.media.session.MediaSession;
-import android.media.session.PlaybackState;
-import android.net.Uri;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.fragments.SearchListFragment;
-import com.example.davide.letssound.managers.MusicPlayerManager;
-import com.example.davide.letssound.services.MediaService;
-
 import icepick.State;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
-//    SectionsPagerAdapter mSectionsPagerAdapter;
-//    ViewPager viewPager;
     private String TAG = "MainActivity";
     @State
     public String currentFragmentTag = SearchListFragment.SEARCH_LIST_FRAG_TAG;
@@ -116,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         initActionBar();
         initFragment();
-//        initViewPager();
     }
 
     /**
@@ -149,25 +120,5 @@ public class MainActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
         }
     }
-
-//    /**
-//     * TODO move in a base class
-//     */
-//    private void initViewPager() {
-//        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
-//                new WeakReference<Activity>(this));
-//        viewPager = (ViewPager) findViewById(R.id.pagerId);
-//        if (viewPager != null) {
-//            viewPager.setAdapter(mSectionsPagerAdapter);
-//        }
-//
-//        // Give the TabLayout the ViewPager
-//        TabLayout tabLayout = (TabLayout) findViewById(R.id.slidingTabsId);
-//        if (tabLayout != null) {
-//            tabLayout.setupWithViewPager(viewPager);
-//        }
-//    }
-
-
 
 }

@@ -17,6 +17,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.davide.letssound.helpers.NotificationHelper;
 
@@ -28,7 +29,7 @@ import java.lang.ref.WeakReference;
  * Created by davide on 13/07/16.
  */
 public class MediaService extends Service implements MediaPlayer.OnBufferingUpdateListener,
-        MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
+        MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
     private static final String TAG = "MediaService";
     public static final String PARAM_TRACK_TITLE = "TITLE";
     public static String PARAM_TRACK_THUMBNAIL = "PARAM_TRACK_THUMBNAIL";
@@ -45,6 +46,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     private Uri mediaArtUri;
     private String soundTrackTitle;
     private Uri soundTrackUrl;
+
 
 
     /**
@@ -166,6 +168,11 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         //send broadcast event
 //        sendBroadcast(new Intent());
     }
+    @Override
+    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+        Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+        return false;
+    }
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
@@ -186,10 +193,9 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
      * @return
      */
     private void initSoundTrackFromBundle(Bundle extras) {
-        //TODO fix it
         soundTrackUrl = extras.getParcelable(PARAM_TRACK_URI);
         mediaArtUri = extras.getParcelable(PARAM_TRACK_THUMBNAIL);
-        soundTrackTitle = extras.getParcelable(PARAM_TRACK_TITLE);
+        soundTrackTitle = extras.getString(PARAM_TRACK_TITLE);
     }
 
 

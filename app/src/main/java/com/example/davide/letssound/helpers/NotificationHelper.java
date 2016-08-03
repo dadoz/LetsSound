@@ -73,7 +73,7 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
                         R.color.md_violet_custom_1))
                 .setContentTitle(title)
                 .setContentText(" - ")
-                .setSmallIcon(R.drawable.sound_track_icon)
+                .setSmallIcon(R.drawable.ic_music_note_black_48dp)
                 .addAction(getActionDependingOnState(PlaybackState.STATE_REWINDING))
                 .addAction(getActionDependingOnState(PlaybackState.STATE_PLAYING))
                 .addAction(getActionDependingOnState(PlaybackState.STATE_FAST_FORWARDING))
