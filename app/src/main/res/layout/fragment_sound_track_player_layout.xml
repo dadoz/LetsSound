@@ -17,6 +17,8 @@
         android:src="@drawable/sound_track_icon_dark"/>
     <com.example.davide.letssound.views.CircularSeekBar
         android:id="@+id/playerSoundTrackSeekbarId"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
         android:layout_width="240dp"
         android:layout_height="240dp"
         app:start_angle="270"
@@ -41,7 +43,8 @@
         android:layout_marginTop="60dp"
         android:layout_marginBottom="@dimen/small_padding"
         android:layout_centerHorizontal="true"
-        android:text="Sound Track Title"/>
+        android:gravity="center"
+        android:text="Sound Track Title sdflkjls sldk fjlskdj flskdj kljsd "/>
     <TextView
         android:id="@+id/playerTrackInfoTextId"
         android:layout_width="wrap_content"
@@ -50,6 +53,7 @@
         android:layout_marginBottom="40dp"
         android:textColor="@color/md_violet_custom_3"
         android:textSize="@dimen/title_text_medium"
+        android:gravity="center"
         android:layout_centerHorizontal="true"
         android:text="info - duration"/>
 

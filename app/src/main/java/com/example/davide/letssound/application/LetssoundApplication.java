@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.MediaPlayer;
 import android.media.session.MediaController;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class LetssoundApplication extends Application {
     private static final String TAG = "LetssoundApplication";
     private static final String FONT_PATH = "fonts/Words-and-Music-JNL.ttf";
+    private MediaService serviceRef;
 
     @Override
     public void onCreate() {
@@ -63,15 +65,18 @@ public class LetssoundApplication extends Application {
         unbindService(serviceConnection);
     }
     public MediaControllerCompat mediaController;
+    public MediaPlayer mediaPlayerRef;
 
     /**
      *
      */
     public ServiceConnection serviceConnection = new ServiceConnection() {
 
+
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             try {
+                serviceRef = ((MediaService.MediaBinder) iBinder).getService();
                 mediaController = new MediaControllerCompat(LetssoundApplication.this,
                         ((MediaService.MediaBinder) iBinder).getMediaSessionToken());
             } catch (RemoteException e) {
@@ -98,5 +103,12 @@ public class LetssoundApplication extends Application {
      */
     public MediaControllerCompat getMediaControllerInstance() {
         return mediaController;
+    }
+    /**
+     *
+     * @return
+     */
+    public MediaService getMediaService() {
+        return serviceRef;
     }
 }

@@ -28,6 +28,8 @@ package com.example.davide.letssound.views;
  */
 
 import com.example.davide.letssound.R;
+import com.example.davide.letssound.fragments.SoundTrackPlayerFragment;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.BlurMaskFilter;

@@ -47,6 +47,9 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     private String soundTrackTitle;
     private Uri soundTrackUrl;
 
+    public int getCurrentMediaPlayerCurrentPosition() {
+        return mediaPlayer.getCurrentPosition();
+    }
 
 
     /**
@@ -59,6 +62,10 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
          */
         public MediaService getService() {
             return MediaService.this;
+        }
+
+        public MediaPlayer getMediaPlayer() {
+            return mediaPlayer;
         }
 
         /**

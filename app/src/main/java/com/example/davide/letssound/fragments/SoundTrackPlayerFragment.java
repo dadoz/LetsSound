@@ -1,14 +1,11 @@
 package com.example.davide.letssound.fragments;
 
-/**
- * Created by davide on 26/11/15.
- */
-
 import android.app.Activity;
-import android.content.Context;
+import android.app.Application;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,16 +13,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.managers.MusicPlayerControllerManager;
-import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.managers.VolleyMediaArtManager;
 import com.example.davide.letssound.services.MediaService;
 import com.example.davide.letssound.views.CircularNetworkImageView;
 import com.example.davide.letssound.views.CircularSeekBar;
 
 import java.lang.ref.WeakReference;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,7 +32,7 @@ import butterknife.ButterKnife;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class SoundTrackPlayerFragment extends Fragment implements View.OnClickListener {
+public class SoundTrackPlayerFragment extends Fragment implements View.OnClickListener, CircularSeekBar.OnCircularSeekBarChangeListener {
     private static final String TAG = "SoundTrackPlayerFragment";
     private Uri mediaArtUri;
     private String title;
@@ -52,6 +51,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
 
     private VolleyMediaArtManager volleyMediaArtManager;
     private MusicPlayerControllerManager musicPlayerControllerManager;
+    private MediaService service;
 
     public SoundTrackPlayerFragment() {
     }
@@ -105,7 +105,10 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
      */
     private void initSeekbar() {
         //get position from mediaSession
-        playerSoundTrackSeekbar.setProgress(30);
+        service = ((LetssoundApplication) getActivity().getApplication()).getMediaService();
+        playerSoundTrackSeekbar.setOnSeekBarChangeListener(this);
+        int tmp = service.getCurrentMediaPlayerCurrentPosition() / 1000;
+        Log.e(TAG, "-----" + tmp);
     }
 
     /**
@@ -132,5 +135,23 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
                 musicPlayerControllerManager.repeatOne(bundle);
                 break;
         }
+    }
+
+    @Override
+    public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
+        Log.e("hey", "bla");
+        if (service != null) {
+            circularSeekBar.setProgress(service.getCurrentMediaPlayerCurrentPosition());
+        }
+    }
+
+    @Override
+    public void onStopTrackingTouch(CircularSeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(CircularSeekBar seekBar) {
+
     }
 }
