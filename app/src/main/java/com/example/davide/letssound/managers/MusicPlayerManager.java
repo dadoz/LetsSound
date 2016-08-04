@@ -1,9 +1,17 @@
 package com.example.davide.letssound.managers;
 
+import android.app.Activity;
+import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import android.view.View;
 
+import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.helpers.ObservableHelper;
 import com.example.davide.letssound.services.MediaService;
 import com.example.davide.letssound.utils.Utils;
@@ -24,6 +32,10 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
     private static RetrofitYoutubeDownloaderManager retrofitManager;
     private static ObservableHelper observableHelper;
     private static WeakReference<OnMusicPlayerCallback> listener;
+    private static WeakReference<Activity> activityRef;
+    private static View playButtonView;
+    private static View pauseButtonView;
+    private static MediaControllerCompat mediaControllerRef;
     private String thumbnailUrl;
     private String title;
 
@@ -33,12 +45,20 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
      * @param lst
      * @return
      */
-    public static MusicPlayerManager getInstance(WeakReference<OnMusicPlayerCallback> lst) {
+    public static MusicPlayerManager getInstance(@NonNull  WeakReference<Activity> activity, View[] viewsArray,
+                                                 WeakReference<OnMusicPlayerCallback> lst) {
         if (instance == null) {
             instance = new MusicPlayerManager();
         }
         retrofitManager = RetrofitYoutubeDownloaderManager.getInstance();
         listener = lst;
+        activityRef = activity;
+        if (viewsArray != null) {
+            playButtonView = viewsArray[0];
+            pauseButtonView = viewsArray[1];
+        }
+        //TODO weak ref??
+        mediaControllerRef = ((LetssoundApplication) activityRef.get().getApplication()).getMediaControllerInstance();
         observableHelper = new ObservableHelper(new WeakReference<ObservableHelper.ObservableHelperInterface>(instance));
         return instance;
     }
@@ -106,4 +126,98 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
         void onPlayMediaCallback(Bundle bundle);
     }
 
+    /**
+     *
+     */
+    public void initMediaController() {
+        if (mediaControllerRef != null) {
+            mediaControllerRef.registerCallback(mediaControllerCallback);
+        }
+    }
+
+    /**
+     *
+     * @param toBePlayed
+     */
+    public void setPlayButton(boolean toBePlayed) {
+        playButtonView.setVisibility(toBePlayed ? View.VISIBLE : View.GONE);
+        pauseButtonView.setVisibility(toBePlayed ? View.GONE : View.VISIBLE);
+    }
+
+    /**
+     *
+     */
+    public void play() {
+        if (mediaControllerRef != null) {
+            mediaControllerRef.getTransportControls().play();
+        }
+
+    }
+    /**
+     *
+     */
+    public void pause() {
+        if (mediaControllerRef != null) {
+            mediaControllerRef.getTransportControls().pause();
+        }
+    }
+    /**
+     *
+     */
+    public void fastForward() {
+        if (mediaControllerRef != null) {
+            mediaControllerRef.getTransportControls().play();
+        }
+
+    }
+    /**
+     *
+     */
+    public void rewind() {
+        if (mediaControllerRef != null) {
+            mediaControllerRef.getTransportControls().rewind();
+        }
+
+    }
+    /**
+     *
+     * @param bundle
+     */
+    public void repeatOne(Bundle bundle) {
+        ((LetssoundApplication) activityRef.get().getApplication()).playMedia(bundle);
+    }
+
+    /**
+     *
+     */
+    public MediaControllerCompat.Callback mediaControllerCallback = new MediaControllerCompat.Callback() {
+
+        @Override
+        public void onPlaybackStateChanged(PlaybackStateCompat state) {
+
+            switch (state.getState()) {
+                case PlaybackState.STATE_NONE:
+                    break;
+                case PlaybackState.STATE_PLAYING:
+                    Log.e(TAG, "to be paused");
+                    setPlayButton(false);
+                    break;
+                case PlaybackState.STATE_PAUSED:
+                    setPlayButton(true);
+                    Log.e(TAG, "to be played");
+                    break;
+                case PlaybackState.STATE_FAST_FORWARDING:
+                    break;
+                case PlaybackState.STATE_REWINDING:
+                    break;
+            }
+        }
+
+        @Override
+        public void onMetadataChanged(MediaMetadataCompat metadata) {
+            super.onMetadataChanged(metadata);
+            //update title
+        }
+
+    };
 }

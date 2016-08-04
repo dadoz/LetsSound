@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.application.LetssoundApplication;
-import com.example.davide.letssound.managers.MusicPlayerControllerManager;
+import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.managers.VolleyMediaArtManager;
 import com.example.davide.letssound.services.MediaService;
 import com.example.davide.letssound.views.CircularNetworkImageView;
@@ -50,7 +50,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     View playerRepeatButton;
 
     private VolleyMediaArtManager volleyMediaArtManager;
-    private MusicPlayerControllerManager musicPlayerControllerManager;
+    private MusicPlayerManager musicPlayerManager;
     private MediaService service;
 
     public SoundTrackPlayerFragment() {
@@ -69,9 +69,9 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         volleyMediaArtManager = VolleyMediaArtManager
                 .getInstance(new WeakReference<>(getActivity().getApplicationContext()), null);
 
-        musicPlayerControllerManager = MusicPlayerControllerManager.getInstance(new WeakReference<Activity>(getActivity()),
-                new View[] {playerPlayButton, playerPauseButton});
-        musicPlayerControllerManager.initMediaController();
+        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
+                new View[] {playerPlayButton, playerPauseButton}, null);
+        musicPlayerManager.initMediaController();
         return mRootView;
     }
 
@@ -125,14 +125,14 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.playerPlayButtonId:
-                musicPlayerControllerManager.play();
+                musicPlayerManager.play();
                 break;
             case R.id.playerPauseButtonId:
-                musicPlayerControllerManager.pause();
+                musicPlayerManager.pause();
                 break;
             case R.id.playerRepeatButtonId:
                 Bundle bundle = getArguments();
-                musicPlayerControllerManager.repeatOne(bundle);
+                musicPlayerManager.repeatOne(bundle);
                 break;
         }
     }

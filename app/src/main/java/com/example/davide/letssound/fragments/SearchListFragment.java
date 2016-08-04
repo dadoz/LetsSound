@@ -133,7 +133,8 @@ public class SearchListFragment extends Fragment implements
 //                new WeakReference<OnDownloadHelperResultInterface>(this));
         searchManager = MediaSearchManager.getInstance(new WeakReference<MediaSearchManager.TrackSearchManagerInterface>(this));
 
-        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<MusicPlayerManager.OnMusicPlayerCallback>(this));
+        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()), null,
+                new WeakReference<MusicPlayerManager.OnMusicPlayerCallback>(this));
     }
 
     /**
