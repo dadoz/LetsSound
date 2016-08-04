@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:circular="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
     android:paddingLeft="@dimen/small_margin_16"
     android:paddingRight="@dimen/small_margin_16"
     android:background="@color/md_violet_custom_1">
@@ -14,18 +15,22 @@
         android:layout_marginTop="80dp"
         android:layout_centerHorizontal="true"
         android:src="@drawable/sound_track_icon_dark"/>
-    <me.angrybyte.circularslider.CircularSlider
+    <com.example.davide.letssound.views.CircularSeekBar
         android:id="@+id/playerSoundTrackSeekbarId"
         android:layout_width="240dp"
         android:layout_height="240dp"
-        android:layout_marginTop="60dp"
-        android:layout_centerHorizontal="true"
-        circular:start_angle="0"
-        circular:angle="3.14"
-        circular:border_color="@color/md_grey_50"
-        circular:border_thickness="4dp"
-        circular:thumb_color="@color/md_violet_custom_3"
-        circular:thumb_size="8dp" />
+        app:start_angle="270"
+        app:end_angle="270"
+        app:circle_x_radius="100"
+        app:circle_y_radius="100"
+        app:use_custom_radii="true"
+        app:progress="25"
+        app:max="100"
+        app:pointer_alpha_ontouch="100"
+        app:circle_color="@color/md_grey_50"
+        app:circle_progress_color="@color/md_violet_custom_3"
+        app:pointer_color="@color/md_violet_custom_3"
+        app:pointer_halo_color="@color/md_grey_50"/>
     <TextView
         android:id="@+id/playerTrackTitleTextId"
         android:layout_width="wrap_content"

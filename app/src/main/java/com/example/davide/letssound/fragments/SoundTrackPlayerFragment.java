@@ -23,12 +23,12 @@ import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.managers.VolleyMediaArtManager;
 import com.example.davide.letssound.services.MediaService;
 import com.example.davide.letssound.views.CircularNetworkImageView;
+import com.example.davide.letssound.views.CircularSeekBar;
 
 import java.lang.ref.WeakReference;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import me.angrybyte.circularslider.CircularSlider;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -38,7 +38,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     private Uri mediaArtUri;
     private String title;
     @Bind(R.id.playerSoundTrackSeekbarId)
-    CircularSlider playerSoundTrackSeekbar;
+    CircularSeekBar playerSoundTrackSeekbar;
     @Bind(R.id.playerMediaArtImageViewId)
     CircularNetworkImageView playerMediaArtImageView;
     @Bind(R.id.playerTrackTitleTextId)
@@ -105,7 +105,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
      */
     private void initSeekbar() {
         //get position from mediaSession
-        playerSoundTrackSeekbar.setPosition(0);
+        playerSoundTrackSeekbar.setProgress(30);
     }
 
     /**

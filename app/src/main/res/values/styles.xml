@@ -5,5 +5,7 @@
         <item name="colorPrimary">@color/md_yellow_custom_1</item>
         <item name="android:textColorPrimary">@color/md_violet_custom_2</item>
         <item name="android:textColorSecondary">@color/md_violet_custom_1</item>
+        <item name="android:color">@color/md_violet_custom_1</item>
+
     </style>
 </resources>
