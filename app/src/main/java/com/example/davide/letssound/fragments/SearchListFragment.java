@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
@@ -265,6 +266,7 @@ public class SearchListFragment extends Fragment implements
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getActivity().getComponentName()));
         searchView.setOnQueryTextListener(this);
+
     }
 
     /**
@@ -274,6 +276,7 @@ public class SearchListFragment extends Fragment implements
         if (searchView != null) {
             autoCompleteTextView = (AutoCompleteTextView) searchView
                     .findViewById(android.support.v7.appcompat.R.id.search_src_text);
+
             setAutocompleteTextViewAdapter();
             autoCompleteTextView.setVisibility(View.VISIBLE);
             autoCompleteTextView.setOnItemClickListener(this);
@@ -284,7 +287,27 @@ public class SearchListFragment extends Fragment implements
                     autoCompleteTextView.showDropDown();
                 }
             });
+            avoidToAutoCollapseDropdown();
         }
+
+    }
+
+    /**
+     * 
+     */
+    private void avoidToAutoCollapseDropdown() {
+        View tmp = searchView.findViewById(autoCompleteTextView.getDropDownAnchor());
+        tmp.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (searchView != null &&
+                        autoCompleteTextView != null &&
+                        !autoCompleteTextView.isPopupShowing() &&
+                        !searchView.isIconified()) {
+                    autoCompleteTextView.showDropDown();
+                }
+            }
+        });
 
     }
 
