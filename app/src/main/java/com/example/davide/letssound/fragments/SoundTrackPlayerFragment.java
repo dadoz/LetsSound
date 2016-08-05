@@ -168,7 +168,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
                     return;
                 }
 
-                int current = Utils.getCurrentPosition( service.getMediaPlayerCurrentPosition(),
+                int current = Utils.getCurrentPosition(service.getMediaPlayerCurrentPosition(),
                         service.getMediaPlayerDuration());
                 if (playerSoundTrackSeekbar.getProgress() == 0) {
                     current++;

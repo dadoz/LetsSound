@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingLeft="@dimen/small_margin_16"
     android:paddingRight="@dimen/small_margin_16"
     android:background="@color/md_violet_custom_1">
@@ -22,17 +22,17 @@
         android:layout_height="240dp"
         app:start_angle="270"
         app:end_angle="270"
-        app:circle_x_radius="100"
-        app:circle_y_radius="100"
+        app:circle_x_radius="130dp"
+        app:circle_y_radius="130dp"
         app:use_custom_radii="true"
         app:lock_enabled="true"
         app:progress="25"
         app:max="100"
         app:pointer_alpha_ontouch="100"
-        app:circle_color="@color/md_grey_50"
-        app:circle_progress_color="@color/md_violet_custom_3"
+        app:circle_color="@color/md_violet_custom_3"
+        app:circle_progress_color="@color/md_grey_50"
         app:pointer_color="@color/md_violet_custom_3"
-        app:pointer_halo_color="@color/md_grey_50"/>
+        app:pointer_halo_color="@color/md_violet_custom_3"/>
     <TextView
         android:id="@+id/playerTrackTitleTextId"
         android:layout_width="wrap_content"

@@ -48,10 +48,14 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     private Uri soundTrackUrl;
 
     public int getMediaPlayerCurrentPosition() {
-        return mediaPlayer.getCurrentPosition();
+        return mediaPlayer != null &&
+                mediaPlayer.isPlaying() ?
+                mediaPlayer.getCurrentPosition() : 0;
     }
     public int getMediaPlayerDuration() {
-        return mediaPlayer.getDuration();
+        return mediaPlayer != null &&
+                mediaPlayer.isPlaying() ?
+                mediaPlayer.getDuration() : 0;
 
     }
 
