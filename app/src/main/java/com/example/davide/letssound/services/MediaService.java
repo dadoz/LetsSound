@@ -1,6 +1,7 @@
 package com.example.davide.letssound.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -25,6 +26,8 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * Created by davide on 13/07/16.
  */
@@ -47,22 +50,11 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     private String soundTrackTitle;
     private Uri soundTrackUrl;
 
-    public int getMediaPlayerCurrentPosition() {
-        return mediaPlayer != null &&
-                mediaPlayer.isPlaying() ?
-                mediaPlayer.getCurrentPosition() : 0;
-    }
-    public int getMediaPlayerDuration() {
-        return mediaPlayer != null &&
-                mediaPlayer.isPlaying() ?
-                mediaPlayer.getDuration() : 0;
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
-
-    public MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
-    }
-
 
     /**
      *
@@ -341,6 +333,27 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getMediaPlayerCurrentPosition() {
+        return mediaPlayer != null &&
+                mediaPlayer.isPlaying() ?
+                mediaPlayer.getCurrentPosition() : 0;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getMediaPlayerDuration() {
+        return mediaPlayer != null &&
+                mediaPlayer.isPlaying() ?
+                mediaPlayer.getDuration() : 0;
+
     }
 
 }

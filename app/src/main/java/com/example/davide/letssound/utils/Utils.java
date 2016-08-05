@@ -1,5 +1,6 @@
 package com.example.davide.letssound.utils;
 
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -7,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.davide.letssound.services.MediaService;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Created by davide on 14/07/16.
@@ -49,4 +52,5 @@ public class Utils {
         Double percentage = ((double) currentPosition / duration) * 100;
         return percentage.intValue();
     }
+
 }

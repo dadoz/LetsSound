@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.e("SERVICE_TAG", "start service");
         ((LetssoundApplication) getApplication()).doBindService();
     }
 
@@ -59,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("SERVICE_TAG", "destroy service");
 //        ((LetssoundApplication) getApplication()).doUnbindService(); //TODO this callback destroy service
 
     }
