@@ -1,5 +1,6 @@
 package com.example.davide.letssound;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,9 +10,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.fragments.SoundTrackPlayerFragment;
 import com.example.davide.letssound.services.MediaService;
 
+
+import java.lang.ref.WeakReference;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -68,6 +72,11 @@ public class SoundTrackPlayerActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
@@ -75,6 +84,11 @@ public class SoundTrackPlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

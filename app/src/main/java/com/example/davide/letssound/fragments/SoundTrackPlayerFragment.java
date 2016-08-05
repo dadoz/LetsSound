@@ -53,9 +53,11 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     @Bind(R.id.playerRepeatButtonId)
     View playerRepeatButton;
 
+    private int current;
     private VolleyMediaArtManager volleyMediaArtManager;
     private MusicPlayerManager musicPlayerManager;
     private MediaService service;
+    private static final int REFRESH_TIMESTAMP = 5000;
 
     public SoundTrackPlayerFragment() {
     }
@@ -119,7 +121,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
                 return true;
             }
         });
-        updateProgressOnSeekBar();
+        updateProgressOnSeekBar(REFRESH_TIMESTAMP + 2000);
     }
 
     /**
@@ -137,7 +139,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         switch (view.getId()) {
             case R.id.playerPlayButtonId:
                 musicPlayerManager.play();
-                updateProgressOnSeekBar();
+                updateProgressOnSeekBar(REFRESH_TIMESTAMP);
                 break;
             case R.id.playerPauseButtonId:
                 musicPlayerManager.pause();
@@ -145,7 +147,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
             case R.id.playerRepeatButtonId:
                 Bundle bundle = getArguments();
                 musicPlayerManager.repeatOne(bundle);
-                updateProgressOnSeekBar();
+                updateProgressOnSeekBar(REFRESH_TIMESTAMP);
                 break;
         }
     }
@@ -153,14 +155,14 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     @Override
     public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
         if (progress > circularSeekBar.getProgress()) {
-            updateProgressOnSeekBar();
+            updateProgressOnSeekBar(REFRESH_TIMESTAMP);
         }
     }
 
     /**
      *
      */
-    private void updateProgressOnSeekBar() {
+    private synchronized void updateProgressOnSeekBar(int timestamp) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -168,14 +170,16 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
                     return;
                 }
 
-                int current = Utils.getCurrentPosition(service.getMediaPlayerCurrentPosition(),
+                current = Utils.getCurrentPosition(service.getMediaPlayerCurrentPosition(),
                         service.getMediaPlayerDuration());
                 if (playerSoundTrackSeekbar.getProgress() == 0) {
                     current++;
                 }
-                playerSoundTrackSeekbar.setProgress(current);
+                if (current > playerSoundTrackSeekbar.getProgress()) {
+                    playerSoundTrackSeekbar.setProgress(current);
+                }
             }
-        }, 4000);
+        }, timestamp);
 
     }
 

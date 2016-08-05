@@ -1,15 +1,20 @@
 package com.example.davide.letssound;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.fragments.SearchListFragment;
+
+import java.lang.ref.WeakReference;
+
 import icepick.State;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -33,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.e("SERVICE_TAG", "start service");
         ((LetssoundApplication) getApplication()).doBindService();
     }
 
@@ -47,9 +53,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        ((LetssoundApplication) getApplication()).doUnbindService(); //TODO this callback destroy service
+        Log.e("SERVICE_TAG", "destroy service");
+//        ((LetssoundApplication) getApplication()).doUnbindService(); //TODO this callback destroy service
+
     }
 
     /**

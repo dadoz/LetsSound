@@ -76,10 +76,6 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
             return MediaService.this;
         }
 
-        public MediaPlayer getMediaPlayer() {
-            return mediaPlayer;
-        }
-
         /**
          *
          * @return

@@ -25,9 +25,6 @@ import java.util.List;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-/**
- * Created by davide on 01/08/16.
- */
 public class LetssoundApplication extends Application {
     private static final String TAG = "LetssoundApplication";
     private static final String FONT_PATH = "fonts/Words-and-Music-JNL.ttf";
@@ -64,9 +61,8 @@ public class LetssoundApplication extends Application {
     public void doUnbindService() {
         unbindService(serviceConnection);
     }
-    public MediaControllerCompat mediaController;
-    public MediaPlayer mediaPlayerRef;
 
+    public MediaControllerCompat mediaController;
     /**
      *
      */
