@@ -109,17 +109,8 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     private void initSeekbar() {
         //get position from mediaSession
         service = ((LetssoundApplication) getActivity().getApplication()).getMediaService();
-        MediaPlayer mediaPlayer = service.getMediaPlayer();
         playerSoundTrackSeekbar.setOnSeekBarChangeListener(this);
-        mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
-            @Override
-            public void onBufferingUpdate(MediaPlayer mediaPlayer, int percent) {
-                Log.e(TAG, "--" + percent);
-                if (percent == 100) {
-                    updateProgressOnSeekBar();
-                }
-            }
-        });
+        updateProgressOnSeekBar();
     }
 
     /**
@@ -150,11 +141,8 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
-        Log.e(TAG, "---a " + progress);
-        Log.e(TAG, "---b " + circularSeekBar.getProgress());
         if (progress > circularSeekBar.getProgress()) {
             updateProgressOnSeekBar();
-//            circularSeekBar.setProgress(progress);
         }
     }
 
