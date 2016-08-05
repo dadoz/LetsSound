@@ -39,6 +39,12 @@ public class Utils {
         return bundle;
     }
 
+    /**
+     *
+     * @param currentPosition
+     * @param duration
+     * @return
+     */
     public static int getCurrentPosition(int currentPosition, int duration) {
         Double percentage = ((double) currentPosition / duration) * 100;
         return percentage.intValue();

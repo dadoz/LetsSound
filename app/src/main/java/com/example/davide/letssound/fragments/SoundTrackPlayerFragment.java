@@ -113,12 +113,12 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     private void initSeekbar() {
         //get position from mediaSession
         playerSoundTrackSeekbar.setOnSeekBarChangeListener(this);
-//        playerSoundTrackSeekbar.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                return true;
-//            }
-//        });
+        playerSoundTrackSeekbar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
         updateProgressOnSeekBar();
     }
 
@@ -137,6 +137,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         switch (view.getId()) {
             case R.id.playerPlayButtonId:
                 musicPlayerManager.play();
+                updateProgressOnSeekBar();
                 break;
             case R.id.playerPauseButtonId:
                 musicPlayerManager.pause();
@@ -144,6 +145,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
             case R.id.playerRepeatButtonId:
                 Bundle bundle = getArguments();
                 musicPlayerManager.repeatOne(bundle);
+                updateProgressOnSeekBar();
                 break;
         }
     }
