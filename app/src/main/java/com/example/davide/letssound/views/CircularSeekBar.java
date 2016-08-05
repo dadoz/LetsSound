@@ -44,6 +44,7 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 
 public class CircularSeekBar extends View {
 
@@ -561,6 +562,15 @@ public class CircularSeekBar extends View {
             invalidate();
         }
     }
+
+    /**
+     * Set the progress of the CircularSeekBar.
+     * If the progress is the same, then any listener will not receive a onProgressChanged event.
+     */
+//    public void setSecondaryProgress(int secondaryProgress) {
+//        getWindow().setFeatureInt(Window.FEATURE_PROGRESS,
+//                secondaryProgress + Window.PROGRESS_SECONDARY_START);
+//    }
 
     protected void setProgressBasedOnAngle(float angle) {
         mPointerPosition = angle;

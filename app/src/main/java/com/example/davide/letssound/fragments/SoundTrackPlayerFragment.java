@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.davide.letssound.MainActivity;
@@ -19,6 +21,7 @@ import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.managers.MusicPlayerManager;
 import com.example.davide.letssound.managers.VolleyMediaArtManager;
 import com.example.davide.letssound.services.MediaService;
+import com.example.davide.letssound.utils.Utils;
 import com.example.davide.letssound.views.CircularNetworkImageView;
 import com.example.davide.letssound.views.CircularSeekBar;
 
@@ -106,9 +109,17 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     private void initSeekbar() {
         //get position from mediaSession
         service = ((LetssoundApplication) getActivity().getApplication()).getMediaService();
+        MediaPlayer mediaPlayer = service.getMediaPlayer();
         playerSoundTrackSeekbar.setOnSeekBarChangeListener(this);
-        int tmp = service.getCurrentMediaPlayerCurrentPosition() / 1000;
-        Log.e(TAG, "-----" + tmp);
+        mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mediaPlayer, int percent) {
+                Log.e(TAG, "--" + percent);
+                if (percent == 100) {
+                    updateProgressOnSeekBar();
+                }
+            }
+        });
     }
 
     /**
@@ -139,10 +150,30 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
-        Log.e("hey", "bla");
-        if (service != null) {
-            circularSeekBar.setProgress(service.getCurrentMediaPlayerCurrentPosition());
+        Log.e(TAG, "---a " + progress);
+        Log.e(TAG, "---b " + circularSeekBar.getProgress());
+        if (progress > circularSeekBar.getProgress()) {
+            updateProgressOnSeekBar();
+//            circularSeekBar.setProgress(progress);
         }
+    }
+
+    /**
+     *
+     */
+    private void updateProgressOnSeekBar() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int duration = service.getMediaPlayerDuration();
+                int current = service.getMediaPlayerCurrentPosition();
+                if (playerSoundTrackSeekbar.getProgress() == 100) {
+                    return;
+                }
+                playerSoundTrackSeekbar.setProgress(Utils.getCurrentPosition(current, duration));
+            }
+        }, 4000);
+
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.davide.letssound.utils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 
 import com.example.davide.letssound.services.MediaService;
@@ -32,10 +33,16 @@ public class Utils {
      */
     public static Bundle buildPlayBundle(String videoUrl, String thumbnailUrl, String title) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(MediaService.PARAM_TRACK_URI, Uri.parse(videoUrl));
+        bundle.putParcelable(MediaService.PARAM_TRACK_URI, videoUrl == null ? null : Uri.parse(videoUrl));
         bundle.putParcelable(MediaService.PARAM_TRACK_THUMBNAIL, Uri.parse(thumbnailUrl));
         bundle.putString(MediaService.PARAM_TRACK_TITLE, title);
         return bundle;
     }
 
+    public static int getCurrentPosition(int currentPosition, int duration) {
+        Double percentage = (double) 0;
+        percentage = ((double) currentPosition / duration) * 100;
+        Log.e("TAG", "-----" + percentage.intValue());
+        return percentage.intValue();
+    }
 }

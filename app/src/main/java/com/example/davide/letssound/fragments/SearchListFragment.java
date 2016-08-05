@@ -293,7 +293,7 @@ public class SearchListFragment extends Fragment implements
     }
 
     /**
-     * 
+     *
      */
     private void avoidToAutoCollapseDropdown() {
         View tmp = searchView.findViewById(autoCompleteTextView.getDropDownAnchor());
@@ -382,11 +382,6 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onPlayMediaCallback(Bundle bundle) {
-        //TODO fix it big leak
-        ((LetssoundApplication) getActivity().getApplication()).playMedia(bundle);
-        Intent intent = new Intent(getContext(), SoundTrackPlayerActivity.class);
-        intent.putExtras(bundle);
-        startActivity(intent);
     }
 
     /**
@@ -411,6 +406,7 @@ public class SearchListFragment extends Fragment implements
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         HistoryResult HistoryResult = (HistoryResult) adapterView.getAdapter().getItem(i);
         handleItemClick(HistoryResult);
+//        musicPlayerManager.playSoundTrack(null, "null", "null"); //TODO rm it
     }
 
     /**

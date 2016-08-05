@@ -1,6 +1,7 @@
 package com.example.davide.letssound.managers;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 
+import com.example.davide.letssound.SoundTrackPlayerActivity;
 import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.helpers.ObservableHelper;
 import com.example.davide.letssound.services.MediaService;
@@ -22,10 +24,6 @@ import java.util.ArrayList;
 import rx.Observable;
 import rx.functions.Func1;
 
-//TODO merge with controller one
-/**
- * Created by davide on 15/07/16.
- */
 public class MusicPlayerManager implements ObservableHelper.ObservableHelperInterface {
     private static final String TAG = "MusicPlayerManagerTAG";
     private static MusicPlayerManager instance;
@@ -72,6 +70,7 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
         this.thumbnailUrl = thumbnailUrl;
         this.title = title;
         fetchSoundTrackUrl(videoId);
+//        handlePlayWithBundle(videoId); //TODO rm it
     }
 
     /**
@@ -97,9 +96,21 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
     @Override
     public void onObservableSuccess(Object obj, String requestType) {
         Log.e(TAG, "success music player " + obj.toString());
-        playMedia((String) obj);
+        handlePlayWithBundle((String) obj);
     }
 
+    /**
+     *
+     * @param soundTrackUrl
+     */
+    private void handlePlayWithBundle(String soundTrackUrl) {
+        Bundle bundle = Utils.buildPlayBundle(soundTrackUrl, thumbnailUrl, title);
+        ((LetssoundApplication) activityRef.get().getApplication()).playMedia(bundle);
+        //TODO handle callback (if error should not start activity
+        Intent intent = new Intent(activityRef.get().getApplicationContext(), SoundTrackPlayerActivity.class);
+        intent.putExtras(bundle);
+        activityRef.get().startActivity(intent);
+    }
 
     @Override
     public void onObservableEmpty() {
@@ -109,16 +120,6 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
     @Override
     public void onObservableError(String type, String error) {
         Log.e(TAG, "error" + error);
-    }
-
-    /**
-     * play media by controller
-     * @param videoUrl
-     */
-    private void playMedia(String videoUrl) {
-        //TODO pay attention on this
-        Bundle bundle = Utils.buildPlayBundle(videoUrl, thumbnailUrl, title);
-        listener.get().onPlayMediaCallback(bundle);
     }
 
 

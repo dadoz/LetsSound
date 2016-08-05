@@ -47,8 +47,16 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     private String soundTrackTitle;
     private Uri soundTrackUrl;
 
-    public int getCurrentMediaPlayerCurrentPosition() {
+    public int getMediaPlayerCurrentPosition() {
         return mediaPlayer.getCurrentPosition();
+    }
+    public int getMediaPlayerDuration() {
+        return mediaPlayer.getDuration();
+
+    }
+
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
     }
 
 
@@ -232,11 +240,15 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 //                FileDescriptor fd = getFileDescriptorFromBundle(extras);
 //                mediaPlayer.setDataSource(fd);
                 initSoundTrackFromBundle(extras);
-                Log.e(TAG, soundTrackUrl.toString());
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//                Log.e(TAG, soundTrackUrl.toString());
                 mediaPlayer.reset();
-                mediaPlayer.setDataSource(MediaService.this, soundTrackUrl);
-                mediaPlayer.prepareAsync();
+                if (soundTrackUrl != null) {
+                    mediaPlayer.setDataSource(MediaService.this, soundTrackUrl);
+                    mediaPlayer.prepareAsync();
+                } else {
+                    mediaPlayer.setDataSource(getFileDescriptorFromName("sample.mp3"));
+                    mediaPlayer.prepare();
+                }
 
                 PlaybackStateCompat playbackState = new PlaybackStateCompat.Builder()
                         .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
@@ -316,5 +328,19 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         public void onCustomAction(@NonNull String action, Bundle extras) {
         }
     };
+
+    /**
+     * TODO rm it
+     * @param s
+     * @return
+     */
+    private FileDescriptor getFileDescriptorFromName(String s) {
+        try {
+            return getApplication().getAssets().openFd(s).getFileDescriptor();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
