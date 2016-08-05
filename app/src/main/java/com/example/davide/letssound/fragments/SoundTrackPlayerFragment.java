@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -69,6 +70,9 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
                              Bundle savedInstanceState) {
         View mRootView = inflater.inflate(R.layout.fragment_sound_track_player_layout, container, false);
         ButterKnife.bind(this, mRootView);
+
+        service = ((LetssoundApplication) getActivity().getApplication()).getMediaService();
+
         volleyMediaArtManager = VolleyMediaArtManager
                 .getInstance(new WeakReference<>(getActivity().getApplicationContext()), null);
 
@@ -108,8 +112,13 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
      */
     private void initSeekbar() {
         //get position from mediaSession
-        service = ((LetssoundApplication) getActivity().getApplication()).getMediaService();
         playerSoundTrackSeekbar.setOnSeekBarChangeListener(this);
+//        playerSoundTrackSeekbar.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                return true;
+//            }
+//        });
         updateProgressOnSeekBar();
     }
 
@@ -153,12 +162,16 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                int duration = service.getMediaPlayerDuration();
-                int current = service.getMediaPlayerCurrentPosition();
                 if (playerSoundTrackSeekbar.getProgress() == 100) {
                     return;
                 }
-                playerSoundTrackSeekbar.setProgress(Utils.getCurrentPosition(current, duration));
+
+                int current = Utils.getCurrentPosition( service.getMediaPlayerCurrentPosition(),
+                        service.getMediaPlayerDuration());
+                if (playerSoundTrackSeekbar.getProgress() == 0) {
+                    current++;
+                }
+                playerSoundTrackSeekbar.setProgress(current);
             }
         }, 4000);
 

@@ -40,9 +40,7 @@ public class Utils {
     }
 
     public static int getCurrentPosition(int currentPosition, int duration) {
-        Double percentage = (double) 0;
-        percentage = ((double) currentPosition / duration) * 100;
-        Log.e("TAG", "-----" + percentage.intValue());
+        Double percentage = ((double) currentPosition / duration) * 100;
         return percentage.intValue();
     }
 }
