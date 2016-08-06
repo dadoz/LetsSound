@@ -6,17 +6,30 @@
     android:paddingLeft="@dimen/small_margin_16"
     android:paddingRight="@dimen/small_margin_16"
     android:background="@color/md_violet_custom_1">
+    <Button
+        android:visibility="gone"
+        android:id="@+id/playerTrackRetryButtonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/md_grey_50"
+        android:textSize="@dimen/title_text_medium"
+        android:backgroundTint="@color/md_violet_custom_3"
+        android:layout_marginTop="@dimen/small_margin_16"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="TRY BACK"/>
+    <!-- create Comound View -->
     <com.example.davide.letssound.views.CircularNetworkImageView
         android:id="@+id/playerMediaArtImageViewId"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:scaleType="fitXY"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="100dp"
         android:layout_centerHorizontal="true"
         android:src="@drawable/sound_track_icon_dark"/>
     <com.example.davide.letssound.views.CircularSeekBar
         android:id="@+id/playerSoundTrackSeekbarId"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="35dp"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,6 +46,8 @@
         app:circle_progress_color="@color/md_grey_50"
         app:pointer_color="@color/md_violet_custom_3"
         app:pointer_halo_color="@color/md_violet_custom_3"/>
+
+    <!--FINISH-->
     <TextView
         android:id="@+id/playerTrackTitleTextId"
         android:layout_width="wrap_content"
@@ -103,7 +118,5 @@
         android:layout_marginBottom="@dimen/small_margin_16"
         android:src="@drawable/ic_repeat_one_white_24dp"
         android:background="?attr/selectableItemBackground"/>
-
-
 
 </RelativeLayout>

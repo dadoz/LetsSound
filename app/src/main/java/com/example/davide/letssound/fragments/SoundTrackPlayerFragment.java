@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,10 +40,12 @@ import java.util.TimerTask;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+
 /**
  * A placeholder fragment containing a simple view.
  */
-public class SoundTrackPlayerFragment extends Fragment implements View.OnClickListener, CircularSeekBar.OnCircularSeekBarChangeListener {
+public class SoundTrackPlayerFragment extends Fragment implements View.OnClickListener,
+        CircularSeekBar.OnCircularSeekBarChangeListener {
     private static final String TAG = "SoundTrackPlayerFragment";
     private Uri mediaArtUri;
     private String title;
@@ -58,6 +61,8 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     View playerPauseButton;
     @Bind(R.id.playerRepeatButtonId)
     View playerRepeatButton;
+    @Bind(R.id.playerTrackRetryButtonId)
+    View playerTrackRetryButton;
 
     private int current;
     private VolleyMediaArtManager volleyMediaArtManager;
@@ -114,6 +119,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         playerPlayButton.setOnClickListener(this);
         playerPauseButton.setOnClickListener(this);
         playerRepeatButton.setOnClickListener(this);
+        playerTrackRetryButton.setOnClickListener(this);
         initSeekbar();
     }
 
@@ -169,7 +175,14 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
             case R.id.playerRepeatButtonId:
                 Bundle bundle = getArguments();
                 musicPlayerManager.repeatOne(bundle);
+                playerSoundTrackSeekbar.setProgress(0);
                 updateProgressOnSeekBar(REFRESH_TIMESTAMP);
+                break;
+            case R.id.playerTrackRetryButtonId:
+                musicPlayerManager.repeatOne(getArguments());
+                playerSoundTrackSeekbar.setProgress(0);
+                updateProgressOnSeekBar(REFRESH_TIMESTAMP);
+                playerTrackRetryButton.setVisibility(View.GONE);
                 break;
         }
     }
@@ -222,12 +235,20 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         errorBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Utils.createSnackBarByBackgroundColor(mainView, "Snap! Error on playing song.", ContextCompat.getColor(getActivity().getApplicationContext(), R.color.md_red_400));
-                Toast.makeText(getActivity().getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+                handleErrorOnPlayingSoundTrack();
             }
         };
         getActivity().registerReceiver(errorBroadcastReceiver,
                 new IntentFilter(MediaService.ERROR_MEDIAPLAYER_BROADCAST));
+    }
+
+    /**
+     *
+     */
+    private void handleErrorOnPlayingSoundTrack() {
+        playerTrackRetryButton.setVisibility(View.VISIBLE);
+        Utils.createSnackBarByBackgroundColor(mainView, "Snap! Error on playing song.",
+                ContextCompat.getColor(getActivity().getApplicationContext(), R.color.md_red_400));
     }
 
 }
