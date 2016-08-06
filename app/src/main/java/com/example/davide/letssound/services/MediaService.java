@@ -49,6 +49,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     private Uri mediaArtUri;
     private String soundTrackTitle;
     private Uri soundTrackUrl;
+    public static final String ERROR_MEDIAPLAYER_BROADCAST = "ERROR_MEDIAPLAYER_BROADCAST";
 
 
     @Override
@@ -121,6 +122,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnCompletionListener(this);
+        mediaPlayer.setOnErrorListener(this);
         mediaPlayer.setOnBufferingUpdateListener(this);
 
         //create media controller
@@ -177,7 +179,9 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     }
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+        Log.e(TAG, "ERROR " + i + " - " + i1);
+        mediaPlayer.reset();
+        sendBroadcast(new Intent(ERROR_MEDIAPLAYER_BROADCAST));
         return false;
     }
 
@@ -227,14 +231,14 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 
         @Override
         public void onPlayFromSearch(final String query, final Bundle extras) {
-            Log.e(TAG, "playing" + playbackState.getState());
+            Log.e(TAG, "playbackState " + playbackState.getState());
             try {
 //                FileDescriptor fd = getFileDescriptorFromBundle(extras);
 //                mediaPlayer.setDataSource(fd);
                 initSoundTrackFromBundle(extras);
-//                Log.e(TAG, soundTrackUrl.toString());
                 mediaPlayer.reset();
                 if (soundTrackUrl != null) {
+                    Log.e(TAG, "setDataSource :)");
                     mediaPlayer.setDataSource(MediaService.this, soundTrackUrl);
                     mediaPlayer.prepareAsync();
                 } else {

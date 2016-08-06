@@ -2,11 +2,16 @@ package com.example.davide.letssound.fragments;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.davide.letssound.MainActivity;
 import com.example.davide.letssound.R;
@@ -58,6 +64,8 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     private MusicPlayerManager musicPlayerManager;
     private MediaService service;
     private static final int REFRESH_TIMESTAMP = 5000;
+    private BroadcastReceiver errorBroadcastReceiver;
+    private View mainView;
 
     public SoundTrackPlayerFragment() {
     }
@@ -70,8 +78,8 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View mRootView = inflater.inflate(R.layout.fragment_sound_track_player_layout, container, false);
-        ButterKnife.bind(this, mRootView);
+        mainView = inflater.inflate(R.layout.fragment_sound_track_player_layout, container, false);
+        ButterKnife.bind(this, mainView);
 
         service = ((LetssoundApplication) getActivity().getApplication()).getMediaService();
 
@@ -81,7 +89,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
                 new View[] {playerPlayButton, playerPauseButton}, null);
         musicPlayerManager.initMediaController();
-        return mRootView;
+        return mainView;
     }
 
     @Override
@@ -109,6 +117,20 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         initSeekbar();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        registerErrorMediaplayerBroadcast();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (errorBroadcastReceiver != null) {
+            getActivity().unregisterReceiver(errorBroadcastReceiver);
+            errorBroadcastReceiver = null;
+        }
+    }
     /**
      *
      */
@@ -192,4 +214,20 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     public void onStartTrackingTouch(CircularSeekBar seekBar) {
 
     }
+
+    /**
+     *
+     */
+    private void registerErrorMediaplayerBroadcast() {
+        errorBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Utils.createSnackBarByBackgroundColor(mainView, "Snap! Error on playing song.", ContextCompat.getColor(getActivity().getApplicationContext(), R.color.md_red_400));
+                Toast.makeText(getActivity().getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+            }
+        };
+        getActivity().registerReceiver(errorBroadcastReceiver,
+                new IntentFilter(MediaService.ERROR_MEDIAPLAYER_BROADCAST));
+    }
+
 }

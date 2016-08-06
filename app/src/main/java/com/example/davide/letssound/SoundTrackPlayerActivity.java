@@ -1,18 +1,24 @@
 package com.example.davide.letssound;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.davide.letssound.application.LetssoundApplication;
 import com.example.davide.letssound.fragments.SoundTrackPlayerFragment;
 import com.example.davide.letssound.services.MediaService;
+import com.example.davide.letssound.utils.Utils;
 
 
 import java.lang.ref.WeakReference;
@@ -29,6 +35,7 @@ public class SoundTrackPlayerActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     private String TAG = "SOUND_TRACK_PLAYER_FRAG_TAG";
+    private BroadcastReceiver errorBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
