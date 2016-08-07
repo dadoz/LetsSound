@@ -16,13 +16,13 @@
         android:paddingLeft="@dimen/medium_padding"
         android:paddingRight="@dimen/medium_padding"
         android:paddingBottom="40dp"
-        android:background="@color/md_yellow_custom_1">
+        android:background="@color/md_grey_300">
         <TextView
             android:id="@+id/soundTrackTitleTextId"
             android:layout_marginLeft="@dimen/medium_large_padding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_violet_custom_1"
+            android:textColor="@color/md_grey_300"
             android:textSize="@dimen/title_text_large"
             android:maxLines="1"
             android:ellipsize="end"
@@ -57,7 +57,7 @@
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_violet_custom_0"
+            android:textColor="@color/md_grey_300"
             android:layout_marginRight="@dimen/medium_large_padding"
             android:textSize="10sp"
             android:textStyle="italic"
@@ -68,7 +68,7 @@
             android:layout_alignParentLeft="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_violet_custom_0"
+            android:textColor="@color/md_grey_300"
             android:layout_marginLeft="@dimen/medium_large_padding"
             android:textSize="10sp"
             android:textStyle="italic"
@@ -81,13 +81,13 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/md_yellow_custom_2">
+        android:background="@color/md_red_400">
         <TextView
             android:id="@+id/downloadTextId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:textColor="@color/md_red_custom_1"
+            android:textColor="@color/md_grey_300"
             android:padding="@dimen/medium_padding"
             android:textSize="@dimen/title_text_medium"
             android:background="?android:selectableItemBackground"
@@ -97,7 +97,7 @@
             android:layout_toLeftOf="@+id/downloadTextId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/md_red_custom_1"
+            android:textColor="@color/md_grey_300"
             android:padding="@dimen/medium_padding"
             android:textSize="@dimen/title_text_medium"
             android:background="?android:selectableItemBackground"

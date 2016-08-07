@@ -280,7 +280,7 @@ public class SearchListFragment extends Fragment implements
             setAutocompleteTextViewAdapter();
             autoCompleteTextView.setVisibility(View.VISIBLE);
             autoCompleteTextView.setOnItemClickListener(this);
-            autoCompleteTextView.setDropDownBackgroundResource(R.color.md_violet_custom_3);
+            autoCompleteTextView.setDropDownBackgroundResource(R.color.md_blue_grey_800);
             autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

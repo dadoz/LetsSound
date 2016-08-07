@@ -47,7 +47,7 @@
             android:layout_marginTop="@dimen/small_padding"
             android:layout_marginLeft="@dimen/small_margin_16"
             android:layout_marginRight="@dimen/small_margin_16"
-            android:textColor="@color/md_yellow_400"
+            android:textColor="@color/md_red_400"
             android:textSize="@dimen/title_text_small"
             android:text="04:30"/>
     </RelativeLayout>

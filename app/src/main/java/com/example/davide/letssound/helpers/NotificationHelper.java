@@ -75,7 +75,7 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
                 .setCategory(Notification.CATEGORY_TRANSPORT)
                 .setContentIntent(getContentIntent())
                 .setColor(ContextCompat.getColor(serviceRef.get().getApplicationContext(),
-                        R.color.md_violet_custom_1))
+                        R.color.md_blue_grey_300))
                 .setContentTitle(title)
                 .setContentText(" - ")
                 .setSmallIcon(R.drawable.ic_music_note_black_48dp)

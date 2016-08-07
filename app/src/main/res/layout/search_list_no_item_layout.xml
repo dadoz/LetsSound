@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/searchNoItemLayoutId"
     android:visibility="gone"
-    android:background="@color/md_violet_custom_1"
+    android:background="@color/md_grey_300"
     android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -19,6 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/title_text_large"
-        android:textColor="@color/md_violet_custom_3"
+        android:textColor="@color/md_red_400"
         android:text="Search some song!"/>
 </RelativeLayout>

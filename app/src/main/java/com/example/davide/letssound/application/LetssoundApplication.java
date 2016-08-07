@@ -5,29 +5,19 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.MediaPlayer;
-import android.media.session.MediaController;
-import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 
 import com.example.davide.letssound.R;
 import com.example.davide.letssound.services.MediaService;
 
-import java.util.List;
-
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class LetssoundApplication extends Application {
     private static final String TAG = "LetssoundApplication";
-    private static final String FONT_PATH = "fonts/Words-and-Music-JNL.ttf";
+    private static final String FONT_PATH = "fonts/KozGoPro-Light.ttf";
     private MediaService serviceRef;
 
     @Override

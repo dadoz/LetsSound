@@ -1,11 +1,9 @@
 <resources>
-
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:colorPrimaryDark">@color/md_yellow_custom_0</item>
-        <item name="colorPrimary">@color/md_yellow_custom_1</item>
-        <item name="android:textColorPrimary">@color/md_violet_custom_2</item>
-        <item name="android:textColorSecondary">@color/md_violet_custom_1</item>
-        <item name="android:color">@color/md_violet_custom_1</item>
-
+        <item name="android:colorPrimaryDark">@color/md_red_500</item>
+        <item name="colorPrimary">@color/md_red_400</item>
+        <item name="android:textColorPrimary">@color/md_blue_grey_900</item>
+        <item name="android:textColorSecondary">@color/md_blue_grey_800</item>
+        <item name="android:color">@color/md_blue_grey_800</item>
     </style>
 </resources>
