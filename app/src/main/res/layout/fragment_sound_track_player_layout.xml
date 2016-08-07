@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/md_grey_50"
         android:textSize="@dimen/title_text_medium"
-        android:backgroundTint="@color/md_grey_300"
+        android:backgroundTint="@color/md_red_400"
         android:layout_marginTop="@dimen/small_margin_16"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
@@ -26,7 +26,7 @@
         android:scaleType="fitXY"
         android:layout_marginTop="100dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/sound_track_icon_dark"/>
+        android:src="@drawable/ic_launch_icon"/>
     <com.example.davide.letssound.views.CircularSeekBar
         android:id="@+id/playerSoundTrackSeekbarId"
         android:layout_marginTop="35dp"
@@ -42,8 +42,8 @@
         app:progress="0"
         app:max="100"
         app:pointer_alpha_ontouch="100"
-        app:circle_color="@color/md_red_400"
-        app:circle_progress_color="@color/md_grey_50"
+        app:circle_color="@color/md_blue_grey_800"
+        app:circle_progress_color="@color/md_red_400"
         app:pointer_color="@color/md_red_400"
         app:pointer_halo_color="@color/md_red_400"/>
 
@@ -53,12 +53,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/playerMediaArtImageViewId"
-        android:textColor="@color/md_grey_50"
+        android:textColor="@color/md_red_400"
         android:textSize="@dimen/title_text_extra_large"
         android:layout_marginTop="60dp"
         android:layout_marginBottom="@dimen/small_padding"
         android:layout_centerHorizontal="true"
         android:gravity="center"
+        android:maxLines="2"
         android:text="Sound Track Title sdflkjls sldk fjlskdj flskdj kljsd "/>
     <TextView
         android:id="@+id/playerTrackInfoTextId"
@@ -66,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/playerTrackTitleTextId"
         android:layout_marginBottom="40dp"
-        android:textColor="@color/md_red_400"
+        android:textColor="@color/md_blue_grey_800"
         android:textSize="@dimen/title_text_medium"
         android:gravity="center"
         android:layout_centerHorizontal="true"

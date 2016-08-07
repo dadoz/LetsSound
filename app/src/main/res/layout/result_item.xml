@@ -13,7 +13,7 @@
         android:layout_width="@dimen/medium_icon_size"
         android:layout_height="@dimen/medium_icon_size"
         android:scaleType="fitXY"
-        android:src="@drawable/sound_track_icon_dark"/>
+        android:src="@drawable/ic_launch_icon"/>
 
     <TextView
         android:layout_marginTop="@dimen/small_padding"
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:textColor="@color/md_grey_300"
+        android:textColor="@color/md_blue_grey_800"
         android:textSize="@dimen/title_text_medium"
         android:text="04:30"/>
 
@@ -35,7 +35,7 @@
         android:maxLines="2"
         android:layout_marginLeft="@dimen/small_margin_16"
         android:layout_marginRight="@dimen/small_margin_16"
-        android:textColor="@color/md_grey_50"
+        android:textColor="@color/md_red_400"
         android:textSize="@dimen/title_text_large"
         android:text="title"/>
     <TextView
@@ -51,7 +51,7 @@
         android:maxLines="1"
         android:textSize="@dimen/title_text_medium"
         android:textStyle="italic"
-        android:textColor="@color/md_red_400"
+        android:textColor="@color/md_blue_grey_800"
         android:text="url"/>
 
 </RelativeLayout>
