@@ -10,7 +10,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 /**
@@ -18,10 +17,9 @@ import io.realm.RealmResults;
  */
 public class HistoryManager {
     private static HistoryManager instance;
-    private static WeakReference<Context> ctxRef;
     private static Realm realm;
-    private final static long SCHEMA_VERSION = 1;
-    private final static String SCHEMA_NAME = "history_soundtrack_realmio";
+//    private final static long SCHEMA_VERSION = 1;
+//    private final static String SCHEMA_NAME = "history_soundtrack_realmio";
     private String TAG = "HistoryManager";
 
     /**
@@ -30,7 +28,6 @@ public class HistoryManager {
      * @return
      */
     public static HistoryManager getInstance(WeakReference<Context> context) {
-        ctxRef = context;
         init();
         return instance == null ?
                 instance = new HistoryManager() : instance;
@@ -46,13 +43,7 @@ public class HistoryManager {
      *
      */
     private static void init() {
-        realm = Realm.getInstance(new RealmConfiguration.Builder(ctxRef.get())
-                .name(SCHEMA_NAME)
-                .schemaVersion(SCHEMA_VERSION)
-//                .encryptionKey(getKey())
-//                .modules(new MySchemaModule())
-//                .migration(new MyMigration())
-                .build());
+        realm = Realm.getDefaultInstance();
     }
     /**
      *
