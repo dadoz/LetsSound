@@ -28,7 +28,7 @@ public class HistoryManager {
      * @return
      */
     public static HistoryManager getInstance(WeakReference<Context> context) {
-        init();
+        init(context);
         return instance == null ?
                 instance = new HistoryManager() : instance;
     }
@@ -41,8 +41,10 @@ public class HistoryManager {
 
     /**
      *
+     * @param context
      */
-    private static void init() {
+    private static void init(WeakReference<Context> context) {
+        Realm.init(context.get());
         realm = Realm.getDefaultInstance();
     }
     /**
