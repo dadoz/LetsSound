@@ -1,9 +1,9 @@
 package com.application.letssound.managers;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.session.PlaybackState;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaMetadataCompat;
@@ -15,8 +15,9 @@ import android.view.View;
 import com.application.letssound.SoundTrackPlayerActivity;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.helpers.ObservableHelper;
-import com.application.letssound.services.MediaService;
 import com.application.letssound.utils.Utils;
+import com.lib.lmn.davide.soundtrackdownloaderlibrary.manager.SoundTrackDownloaderManager;
+import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -66,11 +67,13 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
      *
      * @param videoId
      */
-    public void playSoundTrack(String videoId, String thumbnailUrl, String title) {
+    public void playSoundTrack(Context context, SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks lst,
+                               String videoId, String thumbnailUrl, String title) {
         this.thumbnailUrl = thumbnailUrl;
         this.title = title;
-        fetchSoundTrackUrl(videoId);
-//        handlePlayWithBundle(videoId); //TODO rm it
+        SoundTrackDownloaderManager.Companion.getInstance(context, lst).downloadAndPlaySoundTrack(videoId);
+
+//        fetchSoundTrackUrl(videoId);
     }
 
     /**

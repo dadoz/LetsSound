@@ -1,27 +1,14 @@
 package com.application.letssound;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.fragments.SoundTrackPlayerFragment;
-import com.application.letssound.services.MediaService;
-import com.application.letssound.utils.Utils;
-
-
-import java.lang.ref.WeakReference;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -76,31 +63,6 @@ public class SoundTrackPlayerActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.fragmentContainerId, frag)
                 .commit();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
     }
 
     @Override

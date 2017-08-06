@@ -1,19 +1,15 @@
 package com.application.letssound.fragments;
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,15 +20,12 @@ import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
-import com.application.letssound.MainActivity;
 import com.application.letssound.R;
-import com.application.letssound.SoundTrackPlayerActivity;
 import com.application.letssound.adapters.HistoryAdapter;
+import com.application.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.downloader.helper.DownloaderHelper;
-import com.application.letssound.helpers.NotificationHelper;
 import com.application.letssound.helpers.SoundTrackStatus;
-import com.application.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.application.letssound.managers.HistoryManager;
 import com.application.letssound.managers.MediaSearchManager;
 import com.application.letssound.managers.MusicPlayerManager;
@@ -41,7 +34,12 @@ import com.application.letssound.models.SoundTrack;
 import com.application.letssound.observer.SoundTrackSearchObserver;
 import com.application.letssound.services.MediaService;
 import com.application.letssound.utils.Utils;
+import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.FileInputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -50,7 +48,7 @@ import butterknife.ButterKnife;
 import icepick.Icepick;
 import icepick.State;
 
-import static com.application.letssound.adapters.SoundTrackRecyclerViewAdapter.*;
+import static com.application.letssound.adapters.SoundTrackRecyclerViewAdapter.OnItemClickListenerInterface;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -60,7 +58,7 @@ public class SearchListFragment extends Fragment implements
         SearchView.OnQueryTextListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnPreparedListener, OnItemClickListenerInterface,
         MediaSearchManager.TrackSearchManagerInterface, MusicPlayerManager.OnMusicPlayerCallback,
-        View.OnFocusChangeListener, AdapterView.OnItemClickListener {
+        View.OnFocusChangeListener, AdapterView.OnItemClickListener, SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks {
     public static String SEARCH_LIST_FRAG_TAG = "SEARCH_LIST_FRAG_TAG";
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
@@ -166,15 +164,10 @@ public class SearchListFragment extends Fragment implements
     }
 
     @Override
-    public void onItemClick(int position, View v) {
-        if (trackList == null ||
-                trackList.size() < position) {
-            Log.e(TAG, "did u forget to initialize list?");
-            return;
-        }
-
-        SoundTrack soundTrack = trackList.get(position);
-        musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
+    public void onItemClick(SoundTrack soundTrack) {
+        musicPlayerManager.playSoundTrack(getContext(),
+                this,
+                soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
                 soundTrack.getSnippet().getTitle());
         historyManager.saveOnHistory(soundTrack);
@@ -364,7 +357,6 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onTrackSearchSuccess(Object list) {
-        //TODO fix this
         ArrayList<SoundTrack> tmp = (ArrayList<SoundTrack>) list;
         setResultOnSavedInstance(tmp);
         updateRecyclerViewData(tmp);
@@ -415,7 +407,9 @@ public class SearchListFragment extends Fragment implements
      */
     private void handleItemClick(HistoryResult HistoryResult) {
         SoundTrack soundTrack = historyManager.findSoundTrackByTitle(HistoryResult.getTitle());
-        musicPlayerManager.playSoundTrack(soundTrack.getId().getVideoId(),
+        musicPlayerManager.playSoundTrack(getContext(),
+                this,
+                soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
                 soundTrack.getSnippet().getTitle());
 
@@ -426,4 +420,15 @@ public class SearchListFragment extends Fragment implements
         }
     }
 
+    @Override
+    public void onSoundTrackRetrieveSuccess(@NotNull String filePath, @NotNull FileInputStream fileInputStream) {
+        Bundle bundle = Utils.buildFilePlayBundle(filePath, "", "");
+        ((LetssoundApplication) getActivity().getApplication()).getMediaControllerInstance()
+                .getTransportControls().playFromSearch("CACHED_FILE", bundle);
+    }
+
+    @Override
+    public void onSoundTrackRetrieveError(@Nullable String message) {
+
+    }
 }

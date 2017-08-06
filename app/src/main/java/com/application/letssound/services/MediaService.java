@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,11 +17,12 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.application.letssound.helpers.NotificationHelper;
 
+import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
@@ -237,13 +237,17 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 //                mediaPlayer.setDataSource(fd);
                 initSoundTrackFromBundle(extras);
                 mediaPlayer.reset();
-                if (soundTrackUrl != null) {
+                if (query.equals("CACHED_FILE")) {
+                    if (extras != null && extras.getString(PARAM_TRACK_URI) != null) {
+                        mediaPlayer.setDataSource(new FileInputStream(new File(extras.getString(PARAM_TRACK_URI))).getFD());
+                        mediaPlayer.prepare();
+                    }
+                } else if (soundTrackUrl != null) {
                     Log.e(TAG, "setDataSource :)");
                     mediaPlayer.setDataSource(MediaService.this, soundTrackUrl);
                     mediaPlayer.prepareAsync();
                 } else {
                     mediaPlayer.setDataSource(getFileDescriptorFromName("sample.mp3"));
-                    mediaPlayer.prepare();
                 }
 
                 PlaybackStateCompat playbackState = new PlaybackStateCompat.Builder()

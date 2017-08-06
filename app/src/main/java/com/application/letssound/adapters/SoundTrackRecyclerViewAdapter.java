@@ -1,26 +1,19 @@
 package com.application.letssound.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.NetworkImageView;
 import com.application.letssound.R;
-import com.application.letssound.helpers.SoundTrackStatus;
 import com.application.letssound.managers.VolleyMediaArtManager;
 import com.application.letssound.models.SoundTrack;
 import com.application.letssound.views.CircularNetworkImageView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -50,7 +43,7 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
     public DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.result_item, parent, false);
-        return new DataObjectHolder(view, listener);
+        return new DataObjectHolder(view);
     }
 
     @Override
@@ -65,6 +58,14 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
                     .getThumbnails().getHigh().getUrl(),
                     volleyMediaArtManager.getImageLoader());
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null && listener.get() != null)
+                    listener.get().onItemClick(list.get(position));
+            }
+        });
+
     }
 
     @Override
@@ -91,15 +92,13 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
      *
      */
     public interface OnItemClickListenerInterface {
-        void onItemClick(int position, View v);
+        void onItemClick(SoundTrack soundTrack);
     }
 
     /**
      * viewHolder
      */
-    public static class DataObjectHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
-        private final WeakReference<OnItemClickListenerInterface> listenerRef;
+    public static class DataObjectHolder extends RecyclerView.ViewHolder {
         private final View itemView;
         private final TextView title;
         private final TextView durationTime;
@@ -109,25 +108,21 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
         /**
          *
          * @param view
-         * @param itemClickListenerRef
          */
-        public DataObjectHolder(View view,
-                                WeakReference<OnItemClickListenerInterface> itemClickListenerRef) {
+        public DataObjectHolder(View view) {
             super(view);
             itemView = view;
-            listenerRef = itemClickListenerRef;
             title = (TextView) itemView.findViewById(R.id.titleTextId);
             url = (TextView) itemView.findViewById(R.id.urlTextId);
             durationTime = (TextView) itemView.findViewById(R.id.durationTimeTextId);
             mediaArtImageView = (CircularNetworkImageView) itemView.findViewById(R.id.mediaArtImageViewId);
-
-            itemView.setOnClickListener(this);
+//            itemView.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-            listenerRef.get().onItemClick(getAdapterPosition(), v);
-        }
+//        @Override
+//        public void onClick(View v) {
+//            listenerRef.get().onItemClick(getAdapterPosition(), v);
+//        }
     }
 
 }

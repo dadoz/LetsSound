@@ -6,6 +6,8 @@ import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownload
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.save
 import io.realm.Realm
+import io.realm.RealmConfiguration
+import io.realm.annotations.RealmModule
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -16,11 +18,17 @@ import java.lang.ref.WeakReference
  * Created by davide-syn on 6/26/17.
  */
 
+@RealmModule(library = true, allClasses = true)
 class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks?) {
     val lst: WeakReference<SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks?> = WeakReference(lst)
     val fileDir: File? = context?.filesDir
     init {
-        Realm.init(context)
+//        Realm.init(context)
+        val config: RealmConfiguration = RealmConfiguration.Builder()
+                .name("library.realm")
+                .modules(this)
+                .build()
+        Realm.getInstance(config)
     }
     /**
 
@@ -101,7 +109,7 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
                 val stream = FileOutputStream(file)
                 stream.write(downloadedFile)
                 stream.close()
-                lst.get()?.onSoundTrackRetrieveSuccess(FileInputStream(file))
+                lst.get()?.onSoundTrackRetrieveSuccess(file.absolutePath, FileInputStream(file))
             } catch (e: IOException) {
                 e.printStackTrace()
                 lst.get()?.onSoundTrackRetrieveError(e.message)
