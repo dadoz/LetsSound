@@ -35,6 +35,7 @@ class FileDownloaderManager(context: Context?, private val fileStorageManager: F
                         Response.Listener<ByteArray> { response -> fileStorageManager.put(url.toString(), response) },
                         Response.ErrorListener { error ->  lst2.onErrorResponse(error) },
                         HashMap()))
+//        fileStorageManager.close()
     }
 
     /**

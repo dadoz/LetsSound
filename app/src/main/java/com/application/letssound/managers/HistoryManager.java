@@ -5,13 +5,11 @@ import android.util.Log;
 
 import com.application.letssound.models.HistoryResult;
 import com.application.letssound.models.SoundTrack;
-import com.lib.lmn.davide.soundtrackdownloaderlibrary.manager.FileStorageManager;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 /**
@@ -47,11 +45,11 @@ public class HistoryManager {
      */
     private static void init(WeakReference<Context> context) {
         Realm.init(context.get());
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .name("app.realm")
-                .modules(Realm.getDefaultModule(), new FileStorageManager(context.get(), null))
-                .build();
-        realm = Realm.getInstance(config);
+//        RealmConfiguration config = new RealmConfiguration.Builder()
+//                .name("app.realm")
+//                .modules(new SoundTrackRealmModule())
+//                .build();
+        realm = Realm.getDefaultInstance();
     }
     /**
      *

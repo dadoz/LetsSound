@@ -1,13 +1,11 @@
 package com.lib.lmn.davide.soundtrackdownloaderlibrary.manager
 
 import android.content.Context
-import com.lib.lmn.davide.soundtrackdownloaderlibrary.models.SoundTrack
+import com.lib.lmn.davide.soundtrackdownloaderlibrary.models.SoundTrackCache
+import com.lib.lmn.davide.soundtrackdownloaderlibrary.models.SoundTrackRealmModule
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule
-import com.vicpin.krealmextensions.query
-import com.vicpin.krealmextensions.save
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import io.realm.annotations.RealmModule
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -17,18 +15,24 @@ import java.lang.ref.WeakReference
 /**
  * Created by davide-syn on 6/26/17.
  */
-
-@RealmModule(library = true, allClasses = true)
 class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks?) {
     val lst: WeakReference<SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks?> = WeakReference(lst)
     val fileDir: File? = context?.filesDir
-    init {
-//        Realm.init(context)
-        val config: RealmConfiguration = RealmConfiguration.Builder()
+    val config: RealmConfiguration by lazy {
+        RealmConfiguration.Builder()
                 .name("library.realm")
-                .modules(this)
+                .modules(SoundTrackRealmModule())
                 .build()
+    }
+
+    val realm: Realm by lazy {
         Realm.getInstance(config)
+    }
+
+    init {
+        Realm.init(context)
+        //delete previous realm config
+//        Realm.deleteRealm(config)
     }
     /**
 
@@ -38,14 +42,15 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
      */
     fun put(key: String, file: ByteArray) {
         val encodedKey = generateEncodedKey(key)
-        saveOnDb(encodedKey)
+        if (get(encodedKey) != null)
+            saveOnDb(encodedKey)
         saveFile(encodedKey, file)
     }
 
     private fun saveOnDb(encodedKey: String) {
-        val soundTrack = SoundTrack()
-        soundTrack.key = encodedKey
-        soundTrack.save()
+        val soundTrackCache = SoundTrackCache()
+        soundTrackCache.key = encodedKey
+        realm.createObject(SoundTrackCache().javaClass, soundTrackCache)
     }
 
     /**
@@ -56,13 +61,15 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
      */
     operator fun get(name: String): String? {
         val key = generateEncodedKey(name)
-        val soundTrack = SoundTrack().query { query -> query.equalTo("key", key) }
+        val soundTrack: SoundTrackCache? = realm.where(SoundTrackCache().javaClass)
+                    .equalTo("key", key).findFirst()
 
-        if (soundTrack.isEmpty())
-            return null
-        return soundTrack[0].key
+        return soundTrack?.key
     }
 
+    fun close() {
+        realm.close()
+    }
     /**
 
      * @param key
