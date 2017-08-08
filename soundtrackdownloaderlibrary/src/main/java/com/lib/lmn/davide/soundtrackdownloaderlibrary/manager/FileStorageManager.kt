@@ -35,7 +35,19 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
 //        Realm.deleteRealm(config)
     }
     /**
+     * @param key
+     * *
+     * @return
+     */
+    operator fun get(name: String): String? {
+        val key = generateEncodedKey(name)
+        return realm
+                .where(SoundTrackCache().javaClass)
+                .equalTo("key", key)
+                .findFirst()?.key
+    }
 
+    /**
      * @param key
      * *
      * @param file
@@ -47,29 +59,15 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
         saveFile(encodedKey, file)
     }
 
+    /**
+     *
+     */
     private fun saveOnDb(encodedKey: String) {
         val soundTrackCache = SoundTrackCache()
         soundTrackCache.key = encodedKey
         realm.createObject(SoundTrackCache().javaClass, soundTrackCache)
     }
 
-    /**
-
-     * @param key
-     * *
-     * @return
-     */
-    operator fun get(name: String): String? {
-        val key = generateEncodedKey(name)
-        val soundTrack: SoundTrackCache? = realm.where(SoundTrackCache().javaClass)
-                    .equalTo("key", key).findFirst()
-
-        return soundTrack?.key
-    }
-
-    fun close() {
-        realm.close()
-    }
     /**
 
      * @param key
