@@ -35,18 +35,18 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
         //delete previous realm config
 //        Realm.deleteRealm(config)
     }
-    /**
+     /**
      * @param key
      * *
      * @return
      */
     fun getCachedFile(name: String): String? {
-        val key = generateEncodedKey(name)
-        return realm
-                .where(SoundTrackCache().javaClass)
-                .equalTo("key", key)
-                .findFirst()?.key
-    }
+         val key = generateEncodedKey(name)
+         return realm
+                 .where(SoundTrackCache().javaClass)
+                 .equalTo("key", key)
+                 .findFirst()?.key
+     }
 
     /**
      * @param key
