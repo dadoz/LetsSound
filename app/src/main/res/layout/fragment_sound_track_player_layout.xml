@@ -21,33 +21,21 @@
     <!-- create Comound View -->
     <com.application.letssound.views.CircularNetworkImageView
         android:id="@+id/playerMediaArtImageViewId"
+        android:visibility="gone"
         android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:scaleType="fitXY"
-        android:layout_marginTop="100dp"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_launch_icon"/>
-    <com.application.letssound.views.CircularSeekBar
+        android:layout_height="200dp"/>
+        <!--android:scaleType="fitXY"-->
+        <!--android:layout_marginTop="100dp"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:src="@drawable/ic_launch_icon"/>-->
+    <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/playerSoundTrackSeekbarId"
-        android:layout_marginTop="35dp"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:start_angle="270"
-        app:end_angle="270"
-        app:circle_x_radius="130dp"
-        app:circle_y_radius="130dp"
-        app:use_custom_radii="true"
-        app:lock_enabled="true"
-        app:progress="0"
-        app:max="100"
-        app:pointer_alpha_ontouch="100"
-        app:circle_color="@color/md_blue_grey_800"
-        app:circle_progress_color="@color/md_red_400"
-        app:pointer_color="@color/md_red_400"
-        app:pointer_halo_color="@color/md_red_400"/>
-
-    <!--FINISH-->
+        android:layout_margin="@dimen/small_margin_16"
+        android:progressBackgroundTint="@color/md_indigo_600"
+        style="@style/Base.Widget.AppCompat.SeekBar"
+        />
     <TextView
         android:id="@+id/playerTrackTitleTextId"
         android:layout_width="wrap_content"

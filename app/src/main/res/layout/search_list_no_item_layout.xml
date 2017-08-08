@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/searchNoItemLayoutId"
     android:visibility="gone"
-    android:background="@color/md_grey_300"
     android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent">

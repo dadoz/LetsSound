@@ -160,7 +160,6 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onRefresh() {
-        swipeContainerLayout.setRefreshing(false);
     }
 
     @Override
@@ -345,6 +344,8 @@ public class SearchListFragment extends Fragment implements
      */
     private void initSwipeRefresh() {
         swipeContainerLayout.setOnRefreshListener(this);
+        swipeContainerLayout.setRefreshing(false);
+
     }
 
     /**
@@ -398,6 +399,8 @@ public class SearchListFragment extends Fragment implements
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         HistoryResult HistoryResult = (HistoryResult) adapterView.getAdapter().getItem(i);
         handleItemClick(HistoryResult);
+        swipeContainerLayout.setRefreshing(true);
+
 //        musicPlayerManager.playSoundTrack(null, "null", "null"); //TODO rm it
     }
 
@@ -425,6 +428,9 @@ public class SearchListFragment extends Fragment implements
         Bundle bundle = Utils.buildFilePlayBundle(filePath, "", "");
         ((LetssoundApplication) getActivity().getApplication()).getMediaControllerInstance()
                 .getTransportControls().playFromSearch("CACHED_FILE", bundle);
+
+        //update ui
+        swipeContainerLayout.setRefreshing(false);
     }
 
     @Override

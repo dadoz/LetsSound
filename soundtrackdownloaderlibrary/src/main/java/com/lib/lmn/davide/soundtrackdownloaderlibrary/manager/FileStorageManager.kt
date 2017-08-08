@@ -4,6 +4,7 @@ import android.content.Context
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.models.SoundTrackCache
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.models.SoundTrackRealmModule
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule
+import com.vicpin.krealmextensions.transaction
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import java.io.File
@@ -35,59 +36,44 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
 //        Realm.deleteRealm(config)
     }
     /**
+     * @param key
+     * *
+     * @return
+     */
+    fun getCachedFile(name: String): String? {
+        val key = generateEncodedKey(name)
+        return realm
+                .where(SoundTrackCache().javaClass)
+                .equalTo("key", key)
+                .findFirst()?.key
+    }
 
+    /**
      * @param key
      * *
      * @param file
      */
-    fun put(key: String, file: ByteArray) {
-        val encodedKey = generateEncodedKey(key)
-        if (get(encodedKey) != null)
+    fun setFileOnCache(key: String, file: ByteArray) {
+        val encodedKey: String = generateEncodedKey(key)
+        println(encodedKey)
+        if (getCachedFile(encodedKey) == null) {
+            //save on db
             saveOnDb(encodedKey)
-        saveFile(encodedKey, file)
+            //replace file
+            saveFile(encodedKey, file)
+        }
     }
 
+    /**
+     *
+     */
     private fun saveOnDb(encodedKey: String) {
-        val soundTrackCache = SoundTrackCache()
-        soundTrackCache.key = encodedKey
-        realm.createObject(SoundTrackCache().javaClass, soundTrackCache)
+        realm.transaction { realm ->
+            realm.createObject(SoundTrackCache().javaClass, encodedKey)
+        }
     }
 
-    /**
 
-     * @param key
-     * *
-     * @return
-     */
-    operator fun get(name: String): String? {
-        val key = generateEncodedKey(name)
-        val soundTrack: SoundTrackCache? = realm.where(SoundTrackCache().javaClass)
-                    .equalTo("key", key).findFirst()
-
-        return soundTrack?.key
-    }
-
-    fun close() {
-        realm.close()
-    }
-    /**
-
-     * @param key
-     * *
-     * @return
-     */
-    private fun generateEncodedKey(key: String): String {
-//        var encoded = Base64.encodeToString(key.toByteArray(), Base64.DEFAULT)
-//                .replace("=", "").toLowerCase()
-        var encoded = key
-                .replace("http:\\\\", "")
-                .replace("/", "")
-                .replace("=", "")
-                .toLowerCase()
-        if (encoded.length >= 64)
-            encoded = encoded.substring(0, 63)
-        return encoded
-    }
 
     //new algorithm to handle file name
 //    StringBuilder sb = new StringBuilder(len);
@@ -142,4 +128,22 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
         return "$fileDir/$key"
     }
 
+    /**
+
+     * @param key
+     * *
+     * @return
+     */
+    companion object {
+        fun generateEncodedKey(key: String): String {
+            var encoded = key
+                    .replace("http:\\\\", "")
+                    .replace("/", "")
+                    .replace("=", "")
+                    .toLowerCase()
+            if (encoded.length >= 64)
+                encoded = encoded.substring(0, 63)
+            return encoded
+        }
+    }
 }

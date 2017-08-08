@@ -73,6 +73,11 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
         this.title = title;
         SoundTrackDownloaderManager.Companion.getInstance(context, lst).downloadAndPlaySoundTrack(videoId);
 
+        //start activity
+        Intent intent = new Intent(activityRef.get().getApplicationContext(), SoundTrackPlayerActivity.class);
+//        intent.putExtras(bundle);
+        activityRef.get().startActivity(intent);
+
 //        fetchSoundTrackUrl(videoId);
     }
 

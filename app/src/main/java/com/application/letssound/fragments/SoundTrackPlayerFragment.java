@@ -1,29 +1,23 @@
 package com.application.letssound.fragments;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
+import android.support.v7.widget.AppCompatSeekBar;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.application.letssound.MainActivity;
 import com.application.letssound.R;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.managers.MusicPlayerManager;
@@ -31,11 +25,8 @@ import com.application.letssound.managers.VolleyMediaArtManager;
 import com.application.letssound.services.MediaService;
 import com.application.letssound.utils.Utils;
 import com.application.letssound.views.CircularNetworkImageView;
-import com.application.letssound.views.CircularSeekBar;
 
 import java.lang.ref.WeakReference;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -45,12 +36,12 @@ import butterknife.ButterKnife;
  * A placeholder fragment containing a simple view.
  */
 public class SoundTrackPlayerFragment extends Fragment implements View.OnClickListener,
-        CircularSeekBar.OnCircularSeekBarChangeListener {
+        AppCompatSeekBar.OnSeekBarChangeListener {
     private static final String TAG = "SoundTrackPlayerFragment";
     private Uri mediaArtUri;
     private String title;
     @Bind(R.id.playerSoundTrackSeekbarId)
-    CircularSeekBar playerSoundTrackSeekbar;
+    AppCompatSeekBar playerSoundTrackSeekbar;
     @Bind(R.id.playerMediaArtImageViewId)
     CircularNetworkImageView playerMediaArtImageView;
     @Bind(R.id.playerTrackTitleTextId)
@@ -112,7 +103,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
      *
      */
     public void initView() {
-        Log.e(TAG, "uri " + mediaArtUri.toString());
+//        Log.e(TAG, "uri " + mediaArtUri.toString());
 //        playerMediaArtImageView
 //                .setImageUrl(mediaArtUri.toString(), volleyMediaArtManager.getImageLoader());
         playerTrackTitleText.setText(title);
@@ -187,15 +178,8 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         }
     }
 
-    @Override
-    public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
-        if (progress > circularSeekBar.getProgress()) {
-            updateProgressOnSeekBar(REFRESH_TIMESTAMP);
-        }
-    }
-
     /**
-     *
+     * FIXME - leaking Runnable
      */
     private synchronized void updateProgressOnSeekBar(int timestamp) {
         new Handler().postDelayed(new Runnable() {
@@ -218,15 +202,6 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
 
     }
 
-    @Override
-    public void onStopTrackingTouch(CircularSeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(CircularSeekBar seekBar) {
-
-    }
 
     /**
      *
@@ -251,4 +226,21 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
                 ContextCompat.getColor(getActivity().getApplicationContext(), R.color.md_red_400));
     }
 
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (progress > seekBar.getProgress()) {
+            updateProgressOnSeekBar(REFRESH_TIMESTAMP);
+        }
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
 }

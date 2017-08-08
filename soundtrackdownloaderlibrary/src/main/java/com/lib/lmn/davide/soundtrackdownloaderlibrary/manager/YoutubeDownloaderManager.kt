@@ -21,9 +21,11 @@ class YoutubeDownloaderManager(val youtubeDownloaderService: YoutubeDownloaderMo
         soundTrackObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
-                .doOnError { throwable -> throwable.printStackTrace() }
-                .onErrorReturn { null }
-                .subscribe { soundTrackUrl -> fileDownloaderManager.getSoundTrack(Uri.parse(soundTrackUrl.link)) }
+//                .doOnError { throwable -> throwable.printStackTrace() }
+//                .onErrorReturn { null }
+                .subscribe ({ soundTrackUrl: YoutubeDownloaderFile? ->
+                    fileDownloaderManager.getSoundTrack(soundTrackUrl?.link.let { link -> Uri.parse(link) })},
+                        Throwable::printStackTrace)
     }
 
     companion object {
