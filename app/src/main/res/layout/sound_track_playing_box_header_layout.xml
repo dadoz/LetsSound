@@ -15,8 +15,7 @@
         android:paddingTop="@dimen/medium_padding"
         android:paddingLeft="@dimen/medium_padding"
         android:paddingRight="@dimen/medium_padding"
-        android:paddingBottom="40dp"
-        android:background="@color/md_grey_300">
+        android:paddingBottom="40dp">
         <TextView
             android:id="@+id/soundTrackTitleTextId"
             android:layout_marginLeft="@dimen/medium_large_padding"

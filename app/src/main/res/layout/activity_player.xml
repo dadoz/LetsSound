@@ -23,7 +23,6 @@
         android:id="@+id/fragmentContainerId"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/md_grey_300"
         android:layout_marginBottom="?attr/actionBarSize"
         tools:context=".PlayerActivity"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

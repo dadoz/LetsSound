@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingLeft="@dimen/small_margin_16"
-    android:paddingRight="@dimen/small_margin_16"
-    android:background="@color/md_grey_300">
+    android:paddingRight="@dimen/small_margin_16">
     <Button
         android:visibility="gone"
         android:id="@+id/playerTrackRetryButtonId"

@@ -8,8 +8,6 @@ import com.application.letssound.interceptors.CacheControlApplicationInterceptor
 import com.application.letssound.models.SoundTrack;
 
 import java.lang.ref.WeakReference;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
@@ -23,7 +21,7 @@ import rx.functions.Func1;
 /**
  * Created by davide on 15/07/16.
  */
-public class RetrofitManager {
+public class YoutubeV3RetrofitManager {
 
     private static final String BASE_URL = "https://www.googleapis.com/youtube/v3/";
     private static final int MAX_RESULTS = 25;
@@ -35,7 +33,7 @@ public class RetrofitManager {
     /**
      * constructor
      */
-    public RetrofitManager() {
+    public YoutubeV3RetrofitManager() {
         service = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(getClient())
@@ -55,12 +53,13 @@ public class RetrofitManager {
      * @return
      */
     public Observable<ArrayList<Object>> searchList(String query) {
-        return service.searchList(query, YOUTUBE_PART, MAX_RESULTS).map(new Func1<ArrayList<SoundTrack>, ArrayList<Object>>() {
-            @Override
-            public ArrayList<Object> call(ArrayList<SoundTrack> soundTracks) {
-                return new ArrayList<Object>(soundTracks);
-            }
-        });
+        return service.searchList(query, YOUTUBE_PART, MAX_RESULTS)
+                .map(new Func1<ArrayList<SoundTrack>, ArrayList<Object>>() {
+                    @Override
+                    public ArrayList<Object> call(ArrayList<SoundTrack> soundTracks) {
+                        return new ArrayList<Object>(soundTracks);
+                    }
+                });
     }
 
     public OkHttpClient getClient() {
