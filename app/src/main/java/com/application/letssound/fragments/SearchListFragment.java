@@ -1,4 +1,5 @@
 package com.application.letssound.fragments;
+
 import android.app.Activity;
 import android.app.SearchManager;
 import android.media.MediaPlayer;
@@ -24,7 +25,6 @@ import com.application.letssound.R;
 import com.application.letssound.adapters.HistoryAdapter;
 import com.application.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.application.letssound.application.LetssoundApplication;
-import com.application.letssound.downloader.helper.DownloaderHelper;
 import com.application.letssound.helpers.SoundTrackStatus;
 import com.application.letssound.managers.HistoryManager;
 import com.application.letssound.managers.MediaSearchManager;
@@ -32,7 +32,6 @@ import com.application.letssound.managers.MusicPlayerManager;
 import com.application.letssound.models.HistoryResult;
 import com.application.letssound.models.SoundTrack;
 import com.application.letssound.observer.SoundTrackSearchObserver;
-import com.application.letssound.services.MediaService;
 import com.application.letssound.utils.Utils;
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule;
 
@@ -60,23 +59,20 @@ public class SearchListFragment extends Fragment implements
         MediaSearchManager.TrackSearchManagerInterface, MusicPlayerManager.OnMusicPlayerCallback,
         View.OnFocusChangeListener, AdapterView.OnItemClickListener, SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks {
     public static String SEARCH_LIST_FRAG_TAG = "SEARCH_LIST_FRAG_TAG";
+    @State
+    ArrayList<SoundTrack> soundTrackList;
     @Bind(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
     @Bind(R.id.swipeContainerLayoutId)
     SwipeRefreshLayout swipeContainerLayout;
     @Bind(R.id.searchNoItemLayoutId)
     View searchNoItemLayout;
-
     private SearchView searchView;
-    @State
-    ArrayList<SoundTrack> trackList = new ArrayList<>();
     private SoundTrackStatus soundTrackStatus;
     private MenuItem searchMenuItem;
     private View mainView;
-    private DownloaderHelper downloaderHelper;
-    private MediaSearchManager searchManager;
+    private MediaSearchManager mediaSearchManager;
     private MusicPlayerManager musicPlayerManager;
-    private MediaService boundService;
     private HistoryManager historyManager;
     private static final String TAG = "SearchListFragment";
     private AutoCompleteTextView autoCompleteTextView;
@@ -85,27 +81,6 @@ public class SearchListFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Icepick.restoreInstanceState(this, savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-//        trackList = null;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         initComponents();
     }
 
@@ -119,8 +94,13 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        historyManager = HistoryManager.getInstance(new WeakReference<>(getActivity().getApplicationContext()));
         initView(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mediaSearchManager = null;
     }
 
     /**
@@ -130,8 +110,9 @@ public class SearchListFragment extends Fragment implements
         soundTrackStatus = SoundTrackStatus.getInstance();
 //        downloaderHelper = DownloaderHelper.getInstance(new WeakReference<Activity>(getActivity()),
 //                new WeakReference<OnDownloadHelperResultInterface>(this));
-        searchManager = MediaSearchManager.getInstance(new WeakReference<MediaSearchManager.TrackSearchManagerInterface>(this));
+        mediaSearchManager = MediaSearchManager.getInstance(this);
         musicPlayerManager = MusicPlayerManager.getInstance(getActivity(), null, this);
+        historyManager = HistoryManager.getInstance(new WeakReference<>(getActivity().getApplicationContext()));
     }
 
     /**
@@ -141,20 +122,9 @@ public class SearchListFragment extends Fragment implements
     public void initView(Bundle savedInstanceState) {
         initSwipeRefresh();
         setHasOptionsMenu(true);
-        if (savedInstanceState != null) {
-            initViewFromSavedInstance();
-            return;
-        }
-
-        initRecyclerView(new ArrayList<SoundTrack>());
+        initRecyclerView(savedInstanceState != null ? new ArrayList<SoundTrack>() : soundTrackList);
     }
 
-    /**
-     *
-     */
-    private void initViewFromSavedInstance() {
-        initRecyclerView(trackList);
-    }
 
     @Override
     public void onRefresh() {
@@ -177,27 +147,6 @@ public class SearchListFragment extends Fragment implements
         Icepick.saveInstanceState(this, outState);
     }
 
-//    @Override
-//    public void downloadSoundTrackByUrl(String url) {
-//    }
-//    @Override
-//    public void handleError(Exception e) {
-//        swipeContainerLayout.setRefreshing(false);
-////        setOnIdleStatus();
-//        Utils.createSnackBarByBackgroundColor(mainView, e.getMessage(), ContextCompat
-//                .getColor(getContext(), R.color.md_red_400));
-//    }
-//
-//    @Override
-//    public void handleSuccess(String message) {
-//        Utils.createSnackBarByBackgroundColor(mainView, message,
-//                ContextCompat.getColor(getContext(), R.color.md_teal_400));
-//    }
-
-//    @Override
-//    public void startMediaPlayer(String url) throws Exception {
-//    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         initSearchOptionMenu(menu);
@@ -217,10 +166,9 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        clearList();
         searchMenuItem.collapseActionView();
         soundTrackStatus.setIdleStatus();
-        searchManager.onSearchAsync(query);
+        mediaSearchManager.onSearchAsync(query);
         return true;
     }
 
@@ -231,8 +179,6 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-//        setPlayPlayerUI(true);
-//        onPlayingStatusPrepareUI();
         mp.start();
     }
 
@@ -251,9 +197,9 @@ public class SearchListFragment extends Fragment implements
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setOnQueryTextFocusChangeListener(this);
         initAutocompleteTextView();
-        SearchManager searchManager = (SearchManager) getActivity()
+        SearchManager mediaSearchManager = (SearchManager) getActivity()
                 .getSystemService(Activity.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager
+        searchView.setSearchableInfo(mediaSearchManager
                 .getSearchableInfo(getActivity().getComponentName()));
         searchView.setOnQueryTextListener(this);
 
@@ -279,7 +225,6 @@ public class SearchListFragment extends Fragment implements
             });
             avoidToAutoCollapseDropdown();
         }
-
     }
 
     /**
@@ -298,7 +243,6 @@ public class SearchListFragment extends Fragment implements
                 }
             }
         });
-
     }
 
     /**
@@ -351,7 +295,7 @@ public class SearchListFragment extends Fragment implements
      * @param result
      */
     private void setResultOnSavedInstance(ArrayList<SoundTrack> result) {
-        this.trackList = result;
+        this.soundTrackList = result;
     }
 
     @Override
@@ -379,8 +323,8 @@ public class SearchListFragment extends Fragment implements
      * @deprecated
      */
     private void clearList() {
-        if (trackList != null) {
-            trackList.clear();
+        if (soundTrackList != null) {
+            soundTrackList.clear();
         }
         ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView.getAdapter()).clearAll();
     }
@@ -433,6 +377,7 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onSoundTrackRetrieveError(@Nullable String message) {
-
     }
+
+
 }

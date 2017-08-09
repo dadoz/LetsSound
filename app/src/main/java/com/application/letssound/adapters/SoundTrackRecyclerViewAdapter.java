@@ -78,6 +78,8 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
      * @param lst
      */
     public void addAll(ArrayList<SoundTrack> lst) {
+        if (list == null)
+            list = new ArrayList<>();
         this.list = lst;
     }
 
@@ -85,7 +87,8 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
      *
      */
     public void clearAll() {
-        list.clear();
+        if (list != null)
+            list.clear();
     }
 
     /**

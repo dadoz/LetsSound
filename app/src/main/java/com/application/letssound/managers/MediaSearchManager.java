@@ -21,8 +21,8 @@ public class MediaSearchManager implements MediaSearchManagerInterface,
      *
      * @param lst
      */
-    public MediaSearchManager(WeakReference<TrackSearchManagerInterface> lst) {
-        listener = lst;
+    public MediaSearchManager(TrackSearchManagerInterface lst) {
+        listener = new WeakReference<>(lst);
         retrofitManager = YoutubeV3RetrofitManager.getInstance();
         observableHelper = new ObservableHelper(this);
     }
@@ -31,11 +31,13 @@ public class MediaSearchManager implements MediaSearchManagerInterface,
      *
      * @return
      */
-    public static MediaSearchManager getInstance(WeakReference<TrackSearchManagerInterface> lst) {
-        if (instance == null) {
-            instance = new MediaSearchManager(lst);
-        }
-        return instance;
+    public static MediaSearchManager getInstance(TrackSearchManagerInterface lst) {
+        return new MediaSearchManager(lst);
+        //FIXME when you have time -> not set listener on resume activity
+//        if (instance == null) {
+//            instance = new MediaSearchManager(lst);
+//        }
+//        return instance;
     }
 
     @Override
@@ -51,7 +53,8 @@ public class MediaSearchManager implements MediaSearchManagerInterface,
     @Override
     public void onObservableSuccess(ArrayList<Object> list, String requestType) {
         Log.e(TAG, "success results  " + list.size());
-        listener.get().onTrackSearchSuccess(list);
+        if (listener.get() != null)
+            listener.get().onTrackSearchSuccess(list);
     }
 
     @Override
@@ -61,13 +64,15 @@ public class MediaSearchManager implements MediaSearchManagerInterface,
     @Override
     public void onObservableEmpty() {
         Log.e(TAG, "empty");
-        listener.get().onTrackSearchError("empty fields");
+        if (listener.get() != null)
+            listener.get().onTrackSearchError("empty fields");
     }
 
     @Override
     public void onObservableError(String requestType, String error) {
         Log.e(TAG, "hey" + error);
-        listener.get().onTrackSearchError(error);
+        if (listener.get() != null)
+            listener.get().onTrackSearchError(error);
     }
 
     public interface TrackSearchManagerInterface {
