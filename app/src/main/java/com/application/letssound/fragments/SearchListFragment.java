@@ -17,12 +17,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 
 import com.application.letssound.R;
-import com.application.letssound.adapters.HistoryAdapter;
 import com.application.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.helpers.SoundTrackStatus;
@@ -67,15 +64,12 @@ public class SearchListFragment extends Fragment implements
     SwipeRefreshLayout swipeContainerLayout;
     @Bind(R.id.searchNoItemLayoutId)
     View searchNoItemLayout;
-    private SearchView searchView;
     private SoundTrackStatus soundTrackStatus;
     private MenuItem searchMenuItem;
     private View mainView;
     private MediaSearchManager mediaSearchManager;
     private MusicPlayerManager musicPlayerManager;
     private HistoryManager historyManager;
-    private static final String TAG = "SearchListFragment";
-    private AutoCompleteTextView autoCompleteTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,7 +132,7 @@ public class SearchListFragment extends Fragment implements
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
                 soundTrack.getSnippet().getTitle());
         historyManager.saveOnHistory(soundTrack);
-        setAutocompleteTextViewAdapter();
+//        setAutocompleteTextViewAdapter();
     }
 
     @Override
@@ -194,9 +188,10 @@ public class SearchListFragment extends Fragment implements
      */
     private void initSearchOptionMenu(Menu menu) {
         searchMenuItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setOnQueryTextFocusChangeListener(this);
-        initAutocompleteTextView();
+
+        //get media search manager
         SearchManager mediaSearchManager = (SearchManager) getActivity()
                 .getSystemService(Activity.SEARCH_SERVICE);
         searchView.setSearchableInfo(mediaSearchManager
@@ -204,62 +199,64 @@ public class SearchListFragment extends Fragment implements
         searchView.setOnQueryTextListener(this);
 
     }
+//
+//    /**
+//     * @TODO move on presenter
+//     */
+//    private void initAutocompleteTextView() {
+//        if (searchView != null) {
+//            autoCompleteTextView = (AutoCompleteTextView) searchView
+//                    .findViewById(android.support.v7.appcompat.R.id.search_src_text);
+//
+//            setAutocompleteTextViewAdapter();
+//            autoCompleteTextView.setVisibility(View.VISIBLE);
+//            autoCompleteTextView.setOnItemClickListener(this);
+//            autoCompleteTextView.setDropDownBackgroundResource(R.color.md_blue_grey_800);
+//            autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    autoCompleteTextView.showDropDown();
+//                }
+//            });
+//            avoidToAutoCollapseDropdown();
+//        }
+//    }
+//
+//    /**
+//     *
+//     */
+//    private void avoidToAutoCollapseDropdown() {
+//        View tmp = searchView.findViewById(autoCompleteTextView.getDropDownAnchor());
+//        tmp.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                if (searchView != null &&
+//                        autoCompleteTextView != null &&
+//                        !autoCompleteTextView.isPopupShowing() &&
+//                        !searchView.isIconified()) {
+//                    autoCompleteTextView.showDropDown();
+//                }
+//            }
+//        });
+//    }
 
-    /**
-     * @TODO move on presenter
-     */
-    private void initAutocompleteTextView() {
-        if (searchView != null) {
-            autoCompleteTextView = (AutoCompleteTextView) searchView
-                    .findViewById(android.support.v7.appcompat.R.id.search_src_text);
-
-            setAutocompleteTextViewAdapter();
-            autoCompleteTextView.setVisibility(View.VISIBLE);
-            autoCompleteTextView.setOnItemClickListener(this);
-            autoCompleteTextView.setDropDownBackgroundResource(R.color.md_blue_grey_800);
-            autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    autoCompleteTextView.showDropDown();
-                }
-            });
-            avoidToAutoCollapseDropdown();
-        }
-    }
-
-    /**
-     *
-     */
-    private void avoidToAutoCollapseDropdown() {
-        View tmp = searchView.findViewById(autoCompleteTextView.getDropDownAnchor());
-        tmp.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (searchView != null &&
-                        autoCompleteTextView != null &&
-                        !autoCompleteTextView.isPopupShowing() &&
-                        !searchView.isIconified()) {
-                    autoCompleteTextView.showDropDown();
-                }
-            }
-        });
-    }
-
-    /**
-     *
-     */
-    private void setAutocompleteTextViewAdapter() {
-        HistoryAdapter historyAdapter = new HistoryAdapter(getActivity().getApplicationContext(),
-                R.layout.history_item,
-                historyManager.getHistory());
-        autoCompleteTextView.setAdapter(historyAdapter);
-    }
+//    /**
+//     *
+//     */
+//    private void setAutocompleteTextViewAdapter() {
+//        HistoryAdapter historyAdapter = new HistoryAdapter(getActivity().getApplicationContext(),
+//                R.layout.history_item,
+//                historyManager.getHistory());
+//        autoCompleteTextView.setAdapter(historyAdapter);
+//    }
 
     /**
      *
      * @param result
      */
     private void initRecyclerView(final ArrayList<SoundTrack> result) {
+        //if you want you can save all result on history or in db
+//        historyManager.saveOnHistory(result);
         SoundTrackRecyclerViewAdapter adapter = new SoundTrackRecyclerViewAdapter(result,
                 new WeakReference<OnItemClickListenerInterface>(this),
                 new WeakReference<>(getActivity().getApplicationContext()));
@@ -319,22 +316,8 @@ public class SearchListFragment extends Fragment implements
     public void onPlayMediaCallback(Bundle bundle) {
     }
 
-    /**
-     * @deprecated
-     */
-    private void clearList() {
-        if (soundTrackList != null) {
-            soundTrackList.clear();
-        }
-        ((SoundTrackRecyclerViewAdapter) soundTrackRecyclerView.getAdapter()).clearAll();
-    }
-
     @Override
     public void onFocusChange(View view, boolean isVisible) {
-        if (autoCompleteTextView != null &&
-                isVisible) {
-            autoCompleteTextView.showDropDown();
-        }
     }
 
     @Override
@@ -357,12 +340,6 @@ public class SearchListFragment extends Fragment implements
                 soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
                 soundTrack.getSnippet().getTitle());
-
-        if (autoCompleteTextView != null &&
-                searchMenuItem != null) {
-            searchMenuItem.collapseActionView();
-            autoCompleteTextView.setText("");
-        }
     }
 
     @Override
@@ -378,6 +355,5 @@ public class SearchListFragment extends Fragment implements
     @Override
     public void onSoundTrackRetrieveError(@Nullable String message) {
     }
-
 
 }

@@ -1,25 +1,23 @@
 package com.application.letssound;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.application.letssound.adapters.SoundTrackListViewPagerAdapter;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.fragments.SearchListFragment;
-
-import java.lang.ref.WeakReference;
 
 import icepick.State;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
-    private String TAG = "MainActivity";
     @State
     public String currentFragmentTag = SearchListFragment.SEARCH_LIST_FRAG_TAG;
 
@@ -27,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initView();
+        onInitView();
     }
 
     @Override
@@ -41,29 +39,7 @@ public class MainActivity extends AppCompatActivity {
         ((LetssoundApplication) getApplication()).doBindService();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        ((LetssoundApplication) getApplication()).doUnbindService(); //TODO this callback destroy service
-
-    }
-
     /**
-     * TODO move in a base class
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,53 +48,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * TODO move in a base class
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_settings:
-                openSettings();
+                this.startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     /**
-     * TODO move in a base class
      */
-    private void openSettings() {
-        this.startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-    }
-
-    /**
-     * TODO move in a base class
-     */
-    private void initView() {
+    private void onInitView() {
         initActionBar();
-        initFragment();
+        // Instantiate a ViewPager and a PagerAdapter.
+        ViewPager viewPager = (ViewPager) findViewById(R.id.soundTrackListViewPagerId);
+        viewPager.setAdapter(new SoundTrackListViewPagerAdapter(getSupportFragmentManager()));
+        //set tab layout
+        ((TabLayout) findViewById(R.id.tabLayoutId)).setupWithViewPager(viewPager);
     }
 
     /**
      *
      */
-    private void initFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.mainFragmentContainerId, getSuitableFragment(), currentFragmentTag)
-                .commit();
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Fragment getSuitableFragment() {
-        Fragment frag;
-        return (frag = getSupportFragmentManager().findFragmentByTag(this.currentFragmentTag)) == null ?
-                new SearchListFragment() : frag;
-    }
+//    private void onInitFragment() {
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.mainFragmentContainerId, ActivityUtils.getCurrentFragment(getSupportFragmentManager(),
+//                        currentFragmentTag), currentFragmentTag)
+//                .commit();
+//    }
 
     /**
      * TODO move in a base class
