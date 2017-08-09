@@ -13,7 +13,7 @@
         android:layout_width="@dimen/medium_icon_size"
         android:layout_height="@dimen/medium_icon_size"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_launch_icon"/>
+        android:src="@drawable/cd"/>
 
     <TextView
         android:layout_marginTop="@dimen/small_padding"
