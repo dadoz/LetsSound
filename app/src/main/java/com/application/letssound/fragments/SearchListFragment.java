@@ -122,7 +122,7 @@ public class SearchListFragment extends Fragment implements
     public void initView(Bundle savedInstanceState) {
         initSwipeRefresh();
         setHasOptionsMenu(true);
-        initRecyclerView(savedInstanceState != null ? new ArrayList<SoundTrack>() : soundTrackList);
+        initRecyclerView(savedInstanceState != null ? soundTrackList : new ArrayList<SoundTrack>());
     }
 
 
