@@ -1,6 +1,5 @@
 package com.application.letssound.fragments;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -82,7 +81,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         volleyMediaArtManager = VolleyMediaArtManager
                 .getInstance(new WeakReference<>(getActivity().getApplicationContext()), null);
 
-        musicPlayerManager = MusicPlayerManager.getInstance(new WeakReference<Activity>(getActivity()),
+        musicPlayerManager = MusicPlayerManager.getInstance(getActivity(),
                 new View[] {playerPlayButton, playerPauseButton}, null);
         musicPlayerManager.initMediaController();
         return mainView;

@@ -27,7 +27,7 @@ public class YoutubeV3RetrofitManager {
     private static final int MAX_RESULTS = 25;
     private final YoutubeService service;
     private static final String YOUTUBE_PART = "snippet";
-    private static RetrofitManager instance;
+    private static YoutubeV3RetrofitManager instance; //
     private WeakReference<Context> contextRef;
 
     /**
@@ -43,9 +43,9 @@ public class YoutubeV3RetrofitManager {
                 .create(YoutubeService.class);
     }
 
-    public static RetrofitManager getInstance() {
+    public static YoutubeV3RetrofitManager getInstance() {
         return instance == null ?
-                instance = new RetrofitManager() : instance;
+                instance = new YoutubeV3RetrofitManager() : instance;
     }
 
     /**
@@ -80,5 +80,9 @@ public class YoutubeV3RetrofitManager {
         //part=snippet
         @GET("search?key=" + AuthCustom.API_KEY)
         Observable<ArrayList<SoundTrack>> searchList(@Query("q") String query, @Query("part") String part, @Query("maxResults") int maxResults);
+    }
+
+    public void destroy() {
+        instance = null;
     }
 }

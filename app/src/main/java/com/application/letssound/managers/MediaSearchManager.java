@@ -12,10 +12,20 @@ import rx.Subscription;
 public class MediaSearchManager implements MediaSearchManagerInterface,
         ObservableHelper.ObservableHelperInterface {
     private static final String TAG = "MediaSearchManager";
-    private static MediaSearchManager instance;
-    private static RetrofitManager retrofitManager;
-    private static ObservableHelper observableHelper;
-    private static WeakReference<TrackSearchManagerInterface> listener;
+    private static MediaSearchManager instance; //FIXME LEAK
+    private YoutubeV3RetrofitManager retrofitManager;
+    private ObservableHelper observableHelper;
+    private WeakReference<TrackSearchManagerInterface> listener;
+
+    /**
+     *
+     * @param lst
+     */
+    public MediaSearchManager(WeakReference<TrackSearchManagerInterface> lst) {
+        listener = lst;
+        retrofitManager = YoutubeV3RetrofitManager.getInstance();
+        observableHelper = new ObservableHelper(this);
+    }
 
     /**
      *
@@ -23,11 +33,8 @@ public class MediaSearchManager implements MediaSearchManagerInterface,
      */
     public static MediaSearchManager getInstance(WeakReference<TrackSearchManagerInterface> lst) {
         if (instance == null) {
-            instance = new MediaSearchManager();
+            instance = new MediaSearchManager(lst);
         }
-        listener = lst;
-        retrofitManager = RetrofitManager.getInstance();
-        observableHelper = new ObservableHelper(new WeakReference<ObservableHelper.ObservableHelperInterface>(instance));
         return instance;
     }
 
@@ -68,4 +75,8 @@ public class MediaSearchManager implements MediaSearchManagerInterface,
         void onTrackSearchError(String error);
     }
 
+    public void destroy() {
+        retrofitManager.destroy();
+        instance = null;
+    }
 }

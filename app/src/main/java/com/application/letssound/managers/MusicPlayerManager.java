@@ -27,38 +27,40 @@ import rx.functions.Func1;
 
 public class MusicPlayerManager implements ObservableHelper.ObservableHelperInterface {
     private static final String TAG = "MusicPlayerManagerTAG";
-    private static MusicPlayerManager instance;
-    private static RetrofitYoutubeDownloaderManager retrofitManager;
-    private static ObservableHelper observableHelper;
-    private static WeakReference<OnMusicPlayerCallback> listener;
-    private static WeakReference<Activity> activityRef;
-    private static View playButtonView;
-    private static View pauseButtonView;
-    private static MediaControllerCompat mediaControllerRef;
+    private static MusicPlayerManager instance; //FIXME LEAK
+    private RetrofitYoutubeDownloaderManager retrofitManager;
+    private ObservableHelper observableHelper;
+    private WeakReference<OnMusicPlayerCallback> listener;
+    private WeakReference<Activity> activityRef;
+    private View playButtonView;
+    private View pauseButtonView;
+    private MediaControllerCompat mediaControllerRef; //FIXME LEAK
     private String thumbnailUrl;
     private String title;
 
+    public MusicPlayerManager(Activity activity, View[] viewsArray,
+                              OnMusicPlayerCallback lst) {
+        retrofitManager = RetrofitYoutubeDownloaderManager.getInstance();
+        listener = new WeakReference<OnMusicPlayerCallback>(lst);
+        activityRef = new WeakReference<Activity>(activity);
+        if (viewsArray != null) {
+            playButtonView = viewsArray[0];
+            pauseButtonView = viewsArray[1];
+        }
+        mediaControllerRef = ((LetssoundApplication) activityRef.get().getApplication()).getMediaControllerInstance();
+        observableHelper = new ObservableHelper(instance);
+    }
 
     /**
      *
      * @param lst
      * @return
      */
-    public static MusicPlayerManager getInstance(@NonNull  WeakReference<Activity> activity, View[] viewsArray,
-                                                 WeakReference<OnMusicPlayerCallback> lst) {
+    public static MusicPlayerManager getInstance(@NonNull  Activity activity, View[] viewsArray,
+                                                 OnMusicPlayerCallback lst) {
         if (instance == null) {
-            instance = new MusicPlayerManager();
+            instance = new MusicPlayerManager(activity, viewsArray, lst);
         }
-        retrofitManager = RetrofitYoutubeDownloaderManager.getInstance();
-        listener = lst;
-        activityRef = activity;
-        if (viewsArray != null) {
-            playButtonView = viewsArray[0];
-            pauseButtonView = viewsArray[1];
-        }
-        //TODO weak ref??
-        mediaControllerRef = ((LetssoundApplication) activityRef.get().getApplication()).getMediaControllerInstance();
-        observableHelper = new ObservableHelper(new WeakReference<ObservableHelper.ObservableHelperInterface>(instance));
         return instance;
     }
 

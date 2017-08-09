@@ -17,8 +17,8 @@ public class ObservableHelper {
     private WeakReference<ObservableHelperInterface> listener;
     private String requestType;
 
-    public ObservableHelper(WeakReference<ObservableHelperInterface> lst) {
-        listener = lst;
+    public ObservableHelper(ObservableHelperInterface lst) {
+        listener = new WeakReference<ObservableHelperInterface>(lst);
     }
 
     /**
