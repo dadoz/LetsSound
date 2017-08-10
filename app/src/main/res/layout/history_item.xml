@@ -4,20 +4,20 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/small_margin_16"
-    android:paddingRight="@dimen/small_margin_16"
+    android:padding="@dimen/small_margin_16"
     android:minHeight="@dimen/min_item_height"
     android:background="?android:attr/selectableItemBackground">
     <ImageView
         android:id="@+id/historyIconId"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_width="@dimen/small_icon_size"
-        android:layout_height="@dimen/small_icon_size"
-        android:src="@drawable/ic_schedule_black_24dp" />
+        android:layout_width="@dimen/medium_icon_size"
+        android:layout_height="@dimen/medium_icon_size"
+        android:src="@drawable/ic_disc_48dp" />
 
     <ImageView
         android:id="@+id/historyClearButtonId"
+        android:visibility="gone"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_width="@dimen/small_icon_size"
@@ -26,6 +26,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/small_margin_16"
         android:layout_toRightOf="@id/historyIconId"
         android:layout_toLeftOf="@id/historyClearButtonId"
         android:layout_centerVertical="true">
@@ -34,22 +35,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:layout_marginLeft="@dimen/small_margin_16"
-            android:layout_marginRight="@dimen/small_margin_16"
-            android:textColor="@color/md_blue_grey_50"
-            android:textSize="@dimen/title_text_medium"
+            android:textColor="@color/md_amber_400"
+            android:textSize="@dimen/text_24"
             android:text="title"/>
         <TextView
             android:id="@+id/historyTimestampTextId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/historyTitleTextId"
-            android:layout_marginTop="@dimen/small_padding"
-            android:layout_marginLeft="@dimen/small_margin_16"
-            android:layout_marginRight="@dimen/small_margin_16"
-            android:textColor="@color/md_red_400"
+            android:layout_marginTop="@dimen/small_margin_8"
+            android:textColor="@color/md_blue_grey_700"
             android:textSize="@dimen/title_text_small"
             android:text="04:30"/>
     </RelativeLayout>
 </RelativeLayout>
-    <!--<include layout="@layout/result_item_selected"/>-->
