@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/small_margin_16">
+    android:layout_height="match_parent">
     <Button
         android:id="@+id/playerTrackRetryButtonId"
         android:visibility="gone"
@@ -59,22 +58,22 @@
         <ImageView
             android:id="@+id/playerPlayButtonId"
             android:visibility="gone"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
+            android:layout_width="@dimen/icon_size_48"
+            android:layout_height="@dimen/icon_size_48"
             android:layout_centerHorizontal="true"
             android:src="@drawable/ic_play_48dp"
             android:background="?attr/selectableItemBackground"/>
         <ImageView
             android:id="@+id/playerPauseButtonId"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
+            android:layout_width="@dimen/icon_size_48"
+            android:layout_height="@dimen/icon_size_48"
             android:layout_centerHorizontal="true"
             android:src="@drawable/ic_pause_48dp"
             android:background="?attr/selectableItemBackground"/>
         <ImageView
             android:id="@+id/playerRepeatButtonId"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
+            android:layout_width="@dimen/icon_size_48"
+            android:layout_height="@dimen/icon_size_48"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_replay_48dp"
             android:background="?attr/selectableItemBackground"/>
@@ -100,7 +99,6 @@
         android:layout_above="@id/playerButtonBarLayoutId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/small_margin_16"
         style="@style/Base.Widget.AppCompat.SeekBar"/>
 
 </RelativeLayout>
