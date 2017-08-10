@@ -2,109 +2,105 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingLeft="@dimen/small_margin_16"
-    android:paddingRight="@dimen/small_margin_16">
+    android:padding="@dimen/small_margin_16">
     <Button
-        android:visibility="gone"
         android:id="@+id/playerTrackRetryButtonId"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/md_grey_50"
         android:textSize="@dimen/title_text_medium"
-        android:backgroundTint="@color/md_red_400"
-        android:layout_marginTop="@dimen/small_margin_16"
+        android:backgroundTint="@color/md_orange_900"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="TRY BACK"/>
-    <!-- create Comound View -->
     <com.application.letssound.views.CircularNetworkImageView
         android:id="@+id/playerMediaArtImageViewId"
-        android:visibility="gone"
-        android:layout_width="200dp"
-        android:layout_height="200dp"/>
-        <!--android:scaleType="fitXY"-->
-        <!--android:layout_marginTop="100dp"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:src="@drawable/ic_launch_icon"/>-->
-    <android.support.v7.widget.AppCompatSeekBar
-        android:id="@+id/playerSoundTrackSeekbarId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin_16"
-        android:progressBackgroundTint="@color/md_indigo_600"
-        style="@style/Base.Widget.AppCompat.SeekBar"
-        />
+        android:background="@drawable/ic_disc_48dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="@dimen/small_margin_16"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <!--android:scaleType="fitXY"-->
+    <!--android:layout_marginTop="100dp"-->
+    <!--android:layout_centerHorizontal="true"-->
+
     <TextView
         android:id="@+id/playerTrackTitleTextId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/playerMediaArtImageViewId"
-        android:textColor="@color/md_red_400"
+        android:textColor="@color/md_amber_400"
         android:textSize="@dimen/title_text_extra_large"
-        android:layout_marginTop="60dp"
-        android:layout_marginBottom="@dimen/small_padding"
+        android:layout_marginBottom="@dimen/small_margin_8"
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:maxLines="2"
-        android:text="Sound Track Title sdflkjls sldk fjlskdj flskdj kljsd "/>
+        android:text="Sound Track Tiel"/>
     <TextView
         android:id="@+id/playerTrackInfoTextId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/playerTrackTitleTextId"
-        android:layout_marginBottom="40dp"
-        android:textColor="@color/md_blue_grey_800"
+        android:textColor="@color/md_blue_grey_700"
         android:textSize="@dimen/title_text_medium"
         android:gravity="center"
         android:layout_centerHorizontal="true"
         android:text="info - duration"/>
-
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/playerButtonBarLayoutId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/small_margin_16">
+        android:padding="@dimen/small_margin_16"
+        android:background="@color/md_blue_grey_800">
         <ImageView
-            android:id="@+id/playerFastRewindButtonId"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
-            android:src="@drawable/ic_fast_rewind_white_24dp"
-            android:background="?attr/selectableItemBackground"/>
-        <ImageView
-            android:visibility="gone"
             android:id="@+id/playerPlayButtonId"
+            android:visibility="gone"
             android:layout_width="@dimen/medium_icon_size"
             android:layout_height="@dimen/medium_icon_size"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_play_circle_outline_white_24dp"
+            android:src="@drawable/ic_play_48dp"
             android:background="?attr/selectableItemBackground"/>
         <ImageView
             android:id="@+id/playerPauseButtonId"
             android:layout_width="@dimen/medium_icon_size"
             android:layout_height="@dimen/medium_icon_size"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_pause_circle_outline_white_24dp"
+            android:src="@drawable/ic_pause_48dp"
+            android:background="?attr/selectableItemBackground"/>
+        <ImageView
+            android:id="@+id/playerRepeatButtonId"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_replay_48dp"
+            android:background="?attr/selectableItemBackground"/>
+        <ImageView
+            android:id="@+id/playerFastRewindButtonId"
+            android:visibility="gone"
+            android:layout_width="@dimen/medium_icon_size"
+            android:layout_height="@dimen/medium_icon_size"
+            android:src="@drawable/ic_fast_rewind_white_24dp"
             android:background="?attr/selectableItemBackground"/>
 
         <ImageView
             android:id="@+id/playerFastForwardButtonId"
+            android:visibility="gone"
             android:layout_width="@dimen/medium_icon_size"
             android:layout_height="@dimen/medium_icon_size"
             android:src="@drawable/ic_fast_forward_white_24dp"
             android:background="?attr/selectableItemBackground"/>
+    </RelativeLayout>
 
-    </LinearLayout>
-    <ImageView
-        android:id="@+id/playerRepeatButtonId"
-        android:layout_width="@dimen/medium_icon_size"
-        android:layout_height="@dimen/medium_icon_size"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/playerSoundTrackSeekbarId"
+        android:layout_above="@id/playerButtonBarLayoutId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/small_margin_16"
-        android:src="@drawable/ic_repeat_one_white_24dp"
-        android:background="?attr/selectableItemBackground"/>
+        style="@style/Base.Widget.AppCompat.SeekBar"/>
 
 </RelativeLayout>
