@@ -2,6 +2,7 @@ package com.application.letssound.fragments;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.application.letssound.R;
+import com.application.letssound.SoundTrackPlayerActivity;
 import com.application.letssound.adapters.SoundTrackRecyclerViewAdapter;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.helpers.SoundTrackStatus;
@@ -284,7 +286,6 @@ public class SearchListFragment extends Fragment implements
     private void initSwipeRefresh() {
         swipeContainerLayout.setOnRefreshListener(this);
         swipeContainerLayout.setRefreshing(false);
-
     }
 
     /**
@@ -302,7 +303,6 @@ public class SearchListFragment extends Fragment implements
         updateRecyclerViewData(tmp);
     }
 
-
     @Override
     public void onTrackSearchError(String error) {
         setResultOnSavedInstance(new ArrayList<SoundTrack>());
@@ -310,7 +310,6 @@ public class SearchListFragment extends Fragment implements
         Utils.createSnackBarByBackgroundColor(mainView, error, ContextCompat
                 .getColor(getContext(), R.color.md_red_400));
     }
-
 
     @Override
     public void onPlayMediaCallback(Bundle bundle) {
@@ -324,8 +323,7 @@ public class SearchListFragment extends Fragment implements
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         HistoryResult HistoryResult = (HistoryResult) adapterView.getAdapter().getItem(i);
         handleItemClick(HistoryResult);
-        swipeContainerLayout.setRefreshing(true);
-
+        updateUI(true);
 //        musicPlayerManager.playSoundTrack(null, "null", "null"); //TODO rm it
     }
 
@@ -344,12 +342,32 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onSoundTrackRetrieveSuccess(@NotNull String filePath, @NotNull FileInputStream fileInputStream) {
-        Bundle bundle = Utils.buildFilePlayBundle(filePath, "", "");
+        Bundle bundle = Utils.buildFilePlayBundle(filePath, "", "Sound Track Title");
         ((LetssoundApplication) getActivity().getApplication()).getMediaControllerInstance()
                 .getTransportControls().playFromSearch("CACHED_FILE", bundle);
 
         //update ui
-        swipeContainerLayout.setRefreshing(false);
+        updateUI(false);
+
+        //start activity
+        Intent intent = new Intent(getContext(), SoundTrackPlayerActivity.class);
+//        intent.putExtras(bundle);
+        if (getActivity() != null)
+            getActivity().startActivity(intent);
+    }
+
+    /**
+     * update ui
+     */
+    private void updateUI(final boolean isLoading) {
+        //update ui
+        if (getActivity() != null)
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    swipeContainerLayout.setRefreshing(isLoading);
+                }
+            });
     }
 
     @Override
