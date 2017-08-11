@@ -3,6 +3,7 @@ package com.application.letssound.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRec
     public void onInitView() {
         ArrayList<SoundTrack> list = Utils.iteratorToList(HistoryManager.getInstance(getContext()).getSoundTrackIterator());
         SoundTrackHistoryRecyclerViewAdapter adapter = new SoundTrackHistoryRecyclerViewAdapter(list, this, getContext());
+        historyListView.setLayoutManager(new LinearLayoutManager(getContext()));
         historyListView.setAdapter(adapter);
     }
 
