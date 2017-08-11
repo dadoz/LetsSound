@@ -30,6 +30,8 @@ public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRec
 
     @BindView(R.id.historyListViewId)
     RecyclerView historyListView;
+    @BindView(R.id.emptyResultHistoryLayoutId)
+    View emptyResultHistoryLayoutId;
 
 
     @Nullable
@@ -47,11 +49,23 @@ public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRec
         unbinder.unbind();
     }
 
+    /**
+     * init view
+     */
     public void onInitView() {
         ArrayList<SoundTrack> list = Utils.iteratorToList(HistoryManager.getInstance(getContext()).getSoundTrackIterator());
         SoundTrackHistoryRecyclerViewAdapter adapter = new SoundTrackHistoryRecyclerViewAdapter(list, this, getContext());
         historyListView.setLayoutManager(new LinearLayoutManager(getContext()));
         historyListView.setAdapter(adapter);
+        updateUI(list.size() != 0);
+    }
+
+    /**
+     *
+     * @param isEMptyList
+     */
+    private void updateUI(boolean isEMptyList) {
+        emptyResultHistoryLayoutId.setVisibility(isEMptyList ? View.VISIBLE : View.GONE);
     }
 
     //TODO mv in a presenter maybe
