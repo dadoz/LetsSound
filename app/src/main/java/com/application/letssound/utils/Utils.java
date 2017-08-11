@@ -9,7 +9,11 @@ import android.text.SpannableStringBuilder;
 import android.view.View;
 
 import com.application.letssound.BuildConfig;
+import com.application.letssound.models.SoundTrack;
 import com.application.letssound.services.MediaService;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
@@ -79,5 +83,13 @@ public class Utils {
             }
         }
         return title;
+    }
+
+    public static ArrayList<SoundTrack> iteratorToList(Iterator<SoundTrack> soundTrackIterator) {
+        ArrayList<SoundTrack> list = new ArrayList<>();
+        while (soundTrackIterator.hasNext())
+            list.add(soundTrackIterator.next());
+
+        return list;
     }
 }

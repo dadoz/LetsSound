@@ -6,11 +6,12 @@ import android.util.Log;
 import com.application.letssound.models.HistoryResult;
 import com.application.letssound.models.SoundTrack;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import rx.Observable;
 
 /**
  * Created by davide on 25/07/16.
@@ -18,8 +19,6 @@ import io.realm.RealmResults;
 public class HistoryManager {
     private static HistoryManager instance;
     private static Realm realm;
-//    private final static long SCHEMA_VERSION = 1;
-//    private final static String SCHEMA_NAME = "history_soundtrack_realmio";
     private String TAG = "HistoryManager";
 
     /**
@@ -27,10 +26,9 @@ public class HistoryManager {
      * @param context
      * @return
      */
-    public static HistoryManager getInstance(WeakReference<Context> context) {
+    public static HistoryManager getInstance(Context context) {
         init(context);
-        return instance == null ?
-                instance = new HistoryManager() : instance;
+        return (instance == null) ? instance = new HistoryManager() : instance;
     }
 
     /**
@@ -43,12 +41,8 @@ public class HistoryManager {
      *
      * @param context
      */
-    private static void init(WeakReference<Context> context) {
-        Realm.init(context.get());
-//        RealmConfiguration config = new RealmConfiguration.Builder()
-//                .name("app.realm")
-//                .modules(new SoundTrackRealmModule())
-//                .build();
+    private static void init(Context context) {
+        Realm.init(context);
         realm = Realm.getDefaultInstance();
     }
     /**
@@ -97,34 +91,35 @@ public class HistoryManager {
     /**
      * get history with no filter
      */
-    public ArrayList<HistoryResult> getHistory() {
-        if (realm != null) {
-            ArrayList<HistoryResult> list = new ArrayList<>();
-            RealmResults<SoundTrack> tmp = realm.where(SoundTrack.class)
-                    .findAll();
-            for (SoundTrack obj: tmp) {
-                list.add(new HistoryResult(obj.getSnippet().getTitle(), obj.getTimestamp()));
-            }
-            return list;
-        }
-        return null;
+    public Observable<List<HistoryResult>> getHistory() {
+        return Observable.from(realm
+                .where(SoundTrack.class)
+                .findAll())
+                .flatMap(results -> Observable.just(results))
+                .map(soundTrack -> new HistoryResult(soundTrack.getSnippet().getTitle(), soundTrack.getTimestamp()))
+                .toList();
+    }
+    /**
+     * get history with no filter
+     */
+    public Iterator<SoundTrack> getSoundTrackIterator() {
+        return realm
+                .where(SoundTrack.class)
+                .findAll()
+                .iterator();
     }
 
-    /**
-     *
-     * @return
-     */
-    public ArrayList<String> getHistoryString() {
-        if (realm != null) {
-            ArrayList<String> list = new ArrayList<>();
-            RealmResults<SoundTrack> tmp = realm.where(SoundTrack.class)
-                    .findAll();
-            for (SoundTrack obj:
-                 tmp) {
-                list.add(obj.getSnippet().getTitle());
-            }
-            return list;
-        }
-        return null;
-    }
+//    /**
+//     *
+//     * @return
+//     */
+//    public ArrayList<String> getHistoryString() {
+//        ArrayList<String> list = new ArrayList<>();
+//        RealmResults<SoundTrack> tmp = realm.where(SoundTrack.class)
+//                .findAll();
+//        for (SoundTrack obj: tmp) {
+//            list.add(obj.getSnippet().getTitle());
+//        }
+//        return list;
+//    }
 }

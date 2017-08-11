@@ -27,7 +27,7 @@ import com.application.letssound.views.CircularNetworkImageView;
 
 import java.lang.ref.WeakReference;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
@@ -39,19 +39,19 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     private static final String TAG = "SoundTrackPlayerFragment";
     private Uri mediaArtUri;
     private String title;
-    @Bind(R.id.playerSoundTrackSeekbarId)
+    @BindView(R.id.playerSoundTrackSeekbarId)
     AppCompatSeekBar playerSoundTrackSeekbar;
-    @Bind(R.id.playerMediaArtImageViewId)
+    @BindView(R.id.playerMediaArtImageViewId)
     CircularNetworkImageView playerMediaArtImageView;
-    @Bind(R.id.playerTrackTitleTextId)
+    @BindView(R.id.playerTrackTitleTextId)
     TextView playerTrackTitleText;
-    @Bind(R.id.playerPlayButtonId)
+    @BindView(R.id.playerPlayButtonId)
     View playerPlayButton;
-    @Bind(R.id.playerPauseButtonId)
+    @BindView(R.id.playerPauseButtonId)
     View playerPauseButton;
-    @Bind(R.id.playerRepeatButtonId)
+    @BindView(R.id.playerRepeatButtonId)
     View playerRepeatButton;
-    @Bind(R.id.playerTrackRetryButtonId)
+    @BindView(R.id.playerTrackRetryButtonId)
     View playerTrackRetryButton;
 
     private int current;

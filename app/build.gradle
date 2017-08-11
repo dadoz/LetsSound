@@ -46,7 +46,8 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$appcompat_version"
 
     //butternknife
-    compile 'com.jakewharton:butterknife:7.0.1'
+    compile "com.jakewharton:butterknife:$butterknife_version"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife_version"
 
     //youtube api
     compile('com.google.apis:google-api-services-youtube:v3-rev183-1.22.0') {
@@ -67,6 +68,7 @@ dependencies {
 
     //calligraphy
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+
 
 //    compile 'com.google.http-client:google-http-client-android:1.21.0'
 //    compile 'com.google.api-client:google-api-client-android:1.21.0'

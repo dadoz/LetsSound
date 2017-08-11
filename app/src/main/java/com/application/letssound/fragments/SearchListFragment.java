@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 
 import com.application.letssound.R;
 import com.application.letssound.SoundTrackPlayerActivity;
@@ -41,8 +42,9 @@ import java.io.FileInputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import icepick.Icepick;
 import icepick.State;
 
@@ -60,18 +62,21 @@ public class SearchListFragment extends Fragment implements
     public static String SEARCH_LIST_FRAG_TAG = "SEARCH_LIST_FRAG_TAG";
     @State
     ArrayList<SoundTrack> soundTrackList;
-    @Bind(R.id.trackRecyclerViewId)
+    @BindView(R.id.trackRecyclerViewId)
     RecyclerView soundTrackRecyclerView;
-    @Bind(R.id.swipeContainerLayoutId)
-    SwipeRefreshLayout swipeContainerLayout;
-    @Bind(R.id.searchNoItemLayoutId)
+    @BindView(R.id.searchNoItemLayoutId)
     View searchNoItemLayout;
+    @BindView(R.id.searchNoItemImageId)
+    View searchNoItemImage;
+    @BindView(R.id.emptyResultProgressBarId)
+    ProgressBar emptyResultProgressBar;
     private SoundTrackStatus soundTrackStatus;
     private MenuItem searchMenuItem;
     private View mainView;
     private MediaSearchManager mediaSearchManager;
     private MusicPlayerManager musicPlayerManager;
     private HistoryManager historyManager;
+    private Unbinder unbinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +89,7 @@ public class SearchListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.fragment_search_list_layout, container, false);
-        ButterKnife.bind(this, mainView);
+        unbinder = ButterKnife.bind(this, mainView);
         return mainView;
     }
 
@@ -96,6 +101,7 @@ public class SearchListFragment extends Fragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unbinder.unbind();
         mediaSearchManager = null;
     }
 
@@ -108,7 +114,7 @@ public class SearchListFragment extends Fragment implements
 //                new WeakReference<OnDownloadHelperResultInterface>(this));
         mediaSearchManager = MediaSearchManager.getInstance(this);
         musicPlayerManager = MusicPlayerManager.getInstance(getActivity(), null, this);
-        historyManager = HistoryManager.getInstance(new WeakReference<>(getActivity().getApplicationContext()));
+        historyManager = HistoryManager.getInstance(getActivity().getApplicationContext());
     }
 
     /**
@@ -116,7 +122,6 @@ public class SearchListFragment extends Fragment implements
      * @param savedInstanceState
      */
     public void initView(Bundle savedInstanceState) {
-        initSwipeRefresh();
         setHasOptionsMenu(true);
         initRecyclerView(savedInstanceState != null ? soundTrackList : new ArrayList<SoundTrack>());
     }
@@ -165,6 +170,7 @@ public class SearchListFragment extends Fragment implements
         searchMenuItem.collapseActionView();
         soundTrackStatus.setIdleStatus();
         mediaSearchManager.onSearchAsync(query);
+        updateUI(true);
         return true;
     }
 
@@ -280,13 +286,6 @@ public class SearchListFragment extends Fragment implements
         adapter.notifyDataSetChanged();
     }
 
-    /**
-     *
-     */
-    private void initSwipeRefresh() {
-        swipeContainerLayout.setOnRefreshListener(this);
-        swipeContainerLayout.setRefreshing(false);
-    }
 
     /**
      *
@@ -362,11 +361,9 @@ public class SearchListFragment extends Fragment implements
     private void updateUI(final boolean isLoading) {
         //update ui
         if (getActivity() != null)
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    swipeContainerLayout.setRefreshing(isLoading);
-                }
+            getActivity().runOnUiThread(() -> {
+                emptyResultProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                searchNoItemImage.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
             });
     }
 

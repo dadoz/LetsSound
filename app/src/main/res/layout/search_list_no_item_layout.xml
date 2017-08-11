@@ -5,15 +5,28 @@
     android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ImageView
-        android:id="@+id/searchNoItemImageId"
+    <FrameLayout
+        android:id="@+id/emptySearchFrameLayoutId"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/margin_32"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_headphones_48dp"/>
+        android:layout_height="wrap_content">
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/emptyResultProgressBarId"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/progressBarStyleLarge"/>
+        <ImageView
+            android:id="@+id/searchNoItemImageId"
+            android:layout_marginBottom="@dimen/margin_32"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_headphones_48dp"/>
+    </FrameLayout>
     <TextView
-        android:layout_below="@id/searchNoItemImageId"
+        android:layout_below="@id/emptySearchFrameLayoutId"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

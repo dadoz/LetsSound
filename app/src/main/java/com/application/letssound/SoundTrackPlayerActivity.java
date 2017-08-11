@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 import com.application.letssound.fragments.SoundTrackPlayerFragment;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -18,7 +18,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * Created by davide on 08/02/16.
  */
 public class SoundTrackPlayerActivity extends AppCompatActivity {
-    @Bind(R.id.toolbarId)
+    @BindView(R.id.toolbarId)
     Toolbar toolbar;
 
     private String TAG = "SOUND_TRACK_PLAYER_FRAG_TAG";

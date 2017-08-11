@@ -6,15 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.application.letssound.adapters.SettingsAdapter;
-import com.application.letssound.models.Setting;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -22,9 +18,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * Created by davide on 08/02/16.
  */
 public class SettingsActivity extends AppCompatActivity {
-    @Bind(R.id.toolbarSettingId)
+    @BindView(R.id.toolbarSettingId)
     Toolbar toolbar;
-    @Bind(R.id.settingsListViewId)
+    @BindView(R.id.settingsListViewId)
     ListView settingsListView;
     private ArrayList<String> data = new ArrayList<>();
 
