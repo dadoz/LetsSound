@@ -57,15 +57,15 @@ public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRec
         SoundTrackHistoryRecyclerViewAdapter adapter = new SoundTrackHistoryRecyclerViewAdapter(list, this, getContext());
         historyListView.setLayoutManager(new LinearLayoutManager(getContext()));
         historyListView.setAdapter(adapter);
-        updateUI(list.size() != 0);
+        updateUI(list.size() == 0);
     }
 
     /**
      *
-     * @param isEMptyList
+     * @param isEmptyList
      */
-    private void updateUI(boolean isEMptyList) {
-        emptyResultHistoryLayoutId.setVisibility(isEMptyList ? View.VISIBLE : View.GONE);
+    private void updateUI(boolean isEmptyList) {
+        emptyResultHistoryLayoutId.setVisibility(isEmptyList ? View.VISIBLE : View.GONE);
     }
 
     //TODO mv in a presenter maybe
