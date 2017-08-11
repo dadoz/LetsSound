@@ -80,7 +80,7 @@ public class SoundTrackPlayerActivity extends AppCompatActivity {
      * @return
      */
     public Fragment getSuitableFragment() {
-        Fragment frag = null;
+        Fragment frag;
         return (frag = getSupportFragmentManager().findFragmentByTag(TAG)) == null ?
                 new SoundTrackPlayerFragment() :
                 frag;

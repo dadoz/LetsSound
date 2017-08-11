@@ -41,7 +41,7 @@ public class HistoryListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View mainView = inflater.inflate(R.layout.fragment_history_list_layout, container, false);
+        View mainView = inflater.inflate(R.layout.fragment_latest_play_list_layout, container, false);
         ButterKnife.bind(this, mainView);
         return mainView;
     }

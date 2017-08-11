@@ -102,8 +102,7 @@ public class HistoryManager {
             ArrayList<HistoryResult> list = new ArrayList<>();
             RealmResults<SoundTrack> tmp = realm.where(SoundTrack.class)
                     .findAll();
-            for (SoundTrack obj:
-                 tmp) {
+            for (SoundTrack obj: tmp) {
                 list.add(new HistoryResult(obj.getSnippet().getTitle(), obj.getTimestamp()));
             }
             return list;

@@ -54,12 +54,7 @@ public class YoutubeV3RetrofitManager {
      */
     public Observable<ArrayList<Object>> searchList(String query) {
         return service.searchList(query, YOUTUBE_PART, MAX_RESULTS)
-                .map(new Func1<ArrayList<SoundTrack>, ArrayList<Object>>() {
-                    @Override
-                    public ArrayList<Object> call(ArrayList<SoundTrack> soundTracks) {
-                        return new ArrayList<Object>(soundTracks);
-                    }
-                });
+                .map((Func1<ArrayList<SoundTrack>, ArrayList<Object>>) ArrayList::new);
     }
 
     public OkHttpClient getClient() {

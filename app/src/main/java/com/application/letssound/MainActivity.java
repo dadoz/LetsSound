@@ -66,21 +66,11 @@ public class MainActivity extends AppCompatActivity {
         initActionBar();
         // Instantiate a ViewPager and a PagerAdapter.
         ViewPager viewPager = (ViewPager) findViewById(R.id.soundTrackListViewPagerId);
-        viewPager.setAdapter(new SoundTrackListViewPagerAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(new SoundTrackListViewPagerAdapter(getSupportFragmentManager(),
+                getAssets()));
         //set tab layout
         ((TabLayout) findViewById(R.id.tabLayoutId)).setupWithViewPager(viewPager);
     }
-
-    /**
-     *
-     */
-//    private void onInitFragment() {
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.mainFragmentContainerId, ActivityUtils.getCurrentFragment(getSupportFragmentManager(),
-//                        currentFragmentTag), currentFragmentTag)
-//                .commit();
-//    }
 
     /**
      * TODO move in a base class

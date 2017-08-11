@@ -1,4 +1,4 @@
-package com.application.letssound.gsonDeserializer;
+package com.application.letssound.deserializer;
 
 import android.util.Log;
 

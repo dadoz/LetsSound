@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.media.session.MediaControllerCompat;
 
+import com.application.letssound.BuildConfig;
 import com.application.letssound.R;
 import com.application.letssound.services.MediaService;
 
@@ -17,7 +18,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class LetssoundApplication extends Application {
     private static final String TAG = "LetssoundApplication";
-    private static final String FONT_PATH = "fonts/KozGoPro-Light.ttf";
     private MediaService serviceRef;
 
     @Override
@@ -32,7 +32,7 @@ public class LetssoundApplication extends Application {
     private void initCalligraph() {
         CalligraphyConfig.initDefault(new CalligraphyConfig
                 .Builder()
-                .setDefaultFontPath(FONT_PATH)
+                .setDefaultFontPath(BuildConfig.FONT_PATH)
                 .setFontAttrId(R.attr.fontPath)
                 .build());
     }

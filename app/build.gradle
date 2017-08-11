@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
@@ -13,9 +14,19 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField "String", "FONT_PATH", "\"fonts/KozGoPro-Light.ttf\""
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            buildConfigField "String", "FONT_PATH", "\"fonts/KozGoPro-Light.ttf\""
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
@@ -54,9 +65,8 @@ dependencies {
     compile 'frankiesardo:icepick:3.2.0'
     provided 'frankiesardo:icepick-processor:3.2.0'
 
-    //calligraph
+    //calligraphy
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
-
 
 //    compile 'com.google.http-client:google-http-client-android:1.21.0'
 //    compile 'com.google.api-client:google-api-client-android:1.21.0'
