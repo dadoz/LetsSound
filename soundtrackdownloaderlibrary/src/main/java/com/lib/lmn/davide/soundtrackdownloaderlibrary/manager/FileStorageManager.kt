@@ -40,11 +40,10 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
      * *
      * @return
      */
-    fun getCachedFile(name: String): String? {
-         val key = generateEncodedKey(name)
+    fun getCachedFile(videoId: String): String? {
          return realm
                  .where(SoundTrackCache().javaClass)
-                 .equalTo("key", key)
+                 .equalTo("key", videoId)
                  .findFirst()?.key
      }
 
@@ -53,23 +52,25 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
      * *
      * @param file
      */
-    fun setFileOnCache(key: String, file: ByteArray) {
-        val encodedKey: String = generateEncodedKey(key)
-        println(encodedKey)
-        if (getCachedFile(encodedKey) == null) {
+    fun setFileOnCache(videoId: String, file: ByteArray) {
+        if (getCachedFile(videoId) == null) {
             //save on db
-            saveOnDb(encodedKey)
+            saveOnDb(videoId)
             //replace file
-            saveFile(encodedKey, file)
+            saveFile(videoId, file)
         }
     }
 
     /**
      *
      */
-    private fun saveOnDb(encodedKey: String) {
+    private fun saveOnDb(videoId: String) {
         realm.transaction { realm ->
-            realm.createObject(SoundTrackCache().javaClass, encodedKey)
+            try {
+                realm.createObject(SoundTrackCache().javaClass, videoId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -113,7 +114,9 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
     fun retrieveFile(key: String): ByteArray? {
         try {
             val fileInputStream = FileInputStream("$fileDir/$key")
-            return fileInputStream.readBytes()
+            val byteArray = fileInputStream.readBytes()
+            fileInputStream.close()
+            return byteArray
         } catch (e: Exception) {
             e.printStackTrace()
             return null
@@ -121,11 +124,17 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
     }
 
     /**
+     * retrieve as input stream
+     */
+    fun retrieveFileAsInputStream(key: String): FileInputStream {
+        return FileInputStream("$fileDir/$key")
+    }
+
+    /**
      * get full path
      */
-    fun getFullPath(name: String): Any? {
-        val key = generateEncodedKey(name)
-        return "$fileDir/$key"
+    fun getFullPath(videoId: String): String? {
+        return "$fileDir/$videoId"
     }
 
     /**
@@ -135,6 +144,16 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
      * @return
      */
     companion object {
+        /**
+         * get full path
+         */
+        fun getFullPath(context: Context, videoId: String): String? {
+            return "${context.filesDir}/$videoId"
+        }
+
+        /**
+         * encoded key
+         */
         fun generateEncodedKey(key: String): String {
             var encoded = key
                     .replace("http:\\\\", "")

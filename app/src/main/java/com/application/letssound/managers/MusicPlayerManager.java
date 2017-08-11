@@ -146,8 +146,10 @@ public class MusicPlayerManager implements ObservableHelper.ObservableHelperInte
      * @param toBePlayed
      */
     public void setPlayButton(boolean toBePlayed) {
-        playButtonView.setVisibility(toBePlayed ? View.VISIBLE : View.GONE);
-        pauseButtonView.setVisibility(toBePlayed ? View.GONE : View.VISIBLE);
+        if (playButtonView != null)
+            playButtonView.setVisibility(toBePlayed ? View.VISIBLE : View.GONE);
+        if (pauseButtonView != null)
+            pauseButtonView.setVisibility(toBePlayed ? View.GONE : View.VISIBLE);
     }
 
     /**

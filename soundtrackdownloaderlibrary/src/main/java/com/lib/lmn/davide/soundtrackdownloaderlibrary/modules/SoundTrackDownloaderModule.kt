@@ -9,12 +9,13 @@ import java.io.FileInputStream
 /**
  * Created by davide-syn on 6/26/17.
  */
-open class SoundTrackDownloaderModule(val context: Context?, lst: OnSoundTrackRetrievesCallbacks?) {
+open class SoundTrackDownloaderModule(val context: Context?, val lst: OnSoundTrackRetrievesCallbacks?) {
     val fileStorageManager: FileStorageManager = FileStorageManager(context, lst)
 
     fun getFileDownloaderManager(): FileDownloaderManager {
-        val lst1 = Response.Listener<Any> { result -> println(result.toString().length) }
-        val lst2 = Response.ErrorListener { error -> println(error.message) }
+        val lst1 = Response.Listener<Any> { videoId -> lst?.onSoundTrackRetrieveSuccess(fileStorageManager.getFullPath(videoId as String) as String,
+                fileStorageManager.retrieveFileAsInputStream(videoId)) }
+        val lst2 = Response.ErrorListener { error -> lst?.onSoundTrackRetrieveError(error.message) }
         return FileDownloaderManager(context, fileStorageManager, lst1, lst2)
     }
 

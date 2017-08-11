@@ -1,22 +1,29 @@
 package com.application.letssound.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.application.letssound.R;
+import com.application.letssound.SoundTrackPlayerActivity;
 import com.application.letssound.adapters.SoundTrackHistoryRecyclerViewAdapter;
+import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.managers.HistoryManager;
 import com.application.letssound.models.SoundTrack;
 import com.application.letssound.utils.Utils;
+import com.lib.lmn.davide.soundtrackdownloaderlibrary.manager.FileStorageManager;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +39,8 @@ public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRec
     RecyclerView historyListView;
     @BindView(R.id.emptyResultHistoryLayoutId)
     View emptyResultHistoryLayoutId;
+    @BindView(R.id.historyTimeTextId)
+    TextView historyTimeText;
 
 
     @Nullable
@@ -57,6 +66,8 @@ public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRec
         SoundTrackHistoryRecyclerViewAdapter adapter = new SoundTrackHistoryRecyclerViewAdapter(list, this, getContext());
         historyListView.setLayoutManager(new LinearLayoutManager(getContext()));
         historyListView.setAdapter(adapter);
+
+        historyTimeText.setText(new SimpleDateFormat("dd MMMM", Locale.ITALY).format(new Date()));
         updateUI(list.size() == 0);
     }
 
@@ -66,12 +77,23 @@ public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRec
      */
     private void updateUI(boolean isEmptyList) {
         emptyResultHistoryLayoutId.setVisibility(isEmptyList ? View.VISIBLE : View.GONE);
+        historyTimeText.setVisibility(!isEmptyList ? View.VISIBLE : View.GONE);
     }
 
     //TODO mv in a presenter maybe
     @Override
     public void onItemClick(SoundTrack soundTrack) {
-        Log.e(getClass().getName(), "hye");
+        Bundle bundle = Utils.buildFilePlayBundle(FileStorageManager.Companion.getFullPath(getContext(),
+                soundTrack.getId().getVideoId()),
+                soundTrack.getSnippet().getThumbnails().getMedium().getUrl(), soundTrack.getSnippet().getTitle());
+        ((LetssoundApplication) getActivity().getApplication()).getMediaControllerInstance()
+                .getTransportControls().playFromSearch("CACHED_FILE", bundle);
+
+        //start activity
+        Intent intent = new Intent(getContext(), SoundTrackPlayerActivity.class);
+//        intent.putExtras(bundle);
+        if (getActivity() != null)
+            getActivity().startActivity(intent);
     }
 
 }

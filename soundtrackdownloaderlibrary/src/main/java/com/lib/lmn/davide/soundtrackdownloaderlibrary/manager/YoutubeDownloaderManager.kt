@@ -17,12 +17,12 @@ class YoutubeDownloaderManager(val youtubeDownloaderService: YoutubeDownloaderMo
     /**
      * handle sound track
      */
-    fun getSoundTrack(soundTrackObservable: Observable<YoutubeDownloaderFile>) {
-        soundTrackObservable
+    fun getSoundTrack(videoId: String, soundTrackObservable: Observable<YoutubeDownloaderFile>) {
+                soundTrackObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
-                .subscribe ({ soundTrackUrl: YoutubeDownloaderFile? ->
-                    fileDownloaderManager.getSoundTrack(soundTrackUrl?.link.let { link -> Uri.parse(link) })},
+                .subscribe({ (title, link) ->
+                    fileDownloaderManager.getSoundTrack(videoId, Uri.parse(link))},
                         Throwable::printStackTrace)
     }
 
@@ -36,7 +36,7 @@ class YoutubeDownloaderManager(val youtubeDownloaderService: YoutubeDownloaderMo
     fun fetchSoundTrackUrlByVideoId(videoId: String) {
         val observable =  youtubeDownloaderService.fetchUrlByVideoId(FORMAT_TYPE,
                 BuildConfig.YOUTUBE_BASE_PATH + videoId)
-        getSoundTrack(observable)
+        getSoundTrack(videoId, observable)
     }
 
 

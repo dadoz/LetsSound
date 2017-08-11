@@ -363,6 +363,7 @@ public class SearchListFragment extends Fragment implements
         if (getActivity() != null)
             getActivity().runOnUiThread(() -> {
                 emptyResultProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                soundTrackRecyclerView.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
                 searchNoItemImage.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
             });
     }
