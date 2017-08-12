@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import com.application.letssound.adapters.SoundTrackListViewPagerAdapter;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.fragments.SearchListFragment;
+import com.application.letssound.utils.Utils;
 
 import icepick.State;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -66,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
         initActionBar();
         // Instantiate a ViewPager and a PagerAdapter.
         ViewPager viewPager = (ViewPager) findViewById(R.id.soundTrackListViewPagerId);
-        viewPager.setAdapter(new SoundTrackListViewPagerAdapter(getSupportFragmentManager(),
-                getAssets()));
+        viewPager.setAdapter(new SoundTrackListViewPagerAdapter(getSupportFragmentManager()));
         //set tab layout
-        ((TabLayout) findViewById(R.id.tabLayoutId)).setupWithViewPager(viewPager);
+        TabLayout tabLayout = ((TabLayout) findViewById(R.id.tabLayoutId));
+        tabLayout.setupWithViewPager(viewPager);
+        Utils.setCustomViewOnTabLayout(tabLayout, viewPager, this);
     }
 
     /**
@@ -82,5 +84,4 @@ public class MainActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
         }
     }
-
 }

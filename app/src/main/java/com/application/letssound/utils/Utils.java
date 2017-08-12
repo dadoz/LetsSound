@@ -1,14 +1,20 @@
 package com.application.letssound.utils;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.text.SpannableStringBuilder;
 import android.view.View;
+import android.widget.TextView;
 
 import com.application.letssound.BuildConfig;
+import com.application.letssound.R;
 import com.application.letssound.models.SoundTrack;
 import com.application.letssound.services.MediaService;
 
@@ -91,5 +97,19 @@ public class Utils {
             list.add(soundTrackIterator.next());
 
         return list;
+    }
+
+    public static void setCustomViewOnTabLayout(TabLayout tabLayout, ViewPager viewPager, Context context) {
+        if (viewPager.getAdapter() != null) {
+            for (int i = 0; i< viewPager.getAdapter().getCount(); i++) {
+                TextView textView = new TextView(context);
+                String title = viewPager.getAdapter().getPageTitle(i).toString();
+                textView.setText(title);
+                textView.setTypeface(TypefaceUtils.load(context.getAssets(), BuildConfig.FONT_PATH));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.md_blue_grey_900)); //TODO get from theme
+                textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                tabLayout.getTabAt(i).setCustomView(textView);
+            }
+        }
     }
 }

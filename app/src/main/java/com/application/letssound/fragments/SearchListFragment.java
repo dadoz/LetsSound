@@ -207,56 +207,6 @@ public class SearchListFragment extends Fragment implements
         searchView.setOnQueryTextListener(this);
 
     }
-//
-//    /**
-//     * @TODO move on presenter
-//     */
-//    private void initAutocompleteTextView() {
-//        if (searchView != null) {
-//            autoCompleteTextView = (AutoCompleteTextView) searchView
-//                    .findViewById(android.support.v7.appcompat.R.id.search_src_text);
-//
-//            setAutocompleteTextViewAdapter();
-//            autoCompleteTextView.setVisibility(View.VISIBLE);
-//            autoCompleteTextView.setOnItemClickListener(this);
-//            autoCompleteTextView.setDropDownBackgroundResource(R.color.md_blue_grey_800);
-//            autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    autoCompleteTextView.showDropDown();
-//                }
-//            });
-//            avoidToAutoCollapseDropdown();
-//        }
-//    }
-//
-//    /**
-//     *
-//     */
-//    private void avoidToAutoCollapseDropdown() {
-//        View tmp = searchView.findViewById(autoCompleteTextView.getDropDownAnchor());
-//        tmp.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                if (searchView != null &&
-//                        autoCompleteTextView != null &&
-//                        !autoCompleteTextView.isPopupShowing() &&
-//                        !searchView.isIconified()) {
-//                    autoCompleteTextView.showDropDown();
-//                }
-//            }
-//        });
-//    }
-
-//    /**
-//     *
-//     */
-//    private void setAutocompleteTextViewAdapter() {
-//        HistoryAdapter historyAdapter = new HistoryAdapter(getActivity().getApplicationContext(),
-//                R.layout.history_item,
-//                historyManager.getHistory());
-//        autoCompleteTextView.setAdapter(historyAdapter);
-//    }
 
     /**
      *
@@ -363,7 +313,7 @@ public class SearchListFragment extends Fragment implements
         if (getActivity() != null)
             getActivity().runOnUiThread(() -> {
                 emptyResultProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-                soundTrackRecyclerView.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
+                soundTrackRecyclerView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 searchNoItemImage.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
             });
     }
