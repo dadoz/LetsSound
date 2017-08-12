@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,9 @@ import android.widget.TextView;
 
 import com.application.letssound.R;
 import com.application.letssound.SoundTrackPlayerActivity;
-import com.application.letssound.adapters.SoundTrackHistoryRecyclerViewAdapter;
+import com.application.letssound.adapters.LatestPlayAdapterCallbacks;
+import com.application.letssound.adapters.LatestPlayItemTouchHelper;
+import com.application.letssound.adapters.SoundTrackLatestPlayRecyclerViewAdapter;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.managers.HistoryManager;
 import com.application.letssound.models.SoundTrack;
@@ -29,14 +32,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static android.support.v7.widget.helper.ItemTouchHelper.DOWN;
+import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
+import static android.support.v7.widget.helper.ItemTouchHelper.UP;
+
 /**
  * Created by davide-syn on 8/9/17.
  */
-public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRecyclerViewAdapter.OnItemClickListenerInterface {
+public class LatestPlayFragment extends Fragment implements SoundTrackLatestPlayRecyclerViewAdapter.OnItemClickListenerInterface, LatestPlayAdapterCallbacks {
     private Unbinder unbinder;
 
-    @BindView(R.id.historyListViewId)
-    RecyclerView historyListView;
+    @BindView(R.id.latestPlayRecyclerViewId)
+    RecyclerView latestPlayRecyclerView;
     @BindView(R.id.emptyResultHistoryLayoutId)
     View emptyResultHistoryLayoutId;
     @BindView(R.id.historyTimeTextId)
@@ -63,9 +70,13 @@ public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRec
      */
     public void onInitView() {
         ArrayList<SoundTrack> list = Utils.iteratorToList(HistoryManager.getInstance(getContext()).getSoundTrackIterator());
-        SoundTrackHistoryRecyclerViewAdapter adapter = new SoundTrackHistoryRecyclerViewAdapter(list, this, getContext());
-        historyListView.setLayoutManager(new LinearLayoutManager(getContext()));
-        historyListView.setAdapter(adapter);
+        SoundTrackLatestPlayRecyclerViewAdapter adapter = new SoundTrackLatestPlayRecyclerViewAdapter(list, this, this, getContext());
+        latestPlayRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        latestPlayRecyclerView.setAdapter(adapter);
+
+        ItemTouchHelper touchHelper = new LatestPlayItemTouchHelper(new LatestPlayItemTouchHelper.ItemTouchSimpleCallbacks(UP | DOWN, LEFT),
+                latestPlayRecyclerView.getAdapter());
+        touchHelper.attachToRecyclerView(latestPlayRecyclerView);
 
         historyTimeText.setText(new SimpleDateFormat("dd MMMM", Locale.ITALY).format(new Date()));
         updateUI(list.size() == 0);
@@ -96,4 +107,8 @@ public class LatestPlayFragment extends Fragment implements SoundTrackHistoryRec
             getActivity().startActivity(intent);
     }
 
+    @Override
+    public void onItemDismissCallback(String videoId) {
+        HistoryManager.getInstance(getContext()).removeFromHistory(videoId);
+    }
 }

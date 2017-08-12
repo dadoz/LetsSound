@@ -33,16 +33,14 @@
             android:layout_centerInParent="true"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginRight="@dimen/medium_large_padding"
-            android:src="@drawable/pause_icon"/>
+            android:layout_marginRight="@dimen/medium_large_padding"/>
         <ImageView
             android:visibility="gone"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginRight="@dimen/medium_large_padding"
-            android:src="@drawable/play_icon"/>
+            android:layout_marginRight="@dimen/medium_large_padding"/>
         <SeekBar
             android:id="@+id/soundTrackSeekbarId"
             style="Widget.AppCompat.SeekBar"

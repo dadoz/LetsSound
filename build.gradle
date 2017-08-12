@@ -35,6 +35,7 @@ plugins {
 
 allprojects {
     repositories {
+        maven { url "https://jitpack.io" }
         jcenter()
         mavenCentral()
         maven {url "https://clojars.org/repo/"}

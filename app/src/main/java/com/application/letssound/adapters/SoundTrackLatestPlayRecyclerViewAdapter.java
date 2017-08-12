@@ -18,30 +18,33 @@ import java.util.List;
 /**
  * Created by davide on 30/11/15.
  */
-public class SoundTrackHistoryRecyclerViewAdapter extends RecyclerView
-            .Adapter<SoundTrackHistoryRecyclerViewAdapter
-            .DataObjectHolder> {
+public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
+            .Adapter<SoundTrackLatestPlayRecyclerViewAdapter
+            .DataObjectHolder> implements ItemTouchHelperAdapter {
     private final VolleyMediaArtManager volleyMediaArtManager;
     private List<SoundTrack> list;
     private WeakReference<OnItemClickListenerInterface> listener;
+    private WeakReference<LatestPlayAdapterCallbacks> listenerCallbacks;
 
     /**
      *
      * @param dataset
      * @param itemClickListenerRef
      */
-    public SoundTrackHistoryRecyclerViewAdapter(List<SoundTrack> dataset,
+    public SoundTrackLatestPlayRecyclerViewAdapter(List<SoundTrack> dataset,
                                                 OnItemClickListenerInterface itemClickListenerRef,
+                                                LatestPlayAdapterCallbacks lst2,
                                                 Context context) {
         list = dataset;
         listener = new WeakReference<>(itemClickListenerRef);
+        listenerCallbacks = new WeakReference<>(lst2);
         volleyMediaArtManager = VolleyMediaArtManager.getInstance(new WeakReference<Context>(context), null);
     }
 
     @Override
     public DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.result_item, parent, false);
+                .inflate(R.layout.latest_play_item, parent, false);
         return new DataObjectHolder(view);
     }
 
@@ -69,6 +72,16 @@ public class SoundTrackHistoryRecyclerViewAdapter extends RecyclerView
     public int getItemCount() {
         return list != null ? list.size() : 0;
     }
+
+    @Override
+    public void onItemDismiss(int position) {
+        String videoId = list.get(position).getId().getVideoId();
+        list.remove(list.get(position));
+        notifyDataSetChanged();
+        listenerCallbacks.get().onItemDismissCallback(videoId);
+    }
+
+
     /**
      *
      */
@@ -101,3 +114,4 @@ public class SoundTrackHistoryRecyclerViewAdapter extends RecyclerView
     }
 
 }
+

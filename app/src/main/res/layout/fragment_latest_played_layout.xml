@@ -12,7 +12,7 @@
         android:text="10 August"/>
     <android.support.v7.widget.RecyclerView
         android:layout_below="@id/historyTimeTextId"
-        android:id="@+id/historyListViewId"
+        android:id="@+id/latestPlayRecyclerViewId"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
     </android.support.v7.widget.RecyclerView>

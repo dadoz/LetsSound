@@ -54,6 +54,14 @@ public class Utils {
         bundle.putString(MediaService.PARAM_TRACK_TITLE, title);
         return bundle;
     }
+
+    /**
+     *
+     * @param videoUrl
+     * @param thumbnailUrl
+     * @param title
+     * @return
+     */
     public static Bundle buildFilePlayBundle(String videoUrl, String thumbnailUrl, String title) {
         Bundle bundle = new Bundle();
         bundle.putString(MediaService.PARAM_TRACK_URI, videoUrl);
@@ -91,6 +99,11 @@ public class Utils {
         return title;
     }
 
+    /**
+     *
+     * @param soundTrackIterator
+     * @return
+     */
     public static ArrayList<SoundTrack> iteratorToList(Iterator<SoundTrack> soundTrackIterator) {
         ArrayList<SoundTrack> list = new ArrayList<>();
         while (soundTrackIterator.hasNext())
@@ -99,6 +112,12 @@ public class Utils {
         return list;
     }
 
+    /**
+     *
+     * @param tabLayout
+     * @param viewPager
+     * @param context
+     */
     public static void setCustomViewOnTabLayout(TabLayout tabLayout, ViewPager viewPager, Context context) {
         if (viewPager.getAdapter() != null) {
             for (int i = 0; i< viewPager.getAdapter().getCount(); i++) {
@@ -111,5 +130,15 @@ public class Utils {
                 tabLayout.getTabAt(i).setCustomView(textView);
             }
         }
+    }
+
+    public static Snackbar buildErrorSnackbar(View view, String message) {
+        if (view != null) {
+            Snackbar snackbar = Snackbar.make(view, message == null ?
+                    view.getContext().getString(R.string.generic_error) : message, Snackbar.LENGTH_SHORT);
+            snackbar.getView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.md_red_400));
+            return snackbar;
+        }
+        return null;
     }
 }

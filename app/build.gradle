@@ -69,7 +69,8 @@ dependencies {
     //calligraphy
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
 
-
+    //swipe adapter to handle delete
+    compile 'com.github.TR4Android:Swipeable-RecyclerView:0.2.0'
 //    compile 'com.google.http-client:google-http-client-android:1.21.0'
 //    compile 'com.google.api-client:google-api-client-android:1.21.0'
 //    compile 'com.google.api-client:google-api-client-gson:1.21.0'

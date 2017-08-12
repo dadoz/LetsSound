@@ -61,6 +61,18 @@ public class HistoryManager {
 
     /**
      *
+     */
+    public void removeFromHistory(String videoId) {
+        if (realm != null &&
+                !isNotInList(videoId)) {
+            realm.executeTransaction(realm1 -> {
+                realm1.where(SoundTrack.class).equalTo("id.videoId", videoId).findFirst().deleteFromRealm();
+            });
+        }
+    }
+
+    /**
+     *
      * @param videoId
      * @return
      */

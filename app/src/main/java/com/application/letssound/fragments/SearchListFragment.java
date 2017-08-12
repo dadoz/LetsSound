@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -18,7 +19,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ProgressBar;
 
 import com.application.letssound.R;
@@ -29,7 +29,6 @@ import com.application.letssound.helpers.SoundTrackStatus;
 import com.application.letssound.managers.HistoryManager;
 import com.application.letssound.managers.MediaSearchManager;
 import com.application.letssound.managers.MusicPlayerManager;
-import com.application.letssound.models.HistoryResult;
 import com.application.letssound.models.SoundTrack;
 import com.application.letssound.observer.SoundTrackSearchObserver;
 import com.application.letssound.utils.Utils;
@@ -58,7 +57,7 @@ public class SearchListFragment extends Fragment implements
         SearchView.OnQueryTextListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnPreparedListener, OnItemClickListenerInterface,
         MediaSearchManager.TrackSearchManagerInterface, MusicPlayerManager.OnMusicPlayerCallback,
-        View.OnFocusChangeListener, AdapterView.OnItemClickListener, SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks {
+        View.OnFocusChangeListener, SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks {
     public static String SEARCH_LIST_FRAG_TAG = "SEARCH_LIST_FRAG_TAG";
     @State
     ArrayList<SoundTrack> soundTrackList;
@@ -122,6 +121,7 @@ public class SearchListFragment extends Fragment implements
      * @param savedInstanceState
      */
     public void initView(Bundle savedInstanceState) {
+        updateUI(false);
         setHasOptionsMenu(true);
         initRecyclerView(savedInstanceState != null ? soundTrackList : new ArrayList<SoundTrack>());
     }
@@ -133,13 +133,15 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(SoundTrack soundTrack) {
+        Snackbar snackbar = Snackbar.make(getView(), "loading song", Snackbar.LENGTH_SHORT);
+        snackbar.getView().setBackgroundColor(ContextCompat.getColor(getContext(), R.color.md_amber_400));
+        snackbar.show();
         musicPlayerManager.playSoundTrack(getContext(),
                 this,
                 soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
                 soundTrack.getSnippet().getTitle());
         historyManager.saveOnHistory(soundTrack);
-//        setAutocompleteTextViewAdapter();
     }
 
     @Override
@@ -250,6 +252,7 @@ public class SearchListFragment extends Fragment implements
         ArrayList<SoundTrack> tmp = (ArrayList<SoundTrack>) list;
         setResultOnSavedInstance(tmp);
         updateRecyclerViewData(tmp);
+        updateUI(false);
     }
 
     @Override
@@ -258,6 +261,7 @@ public class SearchListFragment extends Fragment implements
         updateRecyclerViewData(new ArrayList<SoundTrack>());
         Utils.createSnackBarByBackgroundColor(mainView, error, ContextCompat
                 .getColor(getContext(), R.color.md_red_400));
+        updateUI(false);
     }
 
     @Override
@@ -268,26 +272,25 @@ public class SearchListFragment extends Fragment implements
     public void onFocusChange(View view, boolean isVisible) {
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        HistoryResult HistoryResult = (HistoryResult) adapterView.getAdapter().getItem(i);
-        handleItemClick(HistoryResult);
-        updateUI(true);
-//        musicPlayerManager.playSoundTrack(null, "null", "null"); //TODO rm it
-    }
+//    @Override
+//    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//        HistoryResult HistoryResult = (HistoryResult) adapterView.getAdapter().getItem(i);
+//        handleItemClick(HistoryResult);
+////        musicPlayerManager.playSoundTrack(null, "null", "null"); //TODO rm it
+//    }
 
     /**
      *
-     * @param HistoryResult
+//     * @param HistoryResult
      */
-    private void handleItemClick(HistoryResult HistoryResult) {
-        SoundTrack soundTrack = historyManager.findSoundTrackByTitle(HistoryResult.getTitle());
-        musicPlayerManager.playSoundTrack(getContext(),
-                this,
-                soundTrack.getId().getVideoId(),
-                soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
-                soundTrack.getSnippet().getTitle());
-    }
+//    private void handleItemClick(HistoryResult HistoryResult) {
+//        SoundTrack soundTrack = historyManager.findSoundTrackByTitle(HistoryResult.getTitle());
+//        musicPlayerManager.playSoundTrack(getContext(),
+//                this,
+//                soundTrack.getId().getVideoId(),
+//                soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
+//                soundTrack.getSnippet().getTitle());
+//    }
 
     @Override
     public void onSoundTrackRetrieveSuccess(@NotNull String filePath, @NotNull FileInputStream fileInputStream) {
@@ -303,6 +306,14 @@ public class SearchListFragment extends Fragment implements
 //        intent.putExtras(bundle);
         if (getActivity() != null)
             getActivity().startActivity(intent);
+
+    }
+
+    @Override
+    public void onSoundTrackRetrieveError(@Nullable String message) {
+        Snackbar snackbar = Utils.buildErrorSnackbar(getView(), message);
+        if (snackbar != null)
+            snackbar.show();
     }
 
     /**
@@ -313,13 +324,10 @@ public class SearchListFragment extends Fragment implements
         if (getActivity() != null)
             getActivity().runOnUiThread(() -> {
                 emptyResultProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-                soundTrackRecyclerView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                soundTrackRecyclerView.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
                 searchNoItemImage.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
             });
     }
 
-    @Override
-    public void onSoundTrackRetrieveError(@Nullable String message) {
-    }
 
 }
