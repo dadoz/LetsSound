@@ -13,17 +13,15 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="TRY BACK"/>
-    <com.application.letssound.views.CircularNetworkImageView
+    <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/playerMediaArtImageViewId"
         android:background="@drawable/ic_disc_48dp"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="@dimen/small_margin_16"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <!--android:scaleType="fitXY"-->
-    <!--android:layout_marginTop="100dp"-->
-    <!--android:layout_centerHorizontal="true"-->
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:layout_centerHorizontal="true"/>
 
     <TextView
         android:id="@+id/playerTrackTitleTextId"

@@ -70,16 +70,25 @@ public class LatestPlayFragment extends Fragment implements SoundTrackLatestPlay
      */
     public void onInitView() {
         ArrayList<SoundTrack> list = Utils.iteratorToList(HistoryManager.getInstance(getContext()).getSoundTrackIterator());
+        //init recycler view
+        initRecyclerView(list);
+        //init text
+        historyTimeText.setText(new SimpleDateFormat("dd MMMM", Locale.ITALY).format(new Date()));
+        //update ui
+        updateUI(list.size() == 0);
+    }
+
+    /**
+     *
+     * @param list
+     */
+    private void initRecyclerView(ArrayList<SoundTrack> list) {
         SoundTrackLatestPlayRecyclerViewAdapter adapter = new SoundTrackLatestPlayRecyclerViewAdapter(list, this, this, getContext());
         latestPlayRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         latestPlayRecyclerView.setAdapter(adapter);
-
         ItemTouchHelper touchHelper = new LatestPlayItemTouchHelper(new LatestPlayItemTouchHelper.ItemTouchSimpleCallbacks(UP | DOWN, LEFT),
                 latestPlayRecyclerView.getAdapter());
         touchHelper.attachToRecyclerView(latestPlayRecyclerView);
-
-        historyTimeText.setText(new SimpleDateFormat("dd MMMM", Locale.ITALY).format(new Date()));
-        updateUI(list.size() == 0);
     }
 
     /**
@@ -102,7 +111,7 @@ public class LatestPlayFragment extends Fragment implements SoundTrackLatestPlay
 
         //start activity
         Intent intent = new Intent(getContext(), SoundTrackPlayerActivity.class);
-//        intent.putExtras(bundle);
+        intent.putExtras(bundle);
         if (getActivity() != null)
             getActivity().startActivity(intent);
     }

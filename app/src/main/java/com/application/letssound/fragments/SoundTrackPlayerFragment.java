@@ -14,13 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.application.letssound.R;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.managers.MusicPlayerManager;
 import com.application.letssound.managers.VolleyMediaArtManager;
 import com.application.letssound.services.MediaService;
 import com.application.letssound.utils.Utils;
-import com.application.letssound.views.CircularNetworkImageView;
 
 import java.lang.ref.WeakReference;
 
@@ -36,7 +36,7 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
     @BindView(R.id.playerSoundTrackSeekbarId)
     AppCompatSeekBar playerSoundTrackSeekbar;
     @BindView(R.id.playerMediaArtImageViewId)
-    CircularNetworkImageView playerMediaArtImageView;
+    NetworkImageView playerMediaArtImageView;
     @BindView(R.id.playerTrackTitleTextId)
     TextView playerTrackTitleText;
     @BindView(R.id.playerPlayButtonId)
