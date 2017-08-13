@@ -24,6 +24,7 @@ public class LatestPlayItemTouchHelper extends ItemTouchHelper {
 
     public static class ItemTouchSimpleCallbacks extends ItemTouchHelper.SimpleCallback {
 
+        private final int swipeDirs;
         private RecyclerView.Adapter adapter;
 
         /**
@@ -44,6 +45,12 @@ public class LatestPlayItemTouchHelper extends ItemTouchHelper {
          */
         public ItemTouchSimpleCallbacks(int dragDirs, int swipeDirs) {
             super(dragDirs, swipeDirs);
+            this.swipeDirs = swipeDirs;
+        }
+
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            return makeMovementFlags(0, swipeDirs);
         }
 
         @Override

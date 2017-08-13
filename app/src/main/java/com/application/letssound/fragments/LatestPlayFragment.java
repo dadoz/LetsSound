@@ -10,7 +10,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.application.letssound.R;
 import com.application.letssound.SoundTrackPlayerActivity;
@@ -23,10 +22,7 @@ import com.application.letssound.models.SoundTrack;
 import com.application.letssound.utils.Utils;
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.manager.FileStorageManager;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,8 +42,6 @@ public class LatestPlayFragment extends Fragment implements SoundTrackLatestPlay
     RecyclerView latestPlayRecyclerView;
     @BindView(R.id.emptyResultHistoryLayoutId)
     View emptyResultHistoryLayoutId;
-    @BindView(R.id.historyTimeTextId)
-    TextView historyTimeText;
 
 
     @Nullable
@@ -72,8 +66,8 @@ public class LatestPlayFragment extends Fragment implements SoundTrackLatestPlay
         ArrayList<SoundTrack> list = Utils.iteratorToList(HistoryManager.getInstance(getContext()).getSoundTrackIterator());
         //init recycler view
         initRecyclerView(list);
-        //init text
-        historyTimeText.setText(new SimpleDateFormat("dd MMMM", Locale.ITALY).format(new Date()));
+//        //init text
+//        historyTimeText.setText(new SimpleDateFormat("dd MMMM", Locale.ITALY).format(new Date()));
         //update ui
         updateUI(list.size() == 0);
     }
@@ -97,10 +91,8 @@ public class LatestPlayFragment extends Fragment implements SoundTrackLatestPlay
      */
     private void updateUI(boolean isEmptyList) {
         emptyResultHistoryLayoutId.setVisibility(isEmptyList ? View.VISIBLE : View.GONE);
-        historyTimeText.setVisibility(!isEmptyList ? View.VISIBLE : View.GONE);
     }
 
-    //TODO mv in a presenter maybe
     @Override
     public void onItemClick(SoundTrack soundTrack) {
         Bundle bundle = Utils.buildFilePlayBundle(FileStorageManager.Companion.getFullPath(getContext(),

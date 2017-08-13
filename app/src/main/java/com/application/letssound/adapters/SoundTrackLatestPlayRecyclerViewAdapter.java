@@ -10,22 +10,30 @@ import android.widget.TextView;
 import com.application.letssound.R;
 import com.application.letssound.managers.VolleyMediaArtManager;
 import com.application.letssound.models.SoundTrack;
+import com.application.letssound.utils.Utils;
 import com.application.letssound.views.CircularNetworkImageView;
+import com.google.common.collect.Lists;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import static com.application.letssound.adapters.SoundTrackLatestPlayRecyclerViewAdapter.ViewTypeEnum.LATEST_PLAY_ITEM;
+import static com.application.letssound.adapters.SoundTrackLatestPlayRecyclerViewAdapter.ViewTypeEnum.TIMESTAMP_ITEM;
 
 /**
  * Created by davide on 30/11/15.
  */
 public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
-            .Adapter<SoundTrackLatestPlayRecyclerViewAdapter
-            .DataObjectHolder> implements ItemTouchHelperAdapter {
+            .Adapter<RecyclerView.ViewHolder> implements ItemTouchHelperAdapter {
     private final VolleyMediaArtManager volleyMediaArtManager;
     private List<SoundTrack> list;
     private WeakReference<OnItemClickListenerInterface> listener;
     private WeakReference<LatestPlayAdapterCallbacks> listenerCallbacks;
 
+    enum ViewTypeEnum {LATEST_PLAY_ITEM, TIMESTAMP_ITEM}
     /**
      *
      * @param dataset
@@ -35,37 +43,59 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
                                                 OnItemClickListenerInterface itemClickListenerRef,
                                                 LatestPlayAdapterCallbacks lst2,
                                                 Context context) {
-        list = dataset;
+        list = Lists.reverse(dataset); //revers on realm ???
         listener = new WeakReference<>(itemClickListenerRef);
         listenerCallbacks = new WeakReference<>(lst2);
         volleyMediaArtManager = VolleyMediaArtManager.getInstance(new WeakReference<Context>(context), null);
     }
 
     @Override
-    public DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public int getItemViewType(int position) {
+        return position == 0 ||
+                !Utils.isSameDay(list.get(position -1).getTimestamp() * 1000, list.get(position).getTimestamp() * 1000) ?
+                TIMESTAMP_ITEM.ordinal() : LATEST_PLAY_ITEM.ordinal();
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TIMESTAMP_ITEM.ordinal()) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.timestamp_item, parent, false);
+            return new TimestampViewHolder(view);
+        }
+
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.latest_play_item, parent, false);
         return new DataObjectHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(DataObjectHolder holder, final int position) {
-        SoundTrack selectedItem = list.get(position);
-        holder.title.setText(selectedItem.getSnippet().getTitle());
-        holder.url.setText("Author: " + selectedItem.getSnippet().getChannelId());
-        holder.durationTime.setText("00:00");
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+        SoundTrack item = list.get(position);
+        //history item
+        if (viewHolder instanceof DataObjectHolder) {
+            DataObjectHolder holder = ((DataObjectHolder) viewHolder);
+            holder.title.setText(item.getSnippet().getTitle());
+            holder.url.setText("Author: " + item.getSnippet().getChannelId());
+            holder.durationTime.setText("00:00");
 
-        if (selectedItem.getSnippet().getThumbnails().getHigh() != null) {
-            holder.mediaArtImageView.setImageUrl(selectedItem.getSnippet()
-                    .getThumbnails().getHigh().getUrl(),
-                    volleyMediaArtManager.getImageLoader());
+            if (item.getSnippet().getThumbnails().getHigh() != null) {
+                holder.mediaArtImageView.setImageUrl(item.getSnippet()
+                                .getThumbnails().getHigh().getUrl(),
+                        volleyMediaArtManager.getImageLoader());
+            }
+
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null && listener.get() != null)
+                    listener.get().onItemClick(list.get(position));
+            });
         }
+        //timestamp
+        if (viewHolder instanceof TimestampViewHolder) {
+            TimestampViewHolder holder = ((TimestampViewHolder) viewHolder);
 
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null && listener.get() != null)
-                listener.get().onItemClick(list.get(position));
-        });
-
+            holder.timestamp.setText(new SimpleDateFormat("dd MMMM", Locale.ITALY).format(new Date(item.getTimestamp() * 1000)));
+        }
     }
 
     @Override
@@ -81,13 +111,6 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
         listenerCallbacks.get().onItemDismissCallback(videoId);
     }
 
-
-    /**
-     *
-     */
-    public interface OnItemClickListenerInterface {
-        void onItemClick(SoundTrack soundTrack);
-    }
 
     /**
      * viewHolder
@@ -110,6 +133,28 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
             url = (TextView) itemView.findViewById(R.id.urlTextId);
             durationTime = (TextView) itemView.findViewById(R.id.durationTimeTextId);
             mediaArtImageView = (CircularNetworkImageView) itemView.findViewById(R.id.mediaArtImageViewId);
+        }
+    }
+
+    /**
+     *
+     */
+    public interface OnItemClickListenerInterface {
+        void onItemClick(SoundTrack soundTrack);
+    }
+
+    /**
+     *
+     */
+    class TimestampViewHolder extends DataObjectHolder {
+        private final TextView timestamp;
+        private final View itemView;
+
+        public TimestampViewHolder(View view) {
+            super(view);
+            itemView = view;
+            timestamp = (TextView) itemView.findViewById(R.id.timestampTextId);
+
         }
     }
 

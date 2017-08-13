@@ -45,17 +45,27 @@ public class HistoryManager {
         Realm.init(context);
         realm = Realm.getDefaultInstance();
     }
+
+    private static void updateTimeStamp() {
+        if (realm != null) {
+            RealmResults<SoundTrack> list = realm.where(SoundTrack.class).findAll();
+            for (SoundTrack item : list) {
+                if (item.getTimestamp() == 0)
+                    realm.executeTransaction((realm) -> item.setTimestamp());
+            }
+        }
+    }
+
     /**
      *
      * @param soundTrack
      */
     public void saveOnHistory(SoundTrack soundTrack) {
-        if (realm != null &&
-                isNotInList(soundTrack.getId().getVideoId())) {
-            soundTrack.setTimestamp();
-            realm.beginTransaction();
-            realm.copyToRealm(soundTrack);
-            realm.commitTransaction();
+        if (realm != null) {
+            realm.executeTransaction((realm -> {
+                soundTrack.setTimestamp();
+                realm.copyToRealmOrUpdate(soundTrack);
+            }));
         }
     }
 
