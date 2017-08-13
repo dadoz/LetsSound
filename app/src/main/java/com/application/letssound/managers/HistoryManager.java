@@ -64,7 +64,7 @@ public class HistoryManager {
         if (realm != null) {
             realm.executeTransaction((realm -> {
                 soundTrack.setTimestamp();
-                realm.copyToRealmOrUpdate(soundTrack);
+                realm.copyToRealm(soundTrack);
             }));
         }
     }
@@ -73,10 +73,13 @@ public class HistoryManager {
      *
      */
     public void removeFromHistory(String videoId) {
-        if (realm != null &&
-                !isNotInList(videoId)) {
+        if (realm != null) {
             realm.executeTransaction(realm1 -> {
-                realm1.where(SoundTrack.class).equalTo("id.videoId", videoId).findFirst().deleteFromRealm();
+                try {
+                    realm1.where(SoundTrack.class).equalTo("id.videoId", videoId).findFirst().deleteFromRealm();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             });
         }
     }

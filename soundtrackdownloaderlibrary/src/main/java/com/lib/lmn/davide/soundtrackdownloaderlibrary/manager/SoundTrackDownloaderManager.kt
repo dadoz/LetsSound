@@ -1,6 +1,7 @@
 package com.lib.lmn.davide.soundtrackdownloaderlibrary.manager
 
 import android.content.Context
+import com.android.volley.VolleyError
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.YoutubeDownloaderModule
 
@@ -16,7 +17,10 @@ class SoundTrackDownloaderManager private constructor(context: Context, listener
         instance = this
     }
 
-    fun downloadAndPlaySoundTrack(videoId: String) = youtubeDownloaderManager.fetchSoundTrackUrlByVideoId(videoId)
+    fun downloadAndPlaySoundTrack(videoId: String?) {
+        videoId ?: return fileDownloaderManager.lst2.onErrorResponse(VolleyError("Oh Snap: empty videoId - downloadAndPlaySoundTrack"))
+        youtubeDownloaderManager.fetchSoundTrackUrlByVideoId(videoId)
+    }
 
     companion object {
         lateinit var instance: SoundTrackDownloaderManager

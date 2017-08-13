@@ -58,12 +58,9 @@ public class SoundTrackRecyclerViewAdapter extends RecyclerView
                     .getThumbnails().getHigh().getUrl(),
                     volleyMediaArtManager.getImageLoader());
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null && listener.get() != null)
-                    listener.get().onItemClick(list.get(position));
-            }
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null && listener.get() != null)
+                listener.get().onItemClick(list.get(position));
         });
 
     }

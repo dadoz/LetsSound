@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -207,10 +208,12 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
      */
     private void initSoundTrackFromBundle(Bundle extras) {
         try {
-            soundTrackUrl = extras.getParcelable(PARAM_TRACK_URI);
             mediaArtUri = extras.getParcelable(PARAM_TRACK_THUMBNAIL);
             soundTrackTitle = extras.getString(PARAM_TRACK_TITLE);
+            if (extras.get(PARAM_TRACK_URI) instanceof Parcelable)
+                soundTrackUrl = extras.getParcelable(PARAM_TRACK_URI);
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
