@@ -80,7 +80,7 @@ public class LetssoundApplication extends Application {
      * @deprecated
      */
     public void playMedia(Bundle bundle) {
-        mediaController.getTransportControls().playFromSearch("", bundle);
+        mediaController.getTransportControls().playFromSearch("STREAMING", bundle);
     }
 
     /**

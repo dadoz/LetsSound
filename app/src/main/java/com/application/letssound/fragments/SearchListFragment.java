@@ -272,26 +272,6 @@ public class SearchListFragment extends Fragment implements
     public void onFocusChange(View view, boolean isVisible) {
     }
 
-//    @Override
-//    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//        HistoryResult HistoryResult = (HistoryResult) adapterView.getAdapter().getItem(i);
-//        handleItemClick(HistoryResult);
-////        musicPlayerManager.playSoundTrack(null, "null", "null"); //TODO rm it
-//    }
-
-    /**
-     *
-//     * @param HistoryResult
-     */
-//    private void handleItemClick(HistoryResult HistoryResult) {
-//        SoundTrack soundTrack = historyManager.findSoundTrackByTitle(HistoryResult.getTitle());
-//        musicPlayerManager.playSoundTrack(getContext(),
-//                this,
-//                soundTrack.getId().getVideoId(),
-//                soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
-//                soundTrack.getSnippet().getTitle());
-//    }
-
     @Override
     public void onSoundTrackRetrieveSuccess(@NotNull String filePath, @NotNull FileInputStream fileInputStream) {
         Bundle bundle = Utils.buildFilePlayBundle(filePath, "", "Sound Track Title");

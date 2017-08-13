@@ -60,6 +60,42 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
             saveFile(videoId, file)
         }
     }
+    /**
+     * @param key
+     * *
+     * @param file
+     */
+    fun deleteFileOnCache(videoId: String) {
+        if (getCachedFile(videoId) != null) {
+            //save on db
+            deleteOnDb(videoId)
+            //replace file
+            deleteFile(videoId)
+        }
+    }
+
+    /**
+     *
+     */
+    private fun deleteFile(videoId: String) {
+        try {
+            File(getFullPath(videoId)).delete()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     *
+     */
+    private fun deleteOnDb(videoId: String) {
+        realm.transaction { realm ->
+            realm
+                .where(SoundTrackCache().javaClass)
+                .equalTo("id", videoId)
+                .findFirst()
+                .deleteFromRealm() }
+    }
 
     /**
      *

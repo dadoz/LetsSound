@@ -110,5 +110,6 @@ public class LatestPlayFragment extends Fragment implements SoundTrackLatestPlay
     @Override
     public void onItemDismissCallback(String videoId) {
         HistoryManager.getInstance(getContext()).removeFromHistory(videoId);
+        new FileStorageManager(getContext(), null).deleteFileOnCache(videoId);
     }
 }

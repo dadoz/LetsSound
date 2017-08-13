@@ -28,6 +28,9 @@ import java.lang.ref.WeakReference;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
+import static android.media.MediaPlayer.MEDIA_ERROR_IO;
+import static android.media.MediaPlayer.MEDIA_ERROR_SERVER_DIED;
+
 /**
  * Created by davide on 13/07/16.
  */
@@ -82,13 +85,8 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     @Override
     public void onCreate() {
         super.onCreate();
-        try {
-            initMediaSession();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        initMediaSession();
         initNotification();
-
         getSystemService(NOTIFICATION_SERVICE);
         Log.e("TAG", "hey service start");
     }
@@ -104,29 +102,33 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     /**
      * init mediasession
      */
-    private void initMediaSession() throws RemoteException {
-        playbackState = new PlaybackStateCompat.Builder()
-                .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
-                .build();
+    private void initMediaSession() {
+        try {
+            playbackState = new PlaybackStateCompat.Builder()
+                    .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
+                    .build();
 
-        //set up media session
-        mediaSession = new MediaSessionCompat(this, SESSION_TOKEN_TAG);
-        mediaSession.setCallback(msCallback);
-        mediaSession.setActive(true);
-        mediaSession.setPlaybackState(playbackState);
+            //set up media session
+            mediaSession = new MediaSessionCompat(this, SESSION_TOKEN_TAG);
+            mediaSession.setCallback(msCallback);
+            mediaSession.setActive(true);
+            mediaSession.setPlaybackState(playbackState);
 
-        //set up audio manager
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+            //set up audio manager
+            audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
-        //create media player
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnPreparedListener(this);
-        mediaPlayer.setOnCompletionListener(this);
-        mediaPlayer.setOnErrorListener(this);
-        mediaPlayer.setOnBufferingUpdateListener(this);
+            //create media player
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setOnPreparedListener(this);
+            mediaPlayer.setOnCompletionListener(this);
+            mediaPlayer.setOnErrorListener(this);
+            mediaPlayer.setOnBufferingUpdateListener(this);
 
-        //create media controller
-        mediaController = new MediaControllerCompat(getApplicationContext(), mediaSession.getSessionToken());
+            //create media controller
+            mediaController = new MediaControllerCompat(getApplicationContext(), mediaSession.getSessionToken());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Nullable
@@ -178,8 +180,8 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 //        sendBroadcast(new Intent());
     }
     @Override
-    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        Log.e(TAG, "ERROR " + i + " - " + i1);
+    public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
+        Log.e(TAG, "MediaPlayer error");
         mediaPlayer.reset();
         sendBroadcast(new Intent(ERROR_MEDIAPLAYER_BROADCAST));
         return false;
@@ -204,9 +206,12 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
      * @return
      */
     private void initSoundTrackFromBundle(Bundle extras) {
-        soundTrackUrl = extras.getParcelable(PARAM_TRACK_URI);
-        mediaArtUri = extras.getParcelable(PARAM_TRACK_THUMBNAIL);
-        soundTrackTitle = extras.getString(PARAM_TRACK_TITLE);
+        try {
+            soundTrackUrl = extras.getParcelable(PARAM_TRACK_URI);
+            mediaArtUri = extras.getParcelable(PARAM_TRACK_THUMBNAIL);
+            soundTrackTitle = extras.getString(PARAM_TRACK_TITLE);
+        } catch (Exception e) {
+        }
     }
 
 
@@ -231,25 +236,9 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
 
         @Override
         public void onPlayFromSearch(final String query, final Bundle extras) {
-            Log.e(TAG, "playbackState " + playbackState.getState());
+            initSoundTrackFromBundle(extras);
+            //set notification
             try {
-//                FileDescriptor fd = getFileDescriptorFromBundle(extras);
-//                mediaPlayer.setDataSource(fd);
-                initSoundTrackFromBundle(extras);
-                mediaPlayer.reset();
-                if (query.equals("CACHED_FILE")) {
-                    if (extras != null && extras.getString(PARAM_TRACK_URI) != null) {
-                        mediaPlayer.setDataSource(new FileInputStream(new File(extras.getString(PARAM_TRACK_URI))).getFD());
-                        mediaPlayer.prepare();
-                    }
-                } else if (soundTrackUrl != null) {
-                    Log.e(TAG, "setDataSource :)");
-                    mediaPlayer.setDataSource(MediaService.this, soundTrackUrl);
-                    mediaPlayer.prepareAsync();
-                } else {
-                    mediaPlayer.setDataSource(getFileDescriptorFromName("sample.mp3"));
-                }
-
                 PlaybackStateCompat playbackState = new PlaybackStateCompat.Builder()
                         .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                         .build();
@@ -261,9 +250,18 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, "this is title")
                         .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, mediaArtUri.toString())
                         .build());
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            //handle play sound track -> important one
+            try {
+                handlePlaySoundTrackByType(query, extras);
+            } catch (IOException e) {
+                e.printStackTrace();
+                onError(mediaPlayer, MEDIA_ERROR_SERVER_DIED, MEDIA_ERROR_IO);
+            }
+
         }
 
         @Override
@@ -328,6 +326,43 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
         public void onCustomAction(@NonNull String action, Bundle extras) {
         }
     };
+
+    /**
+     * handle play sound track
+     */
+    private void handlePlaySoundTrackByType(String query, Bundle extras) throws IOException {
+        //first reset
+        mediaPlayer.reset();
+
+        switch (query) {
+            case "CACHED_FILE":
+                if (extras != null && extras.getString(PARAM_TRACK_URI) != null) {
+                    mediaPlayer.setDataSource(new FileInputStream(new File(extras.getString(PARAM_TRACK_URI))).getFD());
+                    mediaPlayer.prepare();
+                }
+                break;
+            case "STREAMING":
+                mediaPlayer.setDataSource(MediaService.this, soundTrackUrl);
+                mediaPlayer.prepareAsync();
+                break;
+            default:
+                mediaPlayer.setDataSource(getFileDescriptorFromName("sample.mp3"));
+                break;
+        }
+
+//        if (query.equals("CACHED_FILE")) {
+//            if (extras != null && extras.getString(PARAM_TRACK_URI) != null) {
+//                mediaPlayer.setDataSource(new FileInputStream(new File(extras.getString(PARAM_TRACK_URI))).getFD());
+//                mediaPlayer.prepare();
+//            }
+//        } else if (soundTrackUrl != null) {
+//            Log.e(TAG, "setDataSource :)");
+//            mediaPlayer.setDataSource(MediaService.this, soundTrackUrl);
+//            mediaPlayer.prepareAsync();
+//        } else {
+//            mediaPlayer.setDataSource(getFileDescriptorFromName("sample.mp3"));
+//        }
+    }
 
     /**
      * TODO rm it
