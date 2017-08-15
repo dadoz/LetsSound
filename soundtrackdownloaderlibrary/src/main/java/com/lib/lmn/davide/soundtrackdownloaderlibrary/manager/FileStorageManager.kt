@@ -92,7 +92,7 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
         realm.transaction { realm ->
             realm
                 .where(SoundTrackCache().javaClass)
-                .equalTo("id", videoId)
+                .equalTo("key", videoId)
                 .findFirst()
                 .deleteFromRealm() }
     }
