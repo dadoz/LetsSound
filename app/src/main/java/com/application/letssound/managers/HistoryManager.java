@@ -9,6 +9,7 @@ import com.application.letssound.models.SoundTrack;
 import java.util.Iterator;
 import java.util.List;
 
+import io.reactivex.subjects.PublishSubject;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Observable;
@@ -20,7 +21,15 @@ public class HistoryManager {
     private static HistoryManager instance;
     private static Realm realm;
     private String TAG = "HistoryManager";
+    private PublishSubject<SoundTrack> searchedItemSubject = PublishSubject.create();
 
+    /**
+     *
+     * @return
+     */
+    public PublishSubject<SoundTrack> getSearchedItemSubject() {
+        return searchedItemSubject;
+    }
     /**
      *
      * @param context
@@ -61,6 +70,10 @@ public class HistoryManager {
      * @param soundTrack
      */
     public void saveOnHistory(SoundTrack soundTrack) {
+        //publish on next item added
+        searchedItemSubject.onNext(soundTrack);
+
+        //save on db
         if (realm != null) {
             realm.executeTransaction((realm -> {
                 soundTrack.setTimestamp();
