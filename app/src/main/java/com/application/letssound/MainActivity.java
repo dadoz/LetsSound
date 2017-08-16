@@ -27,6 +27,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class MainActivity extends AppCompatActivity {
     @State
     public String currentFragmentTag = SearchListFragment.SEARCH_LIST_FRAG_TAG;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
 
         //get media search manager
         SearchManager mediaSearchManager = (SearchManager) getSystemService(Activity.SEARCH_SERVICE);
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                     SoundTrackSuggestionProvider.AUTHORITY, SoundTrackSuggestionProvider.MODE);
             suggestions.saveRecentQuery(query, null);
+            searchView.setQuery(query, true);
         }
     }
 
