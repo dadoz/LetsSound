@@ -1,8 +1,10 @@
 package com.application.letssound;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 
 import com.application.letssound.adapters.SoundTrackListViewPagerAdapter;
 import com.application.letssound.application.LetssoundApplication;
+import com.application.letssound.contentProvider.SoundTrackSuggestionProvider;
 import com.application.letssound.fragments.SearchListFragment;
 import com.application.letssound.utils.Utils;
 
@@ -27,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
         onInitView();
+        saveSuggestionQueries();
     }
 
     @Override
@@ -84,4 +88,19 @@ public class MainActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
         }
     }
+
+    /**
+     * save suggestion
+     */
+    private void saveSuggestionQueries() {
+        Intent intent  = getIntent();
+        if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SoundTrackSuggestionProvider.AUTHORITY, SoundTrackSuggestionProvider.MODE);
+            suggestions.saveRecentQuery(query, null);
+        }
+    }
+
+
 }

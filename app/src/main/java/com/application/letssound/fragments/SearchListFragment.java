@@ -46,7 +46,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import icepick.Icepick;
 import icepick.State;
-import io.reactivex.subjects.PublishSubject;
 
 import static com.application.letssound.adapters.SoundTrackRecyclerViewAdapter.OnItemClickListenerInterface;
 
@@ -200,15 +199,14 @@ public class SearchListFragment extends Fragment implements
     private void initSearchOptionMenu(Menu menu) {
         searchMenuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        searchView.setOnQueryTextFocusChangeListener(this);
 
         //get media search manager
         SearchManager mediaSearchManager = (SearchManager) getActivity()
                 .getSystemService(Activity.SEARCH_SERVICE);
         searchView.setSearchableInfo(mediaSearchManager
                 .getSearchableInfo(getActivity().getComponentName()));
-        searchView.setOnQueryTextListener(this);
-
+//        searchView.setOnQueryTextListener(this);
+//        searchView.setOnQueryTextFocusChangeListener(this);
     }
 
     /**
@@ -309,6 +307,5 @@ public class SearchListFragment extends Fragment implements
                 searchNoItemImage.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
             });
     }
-
 
 }

@@ -11,4 +11,5 @@
     <string name="player_name">Player</string>
     <string name="search_title">Song list</string>
     <string name="generic_error">Oh Snap. Some error has occurred</string>
+    <string name="search_hint">Search a song</string>
 </resources>
