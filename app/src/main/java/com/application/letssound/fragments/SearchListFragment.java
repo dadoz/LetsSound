@@ -1,7 +1,5 @@
 package com.application.letssound.fragments;
 
-import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -199,14 +197,8 @@ public class SearchListFragment extends Fragment implements
     private void initSearchOptionMenu(Menu menu) {
         searchMenuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-
-        //get media search manager
-        SearchManager mediaSearchManager = (SearchManager) getActivity()
-                .getSystemService(Activity.SEARCH_SERVICE);
-        searchView.setSearchableInfo(mediaSearchManager
-                .getSearchableInfo(getActivity().getComponentName()));
-//        searchView.setOnQueryTextListener(this);
-//        searchView.setOnQueryTextFocusChangeListener(this);
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnQueryTextFocusChangeListener(this);
     }
 
     /**

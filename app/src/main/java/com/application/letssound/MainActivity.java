@@ -1,13 +1,16 @@
 package com.application.letssound;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +33,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
         onInitView();
-        saveSuggestionQueries();
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        saveSuggestionQueries(intent);
     }
 
     @Override
@@ -45,10 +51,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * base activity
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+
+        //get media search manager
+        SearchManager mediaSearchManager = (SearchManager) getSystemService(Activity.SEARCH_SERVICE);
+        searchView.setSearchableInfo(mediaSearchManager.getSearchableInfo(getComponentName()));
         return true;
     }
 
@@ -92,8 +105,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * save suggestion
      */
-    private void saveSuggestionQueries() {
-        Intent intent  = getIntent();
+    private void saveSuggestionQueries(Intent intent) {
         if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
