@@ -6,13 +6,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.application.letssound.fragments.LatestPlayFragment;
 import com.application.letssound.fragments.SearchListFragment;
+import com.application.letssound.fragments.SoundtrackPlayListFragment;
 
 /**
  * Created by davide-syn on 8/9/17.
  */
 
 public class SoundTrackListViewPagerAdapter extends FragmentStatePagerAdapter {
-    private final int NUM_PAGER = 2;
+    private final int NUM_PAGER = 3;
 
     public SoundTrackListViewPagerAdapter(FragmentManager supportFragmentManager) {
         super(supportFragmentManager);
@@ -23,6 +24,8 @@ public class SoundTrackListViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 return new SearchListFragment();
+            case 2:
+                return new SoundtrackPlayListFragment();
             case 1:
                 return new LatestPlayFragment();
         }
@@ -34,6 +37,8 @@ public class SoundTrackListViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 return "SEARCH";
+            case 2:
+                return "PLAYLIST";
             case 1:
                 return "LATEST PLAY";
         }

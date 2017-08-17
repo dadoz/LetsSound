@@ -26,11 +26,12 @@
             android:src="@drawable/ic_headphones_48dp"/>
     </FrameLayout>
     <TextView
+        android:id="@+id/emptyTextLayoutId"
         android:layout_below="@id/emptySearchFrameLayoutId"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/title_text_large"
         android:textColor="@color/md_amber_400"
-        android:text="Search your preferite songs"/>
+        android:text="@string/search_preferite_songs"/>
 </RelativeLayout>
