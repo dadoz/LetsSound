@@ -3,7 +3,6 @@ package com.application.letssound.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,15 +16,14 @@ import com.application.letssound.SoundTrackPlayerActivity;
 import com.application.letssound.adapters.LatestPlayAdapterCallbacks;
 import com.application.letssound.adapters.LatestPlayItemTouchHelper;
 import com.application.letssound.adapters.SoundTrackLatestPlayRecyclerViewAdapter;
-import com.application.letssound.adapters.SoundTrackMostPlayRecyclerViewAdapter;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.managers.HistoryManager;
 import com.application.letssound.models.SoundTrack;
 import com.application.letssound.utils.Utils;
+import com.application.letssound.views.MostPlayedPlaylistView;
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.manager.FileStorageManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,12 +42,10 @@ public class PlaylistFragment extends Fragment implements SoundTrackLatestPlayRe
 
     @BindView(R.id.latestPlayRecyclerViewId)
     RecyclerView latestPlayRecyclerView;
-    @BindView(R.id.mostPlayRecyclerViewId)
-    RecyclerView mostPlayRecyclerView;
     @BindView(R.id.emptyResultHistoryLayoutId)
     View emptyResultHistoryLayoutId;
-    @BindView(R.id.mostPlayedPlayAllButtonId)
-    View mostPlayedPlayAllButton;
+    @BindView(R.id.mostPlayedPlaylistContainerId)
+    MostPlayedPlaylistView mostPlayedPlaylistContainer;
     private HistoryManager historyManager;
     private Disposable subjectDisposable;
 
@@ -85,21 +81,8 @@ public class PlaylistFragment extends Fragment implements SoundTrackLatestPlayRe
         initLatestPlayedView();
 
         //init most played playlist
-        initMostPlayedView();
-    }
-
-    private void initMostPlayedView() {
         ArrayList<SoundTrack> list = Utils.iteratorToList(historyManager.getSoundTrackIterator());
-        List<SoundTrack> mostPlayedList = list.subList(0, 3);
-
-        initMostPlayedRecyclerView(mostPlayedList);
-    }
-
-    private void initMostPlayedRecyclerView(List<SoundTrack> list) {
-        SoundTrackMostPlayRecyclerViewAdapter adapter = new SoundTrackMostPlayRecyclerViewAdapter(list);
-        mostPlayRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        mostPlayRecyclerView.setAdapter(adapter);
-        mostPlayedPlayAllButton.setOnClickListener(view -> Snackbar.make(view, "play all", Snackbar.LENGTH_SHORT).show());
+        mostPlayedPlaylistContainer.initMostPlayedView(list);
     }
 
     /**
