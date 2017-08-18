@@ -1,0 +1,76 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <!--playlist -->
+    <android.support.v7.widget.CardView
+        android:id="@+id/mostPlayedPlaylistContainerId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_margin_16"
+        android:backgroundTint="@color/md_blue_grey_800"
+        android:minHeight="100dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/mostPlayedMainTitleId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin_16"
+                android:layout_marginLeft="@dimen/small_margin_16"
+                android:layout_marginRight="@dimen/small_margin_16"
+                android:text="Most played"
+                android:textSize="@dimen/text_18"
+                android:textColor="@color/md_grey_50"/>
+            <android.support.v7.widget.RecyclerView
+                android:layout_marginLeft="@dimen/small_margin_16"
+                android:layout_marginRight="@dimen/small_margin_16"
+                android:layout_marginTop="@dimen/small_margin_8"
+                android:layout_below="@id/mostPlayedMainTitleId"
+                android:id="@+id/mostPlayRecyclerViewId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_below="@id/mostPlayRecyclerViewId"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/small_margin_16"
+                android:id="@+id/mostPlayedPlayAllButtonId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_18"
+                android:background="?attr/selectableItemBackground"
+                android:textColor="@color/md_deep_orange_800"
+                android:text="PLAY ALL"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/mostPlayedPlaylistContainerId"
+        android:id="@+id/latestPlayRecyclerViewId"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+    </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:id="@+id/emptyResultHistoryLayoutId"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_32"
+            android:src="@drawable/ic_sound_track_history_48dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/title_text_large"
+            android:textColor="@color/md_amber_400"
+            android:text="no recent songs played"/>
+
+    </LinearLayout>
+</RelativeLayout>

@@ -46,8 +46,8 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     public static String PARAM_TRACK_URI = "PARAM_TRACK_URI";
     private PlaybackStateCompat playbackState;
     private AudioManager audioManager;
-    private MediaPlayer mediaPlayer;
-    private MediaControllerCompat mediaController;
+    public MediaPlayer mediaPlayer;
+    public MediaControllerCompat mediaController;
     private NotificationHelper notificationHelper;
     public int SEEKTO_MIN = 10000;
     private Uri mediaArtUri;

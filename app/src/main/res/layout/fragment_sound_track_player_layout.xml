@@ -45,53 +45,41 @@
         android:gravity="center"
         android:layout_centerHorizontal="true"
         android:text="info - duration"/>
-    <RelativeLayout
+    <android.support.v7.widget.CardView
         android:id="@+id/playerButtonBarLayoutId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:padding="@dimen/small_margin_16"
-        android:background="@color/md_blue_grey_800">
-        <ImageView
-            android:id="@+id/playerPlayButtonId"
-            android:visibility="gone"
-            android:layout_width="@dimen/icon_size_48"
-            android:layout_height="@dimen/icon_size_48"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_play_48dp"
-            android:background="?attr/selectableItemBackground"/>
-        <ImageView
-            android:id="@+id/playerPauseButtonId"
-            android:layout_width="@dimen/icon_size_48"
-            android:layout_height="@dimen/icon_size_48"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_pause_48dp"
-            android:background="?attr/selectableItemBackground"/>
-        <ImageView
-            android:id="@+id/playerRepeatButtonId"
-            android:layout_width="@dimen/icon_size_48"
-            android:layout_height="@dimen/icon_size_48"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_replay_48dp"
-            android:background="?attr/selectableItemBackground"/>
-        <ImageView
-            android:id="@+id/playerFastRewindButtonId"
-            android:visibility="gone"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
-            android:src="@drawable/ic_fast_rewind_white_24dp"
-            android:background="?attr/selectableItemBackground"/>
-
-        <ImageView
-            android:id="@+id/playerFastForwardButtonId"
-            android:visibility="gone"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
-            android:src="@drawable/ic_fast_forward_white_24dp"
-            android:background="?attr/selectableItemBackground"/>
-    </RelativeLayout>
-
+            android:layout_alignParentBottom="true"
+            android:padding="@dimen/small_margin_16"
+            android:background="@color/md_blue_grey_800">
+            <ImageView
+                android:id="@+id/playerPlayButtonId"
+                android:visibility="gone"
+                android:layout_width="@dimen/icon_size_24"
+                android:layout_height="@dimen/icon_size_24"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_play_48dp"
+                android:background="?attr/selectableItemBackground"/>
+            <ImageView
+                android:id="@+id/playerPauseButtonId"
+                android:layout_width="@dimen/icon_size_24"
+                android:layout_height="@dimen/icon_size_24"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_pause_48dp"
+                android:background="?attr/selectableItemBackground"/>
+            <ImageView
+                android:id="@+id/playerRepeatButtonId"
+                android:layout_width="@dimen/icon_size_24"
+                android:layout_height="@dimen/icon_size_24"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_replay_48dp"
+                android:background="?attr/selectableItemBackground"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
     <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/playerSoundTrackSeekbarId"
         android:layout_above="@id/playerButtonBarLayoutId"

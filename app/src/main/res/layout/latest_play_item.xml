@@ -9,8 +9,8 @@
 
     <com.application.letssound.views.CircularNetworkImageView
         android:id="@+id/mediaArtImageViewId"
-        android:layout_width="@dimen/medium_icon_size"
-        android:layout_height="@dimen/medium_icon_size"
+        android:layout_width="@dimen/icon_size_48"
+        android:layout_height="@dimen/icon_size_48"
         android:scaleType="fitXY"
         android:src="@drawable/ic_disc_48dp"/>
 
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:textColor="@color/md_blue_grey_700"
-        android:textSize="@dimen/title_text_medium"
+        android:textSize="@dimen/text_12"
         android:text="04:30"/>
 
     <TextView
@@ -35,7 +35,7 @@
         android:layout_marginLeft="@dimen/small_margin_16"
         android:layout_marginRight="@dimen/small_margin_16"
         android:textColor="@color/md_amber_400"
-        android:textSize="@dimen/title_text_large"
+        android:textSize="@dimen/text_18"
         android:text="title"/>
     <TextView
         android:id="@+id/urlTextId"
@@ -48,7 +48,7 @@
         android:layout_marginLeft="@dimen/small_margin_16"
         android:layout_marginRight="@dimen/small_margin_16"
         android:maxLines="1"
-        android:textSize="@dimen/title_text_medium"
+        android:textSize="@dimen/text_12"
         android:textStyle="italic"
         android:textColor="@color/md_blue_grey_700"
         android:text="url"/>

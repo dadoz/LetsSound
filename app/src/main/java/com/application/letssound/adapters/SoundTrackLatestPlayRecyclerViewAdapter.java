@@ -60,7 +60,7 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TIMESTAMP_ITEM.ordinal()) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.timestamp_item, parent, false);
+                    .inflate(R.layout.latest_play_timestamp_item, parent, false);
             return new TimestampViewHolder(view);
         }
 

@@ -21,4 +21,6 @@
     <dimen name="margin_32">32dp</dimen>
     <dimen name="icon_size_48">48dp</dimen>
     <dimen name="text_18">18sp</dimen>
+    <dimen name="icon_size_24">24dp</dimen>
+    <dimen name="text_12">12sp</dimen>
 </resources>

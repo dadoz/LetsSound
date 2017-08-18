@@ -110,6 +110,13 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
         playerPauseButton.setOnClickListener(this);
         playerRepeatButton.setOnClickListener(this);
         playerTrackRetryButton.setOnClickListener(this);
+
+//        mediaPlayer = (MediaController.MediaPlayerControl)
+//                service.mediaController.getMediaController();
+//
+//        SeekBar seeker = playerSoundTrackSeekbar;
+//        seeker.setOnSeekBarChangeListener(mSeekListener);
+//        playerSoundTrackSeekbar.setMax(1000);
     }
 
 
@@ -128,14 +135,6 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
             getActivity().unregisterReceiver(errorBroadcastReceiver);
             errorBroadcastReceiver = null;
         }
-    }
-    /**
-     *
-     */
-    private void initSeekbar() {
-        //get position from mediaSession
-//        playerSoundTrackSeekbar.setOnSeekBarChangeListener(this);
-//        playerSoundTrackSeekbar.setOnTouchListener((view, motionEvent) -> true);
     }
 
     /**
@@ -169,28 +168,5 @@ public class SoundTrackPlayerFragment extends Fragment implements View.OnClickLi
                 break;
         }
     }
-
-    /**
-     * FIXME - leaking Runnable
-     */
-//    private synchronized void updateProgressOnSeekBar(int timestamp) {
-//        new Handler().postDelayed(() -> {
-//            if (playerSoundTrackSeekbar.getProgress() == 100) {
-//                return;
-//            }
-//
-//            current = Utils.getCurrentPosition(service.getMediaPlayerCurrentPosition(),
-//                    service.getMediaPlayerDuration());
-//            if (playerSoundTrackSeekbar.getProgress() == 0) {
-//                current++;
-//            }
-//            if (current > playerSoundTrackSeekbar.getProgress()) {
-//                playerSoundTrackSeekbar.setProgress(current);
-//            }
-//        }, timestamp);
-//
-//    }
-
-
 
 }
