@@ -52,7 +52,7 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
     @Override
     public int getItemViewType(int position) {
         return position == 0 ||
-                !Utils.isSameDay(list.get(position -1).getTimestamp() * 1000, list.get(position).getTimestamp() * 1000) ?
+                !Utils.isSameDay(list.get(position -1).getTimestamp(), list.get(position).getTimestamp()) ?
                 TIMESTAMP_ITEM.ordinal() : LATEST_PLAY_ITEM.ordinal();
     }
 
@@ -94,7 +94,7 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
         if (viewHolder instanceof TimestampViewHolder) {
             TimestampViewHolder holder = ((TimestampViewHolder) viewHolder);
 
-            holder.timestamp.setText(new SimpleDateFormat("dd MMMM", Locale.ITALY).format(new Date(item.getTimestamp() * 1000)));
+            holder.timestamp.setText(new SimpleDateFormat("dd MMMM", Locale.ITALY).format(new Date(item.getTimestamp())));
         }
     }
 

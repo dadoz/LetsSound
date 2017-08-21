@@ -2,19 +2,21 @@ package com.application.letssound.managers;
 
 import android.util.Log;
 
-import com.application.letssound.helpers.ObservableHelper;
+
+import com.application.letssound.helpers.SoundTrackRetrofitResponseCallbacks;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MediaSearchManager implements MediaSearchManagerInterface,
-        ObservableHelper.ObservableHelperInterface {
+        SoundTrackRetrofitResponseCallbacks {
     private static final String TAG = "MediaSearchManager";
     private static MediaSearchManager instance; //FIXME LEAK
     private YoutubeV3RetrofitManager retrofitManager;
-    private ObservableHelper observableHelper;
     private WeakReference<TrackSearchManagerInterface> listener;
 
     /**
@@ -24,7 +26,6 @@ public class MediaSearchManager implements MediaSearchManagerInterface,
     public MediaSearchManager(TrackSearchManagerInterface lst) {
         listener = new WeakReference<>(lst);
         retrofitManager = YoutubeV3RetrofitManager.getInstance();
-        observableHelper = new ObservableHelper(this);
     }
 
     /**
@@ -47,29 +48,34 @@ public class MediaSearchManager implements MediaSearchManagerInterface,
 
     @Override
     public Subscription onSearchAsync(String query) {
-        return observableHelper.initObservable(retrofitManager.searchList(query));
+        return retrofitManager.searchList(query)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(ArrayList::isEmpty)
+                .subscribe(this::onObservableSuccess,
+                        (throwable) -> onObservableError(throwable.getMessage()));
     }
 
     @Override
-    public void onObservableSuccess(ArrayList<Object> list, String requestType) {
+    public void onObservableSuccess(ArrayList<Object> list) {
         Log.e(TAG, "success results  " + list.size());
         if (listener.get() != null)
             listener.get().onTrackSearchSuccess(list);
     }
 
     @Override
-    public void onObservableSuccess(Object obj, String requestType) {
+    public void onObservableSuccess(Object obj) {
     }
 
-    @Override
-    public void onObservableEmpty() {
-        Log.e(TAG, "empty");
-        if (listener.get() != null)
-            listener.get().onTrackSearchError("empty fields");
-    }
+//    @Override
+//    public void onObservableEmpty() {
+//        Log.e(TAG, "empty");
+//        if (listener.get() != null)
+//            listener.get().onTrackSearchError("empty fields");
+//    }
 
     @Override
-    public void onObservableError(String requestType, String error) {
+    public void onObservableError(String error) {
         Log.e(TAG, "hey" + error);
         if (listener.get() != null)
             listener.get().onTrackSearchError(error);

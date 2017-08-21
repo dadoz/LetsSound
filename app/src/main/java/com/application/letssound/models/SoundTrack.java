@@ -4,11 +4,15 @@ package com.application.letssound.models;
 import java.io.Serializable;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by davide on 16/07/16.
  */
 public class SoundTrack extends RealmObject implements Serializable {
+    @PrimaryKey
+    public String videoId;
+
     private ResourceId id;
     private String kind;
     private SoundTrackSnippet snippet;
@@ -16,7 +20,7 @@ public class SoundTrack extends RealmObject implements Serializable {
 
 
     public void setTimestamp() {
-        this.timestamp = System.currentTimeMillis()/1000;
+        this.timestamp = System.currentTimeMillis();
     }
 
     public long getTimestamp() {
@@ -76,5 +80,9 @@ public class SoundTrack extends RealmObject implements Serializable {
     public SoundTrack setSnippet(SoundTrackSnippet snippet) {
         this.snippet = snippet;
         return this;
+    }
+
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
     }
 }

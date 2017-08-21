@@ -70,15 +70,18 @@ public class HistoryManager {
      * @param soundTrack
      */
     public void saveOnHistory(SoundTrack soundTrack) {
-        //publish on next item added
-        searchedItemSubject.onNext(soundTrack);
+        String videoId = soundTrack.getId().getVideoId();
+        if (videoId != null) {
+            //set primary key
+            soundTrack.setVideoId(videoId);
+            soundTrack.setTimestamp();
 
-        //save on db
-        if (realm != null) {
-            realm.executeTransaction((realm -> {
-                soundTrack.setTimestamp();
-                realm.copyToRealm(soundTrack);
-            }));
+            //publish on next item added
+            searchedItemSubject.onNext(soundTrack);
+
+            //save on db
+            if (realm != null)
+                realm.executeTransaction((realm -> realm.copyToRealm(soundTrack)));
         }
     }
 

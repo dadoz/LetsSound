@@ -230,29 +230,27 @@ public class SearchListFragment extends Fragment implements
     }
 
 
-    /**
-     *
-     * @param result
-     */
-    private void setResultOnSavedInstance(ArrayList<SoundTrack> result) {
-        this.soundTrackList = result;
-    }
-
     @Override
     public void onTrackSearchSuccess(Object list) {
-        ArrayList<SoundTrack> tmp = (ArrayList<SoundTrack>) list;
-        setResultOnSavedInstance(tmp);
-        updateRecyclerViewData(tmp);
-        updateUI(false);
+        if (list instanceof ArrayList) {
+            ArrayList<SoundTrack> tmp = (ArrayList<SoundTrack>) list;
+            //saving on state var
+            this.soundTrackList = tmp;
+            updateRecyclerViewData(tmp);
+            updateUI(false);
+        }
     }
 
     @Override
     public void onTrackSearchError(String error) {
-        setResultOnSavedInstance(new ArrayList<SoundTrack>());
-        updateRecyclerViewData(new ArrayList<SoundTrack>());
+        //saving on state var
+        this.soundTrackList = new ArrayList<>();
+        //update
+        updateRecyclerViewData(new ArrayList<>());
+        updateUI(false);
+        //print error - should be in updateUI
         Utils.createSnackBarByBackgroundColor(mainView, error, ContextCompat
                 .getColor(getContext(), R.color.md_red_400));
-        updateUI(false);
     }
 
     @Override

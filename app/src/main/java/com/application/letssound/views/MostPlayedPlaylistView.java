@@ -2,6 +2,7 @@ package com.application.letssound.views;
 
 import android.content.Context;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,11 +42,13 @@ public class MostPlayedPlaylistView extends CardView {
         inflate(getContext(), R.layout.most_played_playlist_layout, this);
         mostPlayRecyclerView = (RecyclerView) findViewById(R.id.mostPlayRecyclerViewId);
         mostPlayedPlayAllButton = findViewById(R.id.mostPlayedPlayAllButtonId);
+        //set style
+        setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.md_blue_grey_800));
     }
 
     public void initMostPlayedView(ArrayList<SoundTrack> list) {
-        List<SoundTrack> mostPlayedList = list.subList(0, 3);
 
+        List<SoundTrack> mostPlayedList = list.isEmpty() ? new ArrayList<>() : list.subList(0, 2);
         initMostPlayedRecyclerView(mostPlayedList);
     }
 
