@@ -51,7 +51,7 @@ public class MediaSearchManager implements MediaSearchManagerInterface,
         return retrofitManager.searchList(query)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .filter(ArrayList::isEmpty)
+                .filter(list -> !list.isEmpty())
                 .subscribe(this::onObservableSuccess,
                         (throwable) -> onObservableError(throwable.getMessage()));
     }

@@ -48,7 +48,7 @@ public class MostPlayedPlaylistView extends CardView {
 
     public void initMostPlayedView(ArrayList<SoundTrack> list) {
 
-        List<SoundTrack> mostPlayedList = list.isEmpty() ? new ArrayList<>() : list.subList(0, 2);
+        List<SoundTrack> mostPlayedList = list.isEmpty() ? new ArrayList<>() : list.subList(0, 1);
         initMostPlayedRecyclerView(mostPlayedList);
     }
 

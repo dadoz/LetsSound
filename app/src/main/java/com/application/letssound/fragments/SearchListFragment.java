@@ -232,13 +232,11 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onTrackSearchSuccess(Object list) {
-        if (list instanceof ArrayList) {
-            ArrayList<SoundTrack> tmp = (ArrayList<SoundTrack>) list;
-            //saving on state var
-            this.soundTrackList = tmp;
-            updateRecyclerViewData(tmp);
-            updateUI(false);
-        }
+        ArrayList<SoundTrack> tmp = (ArrayList<SoundTrack>) list;
+        //saving on state var
+        this.soundTrackList = tmp;
+        updateRecyclerViewData(tmp);
+        updateUI(false);
     }
 
     @Override
