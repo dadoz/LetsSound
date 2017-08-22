@@ -3,10 +3,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
+    <include layout="@layout/search_list_no_item_layout"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/trackRecyclerViewId"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
-
-    <include layout="@layout/search_list_no_item_layout"/>
 </RelativeLayout>

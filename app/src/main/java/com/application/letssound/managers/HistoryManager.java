@@ -81,7 +81,7 @@ public class HistoryManager {
 
             //save on db
             if (realm != null)
-                realm.executeTransaction((realm -> realm.copyToRealm(soundTrack)));
+                realm.executeTransaction((realm -> realm.copyToRealmOrUpdate(soundTrack)));
         }
     }
 

@@ -65,6 +65,8 @@ public class SearchListFragment extends Fragment implements
     View searchNoItemLayout;
     @BindView(R.id.searchNoItemImageId)
     View searchNoItemImage;
+    @BindView(R.id.emptyTextLayoutId)
+    View emptyTextLayout;
     @BindView(R.id.emptyResultProgressBarId)
     ProgressBar emptyResultProgressBar;
     private SoundTrackStatus soundTrackStatus;
@@ -119,9 +121,9 @@ public class SearchListFragment extends Fragment implements
      * @param savedInstanceState
      */
     public void initView(Bundle savedInstanceState) {
-        updateUI(false);
+        updateUI(false, true);
         setHasOptionsMenu(true);
-        initRecyclerView(savedInstanceState != null ? soundTrackList : new ArrayList<SoundTrack>());
+        initRecyclerView(savedInstanceState != null ? soundTrackList : new ArrayList<>());
     }
 
 
@@ -131,6 +133,7 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(SoundTrack soundTrack) {
+        updateUI(true, false);
         Snackbar snackbar = Snackbar.make(getView(), "loading song", Snackbar.LENGTH_SHORT);
         snackbar.getView().setBackgroundColor(ContextCompat.getColor(getContext(), R.color.md_amber_400));
         snackbar.show();
@@ -170,7 +173,7 @@ public class SearchListFragment extends Fragment implements
         searchMenuItem.collapseActionView();
         soundTrackStatus.setIdleStatus();
         mediaSearchManager.onSearchAsync(query);
-        updateUI(true);
+        updateUI(true, false);
         return true;
     }
 
@@ -226,7 +229,7 @@ public class SearchListFragment extends Fragment implements
                 .getAdapter());
         adapter.clearAll();
         adapter.addAll(list);
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged(); ------> this was crashing the main UI thread :X
     }
 
 
@@ -236,7 +239,7 @@ public class SearchListFragment extends Fragment implements
         //saving on state var
         this.soundTrackList = tmp;
         updateRecyclerViewData(tmp);
-        updateUI(false);
+        updateUI(false, false);
     }
 
     @Override
@@ -245,7 +248,7 @@ public class SearchListFragment extends Fragment implements
         this.soundTrackList = new ArrayList<>();
         //update
         updateRecyclerViewData(new ArrayList<>());
-        updateUI(false);
+        updateUI(false, false);
         //print error - should be in updateUI
         Utils.createSnackBarByBackgroundColor(mainView, error, ContextCompat
                 .getColor(getContext(), R.color.md_red_400));
@@ -266,7 +269,7 @@ public class SearchListFragment extends Fragment implements
                 .getTransportControls().playFromSearch("CACHED_FILE", bundle);
 
         //update ui
-        updateUI(false);
+        updateUI(false, false);
 
         //start activity
         Intent intent = new Intent(getContext(), SoundTrackPlayerActivity.class);
@@ -286,13 +289,15 @@ public class SearchListFragment extends Fragment implements
     /**
      * update ui
      */
-    private void updateUI(final boolean isLoading) {
+    private void updateUI(final boolean isLoading, final boolean isInit) {
         //update ui
         if (getActivity() != null)
             getActivity().runOnUiThread(() -> {
                 emptyResultProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
                 soundTrackRecyclerView.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
-                searchNoItemImage.setVisibility(!isLoading ? View.VISIBLE : View.GONE);
+                searchNoItemImage.setVisibility(isInit ? View.VISIBLE : View.GONE);
+                emptyTextLayout.setVisibility(isInit ? View.VISIBLE : View.GONE);
+
             });
     }
 
