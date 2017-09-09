@@ -70,12 +70,12 @@ public class MostPlayedFragment extends Fragment implements SoundTrackLatestPlay
         subjectDisposable = historyManager.getSearchedItemSubject().subscribe(this::initMostPlayedList);
 
         //init most played playlist
-        ArrayList<SoundTrack> list = Utils.iteratorToList(historyManager.getSoundTrackIterator());
-        mostPlayedPlaylistContainer.initMostPlayedView(list);
+        mostPlayedPlaylistContainer.initMostPlayedView(soundTracksList);
     }
 
     public void initMostPlayedList(SoundTrack soundTrack) {
-
+        soundTracksList.add(soundTrack);
+        mostPlayedPlaylistContainer.initMostPlayedView(soundTracksList);
     }
 
     /**

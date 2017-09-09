@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"/>
     <com.application.letssound.views.MostPlayedPlaylistView
         android:layout_marginTop="@dimen/small_margin_8"
+        android:visibility="gone"
         android:id="@+id/mostPlayedPlaylistContainerId2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

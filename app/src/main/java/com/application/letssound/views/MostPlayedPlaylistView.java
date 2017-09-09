@@ -47,8 +47,7 @@ public class MostPlayedPlaylistView extends LinearLayout {
     }
 
     public void initMostPlayedView(ArrayList<SoundTrack> list) {
-
-        List<SoundTrack> mostPlayedList = list.isEmpty() ? new ArrayList<>() : list.subList(0, 1);
+        List<SoundTrack> mostPlayedList = list.isEmpty() ? new ArrayList<>() : list;
         initMostPlayedRecyclerView(mostPlayedList);
     }
 
