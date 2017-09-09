@@ -15,12 +15,27 @@
     <TextView
         android:id="@+id/mostPlayedTitleTextViewId"
         android:layout_marginTop="@dimen/small_margin_8"
+        android:layout_centerHorizontal="true"
         android:layout_below="@id/mostPlayedIconImageViewId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxWidth="160dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:textColor="@color/md_amber_400"
         android:textSize="@dimen/text_18"
         android:text="title"/>
+    <TextView
+        android:id="@+id/urlTextId"
+        android:layout_toLeftOf="@id/durationTimeTextId"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/mostPlayedTitleTextViewId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/small_margin_8"
+        android:maxLines="1"
+        android:textSize="@dimen/title_text_medium"
+        android:textStyle="italic"
+        android:textColor="@color/md_blue_grey_700"
+        android:text="Author name surname"/>
 </RelativeLayout>

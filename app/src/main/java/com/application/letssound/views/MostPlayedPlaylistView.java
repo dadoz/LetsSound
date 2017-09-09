@@ -3,11 +3,11 @@ package com.application.letssound.views;
 import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.application.letssound.R;
 import com.application.letssound.adapters.SoundTrackMostPlayRecyclerViewAdapter;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by davide-syn on 8/17/17.
  */
-public class MostPlayedPlaylistView extends CardView {
+public class MostPlayedPlaylistView extends LinearLayout {
     RecyclerView mostPlayRecyclerView;
     View mostPlayedPlayAllButton;
 
@@ -43,7 +43,7 @@ public class MostPlayedPlaylistView extends CardView {
         mostPlayRecyclerView = (RecyclerView) findViewById(R.id.mostPlayRecyclerViewId);
         mostPlayedPlayAllButton = findViewById(R.id.mostPlayedPlayAllButtonId);
         //set style
-        setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.md_blue_grey_800));
+        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.md_blue_grey_900));
     }
 
     public void initMostPlayedView(ArrayList<SoundTrack> list) {
@@ -53,7 +53,7 @@ public class MostPlayedPlaylistView extends CardView {
     }
 
     private void initMostPlayedRecyclerView(List<SoundTrack> list) {
-        SoundTrackMostPlayRecyclerViewAdapter adapter = new SoundTrackMostPlayRecyclerViewAdapter(list);
+        SoundTrackMostPlayRecyclerViewAdapter adapter = new SoundTrackMostPlayRecyclerViewAdapter(list, getContext());
         mostPlayRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mostPlayRecyclerView.setAdapter(adapter);
         mostPlayedPlayAllButton.setOnClickListener(view -> Snackbar.make(view, "play all", Snackbar.LENGTH_SHORT).show());

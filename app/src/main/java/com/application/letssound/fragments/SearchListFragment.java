@@ -71,7 +71,6 @@ public class SearchListFragment extends Fragment implements
     ProgressBar emptyResultProgressBar;
     private SoundTrackStatus soundTrackStatus;
     private MenuItem searchMenuItem;
-    private View mainView;
     private MediaSearchManager mediaSearchManager;
     private MusicPlayerManager musicPlayerManager;
     private HistoryManager historyManager;
@@ -87,7 +86,7 @@ public class SearchListFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mainView = inflater.inflate(R.layout.fragment_search_list_layout, container, false);
+        View mainView = inflater.inflate(R.layout.fragment_search_list_layout, container, false);
         unbinder = ButterKnife.bind(this, mainView);
         return mainView;
     }
@@ -248,10 +247,14 @@ public class SearchListFragment extends Fragment implements
         this.soundTrackList = new ArrayList<>();
         //update
         updateRecyclerViewData(new ArrayList<>());
+
+        //update ui
         updateUI(false, false);
+
         //print error - should be in updateUI
-        Utils.createSnackBarByBackgroundColor(mainView, error, ContextCompat
-                .getColor(getContext(), R.color.md_red_400));
+        Snackbar snackbar = Utils.buildErrorSnackbar(getView(), error);
+        if (snackbar != null)
+            snackbar.show();
     }
 
     @Override
@@ -281,6 +284,8 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onSoundTrackRetrieveError(@Nullable String message) {
+        updateUI(false, false);
+
         Snackbar snackbar = Utils.buildErrorSnackbar(getView(), message);
         if (snackbar != null)
             snackbar.show();
