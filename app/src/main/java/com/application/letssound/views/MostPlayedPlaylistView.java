@@ -13,6 +13,7 @@ import com.application.letssound.R;
 import com.application.letssound.adapters.SoundTrackMostPlayRecyclerViewAdapter;
 import com.application.letssound.models.SoundTrack;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
 public class MostPlayedPlaylistView extends LinearLayout {
     RecyclerView mostPlayRecyclerView;
     View mostPlayedPlayAllButton;
+    private WeakReference<OnPlayAllClikListener> lst;
 
     public MostPlayedPlaylistView(Context context) {
         super(context);
@@ -46,7 +48,8 @@ public class MostPlayedPlaylistView extends LinearLayout {
         setBackgroundColor(ContextCompat.getColor(getContext(), R.color.md_blue_grey_900));
     }
 
-    public void initMostPlayedView(ArrayList<SoundTrack> list) {
+    public void initMostPlayedView(ArrayList<SoundTrack> list, OnPlayAllClikListener lst) {
+        this.lst = new WeakReference<>(lst);
         List<SoundTrack> mostPlayedList = list.isEmpty() ? new ArrayList<>() : list;
         initMostPlayedRecyclerView(mostPlayedList);
     }
@@ -55,7 +58,10 @@ public class MostPlayedPlaylistView extends LinearLayout {
         SoundTrackMostPlayRecyclerViewAdapter adapter = new SoundTrackMostPlayRecyclerViewAdapter(list, getContext());
         mostPlayRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mostPlayRecyclerView.setAdapter(adapter);
-        mostPlayedPlayAllButton.setOnClickListener(view -> Snackbar.make(view, "play all", Snackbar.LENGTH_SHORT).show());
+        mostPlayedPlayAllButton.setOnClickListener(view -> { lst.get().onPlayAllClick(view); Snackbar.make(view, "play all", Snackbar.LENGTH_SHORT).show(); });
     }
 
+    public interface OnPlayAllClikListener {
+        void onPlayAllClick(View view);
+    }
 }

@@ -14,6 +14,8 @@ import com.application.letssound.BuildConfig;
 import com.application.letssound.R;
 import com.application.letssound.services.MediaService;
 
+import java.util.List;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class LetssoundApplication extends Application {
@@ -96,5 +98,9 @@ public class LetssoundApplication extends Application {
      */
     public MediaService getMediaService() {
         return serviceRef;
+    }
+
+    public void playFromBundleList(List<Bundle> bundleList) {
+        //set bundle list
     }
 }

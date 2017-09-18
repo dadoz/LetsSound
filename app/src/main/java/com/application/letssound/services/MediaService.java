@@ -177,7 +177,8 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
     public void onCompletion(MediaPlayer mediaPlayer) {
         mediaController.getTransportControls().stop();
         notificationHelper.cancel();
-        //send broadcast event
+
+        //send broadcast event to UI - could be better
 //        sendBroadcast(new Intent());
     }
     @Override
@@ -196,8 +197,7 @@ public class MediaService extends Service implements MediaPlayer.OnBufferingUpda
                 .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
                 .build();
         mediaSession.setPlaybackState(playbackState);
-        notificationHelper
-                .updateNotification(new WeakReference<>(playbackState),
+        notificationHelper.updateNotification(new WeakReference<>(playbackState),
                         soundTrackTitle, soundTrackUrl, mediaArtUri);
     }
 
