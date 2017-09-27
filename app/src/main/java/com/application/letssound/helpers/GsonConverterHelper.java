@@ -1,8 +1,8 @@
 package com.application.letssound.helpers;
 
-import com.application.letssound.deserializer.SoundTrackURLDeserializer;
+import com.application.letssound.network.deserializer.SoundTrackURLDeserializer;
 import com.application.letssound.models.SoundTrack;
-import com.application.letssound.deserializer.SoundTrackDeserializer;
+import com.application.letssound.network.deserializer.SoundTrackDeserializer;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 

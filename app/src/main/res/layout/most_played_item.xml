@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:padding="@dimen/small_margin_16">
-    <com.application.letssound.views.CircularNetworkImageView
+    <com.application.letssound.ui.views.CircularNetworkImageView
         android:id="@+id/mostPlayedIconImageViewId"
         android:layout_centerHorizontal="true"
         android:layout_width="@dimen/icon_size_48"

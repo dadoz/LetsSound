@@ -12,7 +12,8 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 
-import com.application.letssound.SoundTrackPlayerActivity;
+import com.application.letssound.network.RetrofitYoutubeDownloaderManager;
+import com.application.letssound.ui.SoundTrackPlayerActivity;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.helpers.SoundTrackRetrofitResponseCallbacks;
 import com.application.letssound.utils.Utils;

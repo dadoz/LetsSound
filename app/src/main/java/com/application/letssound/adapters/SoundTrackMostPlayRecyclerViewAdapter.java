@@ -9,9 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.application.letssound.R;
-import com.application.letssound.managers.VolleyMediaArtManager;
+import com.application.letssound.helpers.VolleyMediaArtHelper;
 import com.application.letssound.models.SoundTrack;
-import com.application.letssound.views.CircularNetworkImageView;
+import com.application.letssound.ui.views.CircularNetworkImageView;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -22,11 +22,11 @@ import java.util.List;
 
 public class SoundTrackMostPlayRecyclerViewAdapter extends RecyclerView.Adapter<SoundTrackMostPlayRecyclerViewAdapter.ViewHolder> {
     private final List<SoundTrack> items;
-    private final VolleyMediaArtManager volleyMediaArtManager;
+    private final VolleyMediaArtHelper volleyMediaArtManager;
 
     public SoundTrackMostPlayRecyclerViewAdapter(List<SoundTrack> list, Context context) {
         this.items = list;
-        volleyMediaArtManager = VolleyMediaArtManager.getInstance(new WeakReference<>(context), null);
+        volleyMediaArtManager = VolleyMediaArtHelper.getInstance(new WeakReference<>(context), null);
     }
 
     @Override

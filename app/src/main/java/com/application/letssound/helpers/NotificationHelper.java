@@ -4,35 +4,25 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.MediaPlayer;
 import android.media.session.PlaybackState;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.TypefaceSpan;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
-import com.application.letssound.MainActivity;
 import com.application.letssound.R;
-import com.application.letssound.SoundTrackPlayerActivity;
-import com.application.letssound.managers.MusicPlayerManager;
-import com.application.letssound.managers.VolleyMediaArtManager;
-import com.application.letssound.models.Setting;
+import com.application.letssound.ui.SoundTrackPlayerActivity;
 import com.application.letssound.services.MediaService;
 import com.application.letssound.utils.Utils;
 
 import java.lang.ref.WeakReference;
 
-public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaArtCallbackInterface {
+public class NotificationHelper implements VolleyMediaArtHelper.OnVolleyMediaArtCallbackInterface {
     private final static int NOTIFICATION_ID = 999999;
 
     public static final String ACTION_PLAY = "play";
@@ -113,8 +103,8 @@ public class NotificationHelper implements VolleyMediaArtManager.OnVolleyMediaAr
             Log.e(TAG, "no media art required to be retrieved");
             return;
         }
-        VolleyMediaArtManager.getInstance(new WeakReference<> (serviceRef.get().getApplicationContext()),
-                new WeakReference<VolleyMediaArtManager.OnVolleyMediaArtCallbackInterface>(this))
+        VolleyMediaArtHelper.getInstance(new WeakReference<> (serviceRef.get().getApplicationContext()),
+                new WeakReference<VolleyMediaArtHelper.OnVolleyMediaArtCallbackInterface>(this))
                 .retrieveMediaArtAsync(mediaArtUri);
     }
 

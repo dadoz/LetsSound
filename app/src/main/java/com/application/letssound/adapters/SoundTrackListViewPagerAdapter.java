@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.application.letssound.fragments.MostPlayedFragment;
-import com.application.letssound.fragments.PlaylistFragment;
-import com.application.letssound.fragments.SearchListFragment;
+import com.application.letssound.ui.fragments.MostPlayedFragment;
+import com.application.letssound.ui.fragments.PlaylistFragment;
+import com.application.letssound.ui.fragments.SearchListFragment;
 
 /**
  * Created by davide-syn on 8/9/17.

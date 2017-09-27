@@ -1,9 +1,6 @@
 package com.application.letssound.managers;
 
-import com.application.letssound.downloader.DownloadVolleyResponse;
-import com.google.api.services.youtube.model.SearchResult;
-
-import java.lang.ref.WeakReference;
+import com.application.letssound.network.downloader.DownloadVolleyResponse;
 
 /**
  * Created by davide on 13/07/16.

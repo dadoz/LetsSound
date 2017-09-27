@@ -4,11 +4,11 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.application.letssound.views.MostPlayedPlaylistView
+    <com.application.letssound.ui.views.MostPlayedPlaylistView
         android:id="@+id/mostPlayedPlaylistContainerId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <com.application.letssound.views.MostPlayedPlaylistView
+    <com.application.letssound.ui.views.MostPlayedPlaylistView
         android:layout_marginTop="@dimen/small_margin_8"
         android:visibility="gone"
         android:id="@+id/mostPlayedPlaylistContainerId2"

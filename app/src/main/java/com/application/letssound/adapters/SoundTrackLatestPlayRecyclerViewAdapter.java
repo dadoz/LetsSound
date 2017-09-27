@@ -8,10 +8,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.application.letssound.R;
-import com.application.letssound.managers.VolleyMediaArtManager;
+import com.application.letssound.adapters.interfaces.ItemTouchHelperAdapter;
+import com.application.letssound.adapters.interfaces.LatestPlayAdapterCallbacks;
+import com.application.letssound.helpers.VolleyMediaArtHelper;
 import com.application.letssound.models.SoundTrack;
 import com.application.letssound.utils.Utils;
-import com.application.letssound.views.CircularNetworkImageView;
+import com.application.letssound.ui.views.CircularNetworkImageView;
 import com.google.common.collect.Lists;
 
 import java.lang.ref.WeakReference;
@@ -28,7 +30,7 @@ import static com.application.letssound.adapters.SoundTrackLatestPlayRecyclerVie
  */
 public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
             .Adapter<RecyclerView.ViewHolder> implements ItemTouchHelperAdapter {
-    private final VolleyMediaArtManager volleyMediaArtManager;
+    private final VolleyMediaArtHelper volleyMediaArtManager;
     private List<SoundTrack> list;
     private WeakReference<OnItemClickListenerInterface> listener;
     private WeakReference<LatestPlayAdapterCallbacks> listenerCallbacks;
@@ -46,7 +48,7 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
         list = Lists.reverse(dataset); //revers on realm ???
         listener = new WeakReference<>(itemClickListenerRef);
         listenerCallbacks = new WeakReference<>(lst2);
-        volleyMediaArtManager = VolleyMediaArtManager.getInstance(new WeakReference<Context>(context), null);
+        volleyMediaArtManager = VolleyMediaArtHelper.getInstance(new WeakReference<Context>(context), null);
     }
 
     @Override

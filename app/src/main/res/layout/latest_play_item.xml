@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground">
 
-    <com.application.letssound.views.CircularNetworkImageView
+    <com.application.letssound.ui.views.CircularNetworkImageView
         android:id="@+id/mediaArtImageViewId"
         android:layout_width="@dimen/icon_size_48"
         android:layout_height="@dimen/icon_size_48"

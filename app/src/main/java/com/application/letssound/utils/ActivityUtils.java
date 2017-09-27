@@ -3,7 +3,7 @@ package com.application.letssound.utils;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.application.letssound.fragments.SearchListFragment;
+import com.application.letssound.ui.fragments.SearchListFragment;
 
 /**
  * Created by davide-syn on 8/9/17.

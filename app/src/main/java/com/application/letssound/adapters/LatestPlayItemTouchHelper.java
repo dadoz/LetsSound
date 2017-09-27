@@ -3,6 +3,8 @@ package com.application.letssound.adapters;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import com.application.letssound.adapters.interfaces.ItemTouchHelperAdapter;
+
 /**
  * Created by davide on 12/08/2017.
  */
