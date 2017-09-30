@@ -15,7 +15,8 @@ android {
 
     defaultConfig {
         buildConfigField "String", "YOUTUBE_BASE_PATH", "\"https://www.youtube.com/watch?v=\""
-        buildConfigField "String", "YOUTUBE_DOWNLOADER_BASE_PATH", "\"http://www.youtubeinmp3.com/\""
+//        buildConfigField "String", "YOUTUBE_DOWNLOADER_BASE_PATH", "\"http://www.youtubeinmp3.com/\""
+        buildConfigField "String", "YOUTUBE_DOWNLOADER_BASE_PATH", "\"http://youtubemp3api.com/\""//{format}/{YouTube-Video-ID}
 
         minSdkVersion 21
         targetSdkVersion 25
@@ -58,6 +59,8 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:$retrofit_version"
     compile "com.squareup.retrofit2:adapter-rxjava:$retrofit_version"
     compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
 
     //extension realm kotling
     compile 'com.github.vicpinm:krealmextensions:1.0.8'

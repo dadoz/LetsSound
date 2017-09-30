@@ -211,7 +211,7 @@ public class SearchListFragment extends Fragment implements
         //if you want you can save all result on history or in db
 //        historyManager.saveOnHistory(result);
         SoundTrackRecyclerViewAdapter adapter = new SoundTrackRecyclerViewAdapter(result,
-                new WeakReference<OnItemClickListenerInterface>(this),
+                new WeakReference<>(this),
                 new WeakReference<>(getActivity().getApplicationContext()));
         adapter.registerAdapterDataObserver(new SoundTrackSearchObserver(new WeakReference<>(adapter),
                 searchNoItemLayout));
@@ -234,10 +234,9 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onTrackSearchSuccess(Object list) {
-        ArrayList<SoundTrack> tmp = (ArrayList<SoundTrack>) list;
         //saving on state var
-        this.soundTrackList = tmp;
-        updateRecyclerViewData(tmp);
+        this.soundTrackList = (ArrayList<SoundTrack>) list;
+        updateRecyclerViewData(soundTrackList);
         updateUI(false, false);
     }
 

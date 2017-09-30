@@ -11,6 +11,7 @@ import rx.Observable;
 /**
  * Created by davide on 15/07/16.
  */
+@Deprecated
 public class RetrofitYoutubeDownloaderManager {
 
     private final static String FORMAT_TYPE = "JSON";

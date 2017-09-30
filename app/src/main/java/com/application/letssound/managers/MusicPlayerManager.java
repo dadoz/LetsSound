@@ -12,10 +12,9 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 
-import com.application.letssound.network.RetrofitYoutubeDownloaderManager;
-import com.application.letssound.ui.SoundTrackPlayerActivity;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.helpers.SoundTrackRetrofitResponseCallbacks;
+import com.application.letssound.ui.SoundTrackPlayerActivity;
 import com.application.letssound.utils.Utils;
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.manager.SoundTrackDownloaderManager;
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule;
@@ -23,13 +22,10 @@ import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownload
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
 public class MusicPlayerManager implements SoundTrackRetrofitResponseCallbacks {
     private static final String TAG = "MusicPlayerManagerTAG";
     private static MusicPlayerManager instance; //FIXME LEAK
-    private RetrofitYoutubeDownloaderManager retrofitManager;
+//    private RetrofitYoutubeDownloaderManager retrofitManager;
     private WeakReference<OnMusicPlayerCallback> listener;
     private WeakReference<Activity> activityRef;
     private View playButtonView;
@@ -40,7 +36,7 @@ public class MusicPlayerManager implements SoundTrackRetrofitResponseCallbacks {
 
     public MusicPlayerManager(Activity activity, View[] viewsArray,
                               OnMusicPlayerCallback lst) {
-        retrofitManager = RetrofitYoutubeDownloaderManager.getInstance();
+//        retrofitManager = RetrofitYoutubeDownloaderManager.getInstance();
         listener = new WeakReference<OnMusicPlayerCallback>(lst);
         activityRef = new WeakReference<Activity>(activity);
         if (viewsArray != null) {
@@ -79,16 +75,15 @@ public class MusicPlayerManager implements SoundTrackRetrofitResponseCallbacks {
 
     /**
      *
-     * @param videoId
      */
-    public void fetchSoundTrackUrl(String videoId) {
-        Log.e(TAG, "fetch" + videoId);
-        retrofitManager.fetchUrlByVideoId(videoId)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onObservableSuccess,
-                        (throwable) -> onObservableError(throwable.getMessage()));
-    }
+//    public void fetchSoundTrackUrl(String videoId) {
+//        Log.e(TAG, "fetch" + videoId);
+//        retrofitManager.fetchUrlByVideoId(videoId)
+//                .subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(this::onObservableSuccess,
+//                        (throwable) -> onObservableError(throwable.getMessage()));
+//    }
 
     @Override
     public void onObservableSuccess(ArrayList<Object> list) {
@@ -97,7 +92,8 @@ public class MusicPlayerManager implements SoundTrackRetrofitResponseCallbacks {
     @Override
     public void onObservableSuccess(Object obj) {
         Log.e(TAG, "success music player " + obj.toString());
-        handlePlayWithBundle((String) obj);
+        String url = ((String) obj);
+        handlePlayWithBundle(url);
     }
 
     /**
