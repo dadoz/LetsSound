@@ -16,7 +16,7 @@ android {
     defaultConfig {
         buildConfigField "String", "YOUTUBE_BASE_PATH", "\"https://www.youtube.com/watch?v=\""
 //        buildConfigField "String", "YOUTUBE_DOWNLOADER_BASE_PATH", "\"http://www.youtubeinmp3.com/\""
-        buildConfigField "String", "YOUTUBE_DOWNLOADER_BASE_PATH", "\"http://youtubemp3api.com/\""//{format}/{YouTube-Video-ID}
+        buildConfigField "String", "YOUTUBE_DOWNLOADER_BASE_PATH", "\"https://download.tubemp3convert.com/\""//{format}/{YouTube-Video-ID}
 
         minSdkVersion 21
         targetSdkVersion 25

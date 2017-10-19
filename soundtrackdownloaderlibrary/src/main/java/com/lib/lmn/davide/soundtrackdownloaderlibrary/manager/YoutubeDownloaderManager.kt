@@ -10,8 +10,8 @@ import rx.schedulers.Schedulers
 /**
  * Created by davide-syn on 6/30/17.
  */
-class YoutubeDownloaderManager(val youtubeDownloaderService: YoutubeDownloaderModule.YoutubeDownloaderService,
-                               val fileDownloaderManager: FileDownloaderManager) {
+class YoutubeDownloaderManager(private val youtubeDownloaderService: YoutubeDownloaderModule.YoutubeDownloaderService,
+                               private val fileDownloaderManager: FileDownloaderManager) {
 
     companion object {
         val FORMAT_TYPE = "mp3"
@@ -26,7 +26,7 @@ class YoutubeDownloaderManager(val youtubeDownloaderService: YoutubeDownloaderMo
         val dispsable =  youtubeDownloaderService.fetchUrlByVideoId(FORMAT_TYPE, videoId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
-                .subscribe({ item -> fileDownloaderManager.getSoundTrack(videoId, Uri.parse(HTTP_PROTOCOL + item.vidInfo.firstInfo?.dloadUrl))},
+                .subscribe({ item -> fileDownloaderManager.getSoundTrack(videoId, Uri.parse(HTTP_PROTOCOL + item.vidInfo.mp3Kb320?.dloadUrl))},
                     {error -> run { Log.e("TEST", error.message); fileDownloaderManager.lst2.onErrorResponse(VolleyError(error)) } })
     }
 

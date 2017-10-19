@@ -17,8 +17,8 @@ import rx.Observable
 /**
  * Created by davide-syn on 6/29/17.
  */
-open class YoutubeDownloaderModule(val fileDownloaderManager: FileDownloaderManager) {
-    var youtubeDownloaderAp: YoutubeDownloaderService
+open class YoutubeDownloaderModule(private val fileDownloaderManager: FileDownloaderManager) {
+    private var youtubeDownloaderAp: YoutubeDownloaderService
 
     /**
      * constructor
@@ -39,9 +39,7 @@ open class YoutubeDownloaderModule(val fileDownloaderManager: FileDownloaderMana
 
     }
 
-    fun getYoutubeDownloadManager(): YoutubeDownloaderManager {
-        return YoutubeDownloaderManager(youtubeDownloaderAp, fileDownloaderManager)
-    }
+    fun getYoutubeDownloadManager(): YoutubeDownloaderManager = YoutubeDownloaderManager(youtubeDownloaderAp, fileDownloaderManager)
 
     /**
      * interface

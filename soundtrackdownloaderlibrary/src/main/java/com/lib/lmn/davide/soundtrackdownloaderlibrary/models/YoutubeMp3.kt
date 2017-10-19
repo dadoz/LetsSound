@@ -11,23 +11,23 @@ data class YoutubeMp3(val vidID: String, val vidTitle: String, val vidInfo: VidI
     inner class VidInfo {
         @SerializedName("0")
         @Expose
-        val firstInfo: FirstInfo? = null
+        val mp332Kb: Mp3Kb32? = null
         @SerializedName("1")
         @Expose
-        private val secondInfo: SecondInfo? = null
+        val mp3Kb128: Mp3Kb128? = null
         @SerializedName("2")
         @Expose
-        private val thirdInfo: ThirdInfo? = null
+        val mp3Kb192: Mp3Kb192? = null
         @SerializedName("3")
         @Expose
-        private val fourthInfo: FourthInfo? = null
+        val mp3Kb256: Mp3Kb256? = null
         @SerializedName("4")
         @Expose
-        private val fifthInfo: FifthInfo? = null
+        val mp3Kb320: Mp3Kb320? = null
     }
 
 
-    inner class FirstInfo {
+    inner class Mp3Kb32 {
         @SerializedName("dloadUrl")
         @Expose
         var dloadUrl: String? = null
@@ -40,21 +40,7 @@ data class YoutubeMp3(val vidID: String, val vidTitle: String, val vidInfo: VidI
 
     }
 
-    inner class SecondInfo {
-
-        @SerializedName("dloadUrl")
-        @Expose
-        var dloadUrl: String? = null
-        @SerializedName("bitrate")
-        @Expose
-        var bitrate: Int? = null
-        @SerializedName("mp3size")
-        @Expose
-        var mp3size: String? = null
-
-    }
-
-    inner class ThirdInfo {
+    inner class Mp3Kb128 {
 
         @SerializedName("dloadUrl")
         @Expose
@@ -68,7 +54,7 @@ data class YoutubeMp3(val vidID: String, val vidTitle: String, val vidInfo: VidI
 
     }
 
-    inner class FourthInfo {
+    inner class Mp3Kb192 {
 
         @SerializedName("dloadUrl")
         @Expose
@@ -82,7 +68,21 @@ data class YoutubeMp3(val vidID: String, val vidTitle: String, val vidInfo: VidI
 
     }
 
-    inner class FifthInfo {
+    inner class Mp3Kb256 {
+
+        @SerializedName("dloadUrl")
+        @Expose
+        var dloadUrl: String? = null
+        @SerializedName("bitrate")
+        @Expose
+        var bitrate: Int? = null
+        @SerializedName("mp3size")
+        @Expose
+        var mp3size: String? = null
+
+    }
+
+    inner class Mp3Kb320 {
 
         @SerializedName("dloadUrl")
         @Expose
