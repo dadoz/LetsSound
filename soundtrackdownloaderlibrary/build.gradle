@@ -5,8 +5,8 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
@@ -18,7 +18,7 @@ android {
         buildConfigField "String", "YOUTUBE_DOWNLOADER_BASE_PATH", "\"http://www.youtubeinmp3.com/\""
 
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
 
