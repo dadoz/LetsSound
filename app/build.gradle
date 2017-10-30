@@ -1,17 +1,21 @@
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.application.letssound"
         minSdkVersion 22
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 2
         versionName "2.0-beta8"
         multiDexEnabled true
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath false
+            }
+        }
     }
 
     buildTypes {
@@ -54,7 +58,7 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife_version"
 
     //youtube api
-    compile('com.google.apis:google-api-services-youtube:v3-rev183-1.22.0') {
+    compile("com.google.apis:google-api-services-youtube:$youtubeapi_version") {
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'com.google.code.findbugs'
     }
@@ -64,26 +68,20 @@ dependencies {
 
     //rx
     compile "io.reactivex.rxjava2:rxandroid:$reactive_version"
-//    compile "io.reactivex.rxjava2:rxjava:$rxjava_version"
 
     //icepick
-    compile 'frankiesardo:icepick:3.2.0'
-    provided 'frankiesardo:icepick-processor:3.2.0'
+    compile "frankiesardo:icepick:$icepick_version"
+    provided "frankiesardo:icepick-processor:$icepick_version"
 
     //calligraphy
-    compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+    compile "uk.co.chrisjenx:calligraphy:$calligraphy_version"
 
     //swipe adapter to handle delete
     compile 'com.github.TR4Android:Swipeable-RecyclerView:0.2.0'
 
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
-
+    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
+    compile "com.squareup.retrofit2:adapter-rxjava:$retrofit_version"
+    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
     compile "com.android.support:multidex:$multidex_version"
-//    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
-//    compile 'com.jakewharton.rxbinding2:rxbinding-support-v4:2.0.0'
-//    compile 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.0.0'
-
 }
