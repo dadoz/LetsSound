@@ -1,5 +1,7 @@
 package com.application.letssound.utils;
 
+import android.content.Context;
+
 import com.application.letssound.services.MusicService;
 
 /**
@@ -12,7 +14,7 @@ public class PreferenceUtil {
     public static final String BLURRED_ALBUM_ART = "--";
     public static final String COLORED_NOTIFICATION = "---";
 
-    public static PreferenceUtil getInstance(MusicService musicService) {
+    public static PreferenceUtil getInstance(Context context) {
         return new PreferenceUtil();
     }
 
@@ -30,5 +32,9 @@ public class PreferenceUtil {
 
     public void unregisterOnSharedPreferenceChangedListener(MusicService musicService) {
 
+    }
+
+    public String getSongSortOrder() {
+        return "song-order-fake";
     }
 }

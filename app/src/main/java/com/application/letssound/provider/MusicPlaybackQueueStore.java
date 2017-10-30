@@ -25,9 +25,8 @@ import android.provider.MediaStore.Audio.AudioColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.application.letssound.models.SoundTrack;
-import com.kabouzeid.gramophone.loader.SongLoader;
-import com.kabouzeid.gramophone.model.Song;
+import com.application.letssound.loader.SongLoader;
+import com.application.letssound.models.Song;
 
 import java.util.ArrayList;
 
@@ -185,17 +184,17 @@ public class MusicPlaybackQueueStore extends SQLiteOpenHelper {
     }
 
     @NonNull
-    public ArrayList<SoundTrack> getSavedPlayingQueue() {
+    public ArrayList<Song> getSavedPlayingQueue() {
         return getQueue(PLAYING_QUEUE_TABLE_NAME);
     }
 
     @NonNull
-    public ArrayList<SoundTrack> getSavedOriginalPlayingQueue() {
+    public ArrayList<Song> getSavedOriginalPlayingQueue() {
         return getQueue(ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
     }
 
     @NonNull
-    private ArrayList<SoundTrack> getQueue(@NonNull final String tableName) {
+    private ArrayList<Song> getQueue(@NonNull final String tableName) {
         Cursor cursor = getReadableDatabase().query(tableName, null,
                 null, null, null, null, null);
         return SongLoader.getSongs(cursor);
