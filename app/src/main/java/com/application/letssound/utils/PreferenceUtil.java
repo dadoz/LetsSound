@@ -37,4 +37,8 @@ public class PreferenceUtil {
     public String getSongSortOrder() {
         return "song-order-fake";
     }
+
+    public void registerOnSharedPreferenceChangedListener(MusicService musicService) {
+
+    }
 }

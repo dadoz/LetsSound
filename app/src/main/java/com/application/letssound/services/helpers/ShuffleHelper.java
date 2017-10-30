@@ -1,6 +1,6 @@
 package com.application.letssound.services.helpers;
 
-import com.application.letssound.models.SoundTrack;
+import com.application.letssound.models.Song;
 
 import java.util.ArrayList;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 
 public class ShuffleHelper {
-    public static void makeShuffleList(ArrayList<SoundTrack> playingQueue, int startPosition) {
+    public static void makeShuffleList(ArrayList<Song> playingQueue, int startPosition) {
 
     }
 }

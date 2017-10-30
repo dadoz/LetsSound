@@ -134,4 +134,8 @@ public class Song implements Parcelable {
             return new Song[size];
         }
     };
+
+    public int getId() {
+        return id;
+    }
 }
