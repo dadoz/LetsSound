@@ -26,7 +26,7 @@ class YoutubeDownloaderManager(private val youtubeDownloaderService: YoutubeDown
      */
     fun fetchSoundTrackUrlByVideoId(videoId: String) {
         val dispsable =  youtubeDownloaderService.fetchUrlByVideoId(headers, videoId)
-                .debounce (2, TimeUnit.MINUTES)
+                .debounce (1, TimeUnit.MINUTES)
                 .flatMap({ youtubeDownloaderService.fetchUrlByVideoId(headers, videoId) })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
