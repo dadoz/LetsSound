@@ -4,95 +4,51 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 /**
- * Created by davide on 30/09/2017.
+ * Created by davide-syn on 11/10/17.
  */
 
-data class YoutubeMp3(val vidID: String, val vidTitle: String, val vidInfo: VidInfo) {
-    inner class VidInfo {
-        @SerializedName("0")
-        @Expose
-        val mp332Kb: Mp3Kb32? = null
-        @SerializedName("1")
-        @Expose
-        val mp3Kb128: Mp3Kb128? = null
-        @SerializedName("2")
-        @Expose
-        val mp3Kb192: Mp3Kb192? = null
-        @SerializedName("3")
-        @Expose
-        val mp3Kb256: Mp3Kb256? = null
-        @SerializedName("4")
-        @Expose
-        val mp3Kb320: Mp3Kb320? = null
-    }
+class YoutubeMp3 {
 
-
-    inner class Mp3Kb32 {
-        @SerializedName("dloadUrl")
-        @Expose
-        var dloadUrl: String? = null
-        @SerializedName("bitrate")
-        @Expose
-        var bitrate: Int? = null
-        @SerializedName("mp3size")
-        @Expose
-        var mp3size: String? = null
-
-    }
-
-    inner class Mp3Kb128 {
-
-        @SerializedName("dloadUrl")
-        @Expose
-        var dloadUrl: String? = null
-        @SerializedName("bitrate")
-        @Expose
-        var bitrate: Int? = null
-        @SerializedName("mp3size")
-        @Expose
-        var mp3size: String? = null
-
-    }
-
-    inner class Mp3Kb192 {
-
-        @SerializedName("dloadUrl")
-        @Expose
-        var dloadUrl: String? = null
-        @SerializedName("bitrate")
-        @Expose
-        var bitrate: Int? = null
-        @SerializedName("mp3size")
-        @Expose
-        var mp3size: String? = null
-
-    }
-
-    inner class Mp3Kb256 {
-
-        @SerializedName("dloadUrl")
-        @Expose
-        var dloadUrl: String? = null
-        @SerializedName("bitrate")
-        @Expose
-        var bitrate: Int? = null
-        @SerializedName("mp3size")
-        @Expose
-        var mp3size: String? = null
-
-    }
-
-    inner class Mp3Kb320 {
-
-        @SerializedName("dloadUrl")
-        @Expose
-        var dloadUrl: String? = null
-        @SerializedName("bitrate")
-        @Expose
-        var bitrate: Int? = null
-        @SerializedName("mp3size")
-        @Expose
-        var mp3size: String? = null
-
-    }
+    @SerializedName("_id")
+    @Expose
+    var id: String? = null
+    @SerializedName("status")
+    @Expose
+    var status: String? = null
+    @SerializedName("title")
+    @Expose
+    var title: String? = null
+    @SerializedName("timestamp")
+    @Expose
+    var timestamp: String? = null
+    @SerializedName("error")
+    @Expose
+    var error: String? = null
+    @SerializedName("dlMusic")
+    @Expose
+    var dlMusic: String? = null
+    @SerializedName("dlVideo")
+    @Expose
+    var dlVideo: String? = null
+    @SerializedName("sizeMusic")
+    @Expose
+    var sizeMusic: String? = null
+    @SerializedName("sizeVideo")
+    @Expose
+    var sizeVideo: String? = null
+    @SerializedName("currentVideoSize")
+    @Expose
+    var currentVideoSize: String? = null
+    @SerializedName("currentMusicSize")
+    @Expose
+    var currentMusicSize: String? = null
+    @SerializedName("remoteAddress")
+    @Expose
+    var remoteAddress: String? = null
+    @SerializedName("filenameVideo")
+    @Expose
+    var filenameVideo: String? = null
+    @SerializedName("filenameMusic")
+    @Expose
+    var filenameMusic: String? = null
 }

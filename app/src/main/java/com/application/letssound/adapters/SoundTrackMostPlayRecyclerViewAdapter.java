@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.application.letssound.R;
@@ -53,13 +52,11 @@ public class SoundTrackMostPlayRecyclerViewAdapter extends RecyclerView.Adapter<
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        public final ImageView icon;
         public final TextView title;
         private final CircularNetworkImageView mediaArtImageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.icon = (ImageView) itemView.findViewById(R.id.mostPlayedIconImageViewId);
             this.title = (TextView) itemView.findViewById(R.id.mostPlayedTitleTextViewId);
             this.mediaArtImageView = (CircularNetworkImageView) itemView.findViewById(R.id.mostPlayedIconImageViewId);
         }

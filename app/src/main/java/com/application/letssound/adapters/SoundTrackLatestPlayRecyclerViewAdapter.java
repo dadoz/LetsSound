@@ -8,12 +8,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.application.letssound.R;
-import com.application.letssound.adapters.interfaces.ItemTouchHelperAdapter;
 import com.application.letssound.adapters.interfaces.LatestPlayAdapterCallbacks;
 import com.application.letssound.helpers.VolleyMediaArtHelper;
 import com.application.letssound.models.SoundTrack;
-import com.application.letssound.utils.Utils;
 import com.application.letssound.ui.views.CircularNetworkImageView;
+import com.application.letssound.utils.Utils;
 import com.google.common.collect.Lists;
 
 import java.lang.ref.WeakReference;
@@ -29,7 +28,7 @@ import static com.application.letssound.adapters.SoundTrackLatestPlayRecyclerVie
  * Created by davide on 30/11/15.
  */
 public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
-            .Adapter<RecyclerView.ViewHolder> implements ItemTouchHelperAdapter {
+            .Adapter<RecyclerView.ViewHolder> {
     private final VolleyMediaArtHelper volleyMediaArtManager;
     private List<SoundTrack> list;
     private WeakReference<OnItemClickListenerInterface> listener;
@@ -105,7 +104,6 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
         return list != null ? list.size() : 0;
     }
 
-    @Override
     public void onItemDismiss(int position) {
         String videoId = list.get(position).getId().getVideoId();
         list.remove(position);

@@ -12,6 +12,7 @@ import rx.schedulers.Schedulers
  */
 class YoutubeDownloaderManager(private val youtubeDownloaderService: YoutubeDownloaderModule.YoutubeDownloaderService,
                                private val fileDownloaderManager: FileDownloaderManager) {
+    val headers: HashMap<String, String> = HashMap()
 
     companion object {
         val FORMAT_TYPE = "mp3"
@@ -23,12 +24,10 @@ class YoutubeDownloaderManager(private val youtubeDownloaderService: YoutubeDown
      * @return
      */
     fun fetchSoundTrackUrlByVideoId(videoId: String) {
-        val dispsable =  youtubeDownloaderService.fetchUrlByVideoId(FORMAT_TYPE, videoId)
+        val dispsable =  youtubeDownloaderService.fetchUrlByVideoId(headers, videoId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
-                .subscribe({ item -> fileDownloaderManager.getSoundTrack(videoId, Uri.parse(HTTP_PROTOCOL + item.vidInfo.mp3Kb320?.dloadUrl))},
+                .subscribe({ item -> fileDownloaderManager.getSoundTrack(videoId, Uri.parse(item.dlMusic))},
                     {error -> run { Log.e("TEST", error.message); fileDownloaderManager.lst2.onErrorResponse(VolleyError(error)) } })
     }
-
-
 }

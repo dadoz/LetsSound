@@ -10,7 +10,8 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Path
+import retrofit2.http.HeaderMap
+import retrofit2.http.Query
 import rx.Observable
 
 
@@ -27,6 +28,7 @@ open class YoutubeDownloaderModule(private val fileDownloaderManager: FileDownlo
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
 
         val retrofit = Retrofit.Builder()
                 .baseUrl(BuildConfig.YOUTUBE_DOWNLOADER_BASE_PATH)
@@ -45,7 +47,8 @@ open class YoutubeDownloaderModule(private val fileDownloaderManager: FileDownlo
      * interface
      */
     interface YoutubeDownloaderService {
-        @GET("@api/json/{format}/{video}")
-        fun fetchUrlByVideoId(@Path("format") format: String, @Path("video") video: String): Observable<YoutubeMp3>
+//        @GET("@api/json/{format}/{video}")
+        @GET("downloader/state")
+        fun fetchUrlByVideoId(@HeaderMap headers: Map<String, String>, @Query("id") id: String): Observable<YoutubeMp3>
     }
 }

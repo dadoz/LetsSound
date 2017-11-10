@@ -8,13 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.application.letssound.R;
-import com.application.letssound.adapters.interfaces.LatestPlayAdapterCallbacks;
 import com.application.letssound.adapters.SoundTrackLatestPlayRecyclerViewAdapter;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.managers.HistoryManager;
 import com.application.letssound.models.SoundTrack;
-import com.application.letssound.utils.Utils;
 import com.application.letssound.ui.views.MostPlayedPlaylistView;
+import com.application.letssound.utils.Utils;
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.manager.FileStorageManager;
 
 import java.util.ArrayList;
@@ -29,9 +28,9 @@ import rx.Observable;
 /**
  * Created by davide-syn on 8/9/17.
  */
-public class MostPlayedFragment extends Fragment implements SoundTrackLatestPlayRecyclerViewAdapter.OnItemClickListenerInterface, LatestPlayAdapterCallbacks, MostPlayedPlaylistView.OnPlayAllClikListener {
+public class MostPlayedFragment extends Fragment implements
+        SoundTrackLatestPlayRecyclerViewAdapter.OnItemClickListenerInterface, MostPlayedPlaylistView.OnPlayAllClikListener {
     private Unbinder unbinder;
-
     @BindView(R.id.mostPlayedPlaylistContainerId)
     MostPlayedPlaylistView mostPlayedPlaylistContainer;
     private HistoryManager historyManager;
@@ -77,7 +76,6 @@ public class MostPlayedFragment extends Fragment implements SoundTrackLatestPlay
                 .first();
         ((LetssoundApplication) getActivity().getApplication()).playFromBundleList(bundleList);
 
-
         //subject to handle searched item
         subjectDisposable = historyManager.getSearchedItemSubject().subscribe(this::initMostPlayedList);
 
@@ -94,7 +92,6 @@ public class MostPlayedFragment extends Fragment implements SoundTrackLatestPlay
     public void onItemClick(SoundTrack soundTrack) {
     }
 
-    @Override
     public void onItemDismissCallback(String videoId) {
         historyManager.removeFromHistory(videoId);
         if (videoId != null)
@@ -103,6 +100,5 @@ public class MostPlayedFragment extends Fragment implements SoundTrackLatestPlay
 
     @Override
     public void onPlayAllClick(View view) {
-
     }
 }

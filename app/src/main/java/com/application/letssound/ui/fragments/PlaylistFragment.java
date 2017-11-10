@@ -6,19 +6,17 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.application.letssound.R;
-import com.application.letssound.ui.SoundTrackPlayerActivity;
-import com.application.letssound.adapters.interfaces.LatestPlayAdapterCallbacks;
-import com.application.letssound.adapters.LatestPlayItemTouchHelper;
 import com.application.letssound.adapters.SoundTrackLatestPlayRecyclerViewAdapter;
+import com.application.letssound.adapters.interfaces.LatestPlayAdapterCallbacks;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.managers.HistoryManager;
 import com.application.letssound.models.SoundTrack;
+import com.application.letssound.ui.SoundTrackPlayerActivity;
 import com.application.letssound.utils.Utils;
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.manager.FileStorageManager;
 
@@ -28,10 +26,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.disposables.Disposable;
-
-import static android.support.v7.widget.helper.ItemTouchHelper.DOWN;
-import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
-import static android.support.v7.widget.helper.ItemTouchHelper.UP;
 
 /**
  * Created by davide-syn on 8/9/17.
@@ -105,12 +99,10 @@ public class PlaylistFragment extends Fragment implements SoundTrackLatestPlayRe
      * @param list
      */
     private void initLatestPlayedRecyclerView(ArrayList<SoundTrack> list) {
-        SoundTrackLatestPlayRecyclerViewAdapter adapter = new SoundTrackLatestPlayRecyclerViewAdapter(list, this, this, getContext());
+        SoundTrackLatestPlayRecyclerViewAdapter adapter =
+                new SoundTrackLatestPlayRecyclerViewAdapter(list, this, this, getContext());
         latestPlayRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         latestPlayRecyclerView.setAdapter(adapter);
-        ItemTouchHelper touchHelper = new LatestPlayItemTouchHelper(new LatestPlayItemTouchHelper.ItemTouchSimpleCallbacks(UP | DOWN, LEFT),
-                latestPlayRecyclerView.getAdapter());
-        touchHelper.attachToRecyclerView(latestPlayRecyclerView);
     }
 
     /**
