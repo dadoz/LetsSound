@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.application.letssound.R;
@@ -79,7 +80,6 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
             holder.title.setText(item.getSnippet().getTitle());
             holder.url.setText("Author: " + item.getSnippet().getChannelId());
             holder.durationTime.setText("00:00");
-
             if (item.getSnippet().getThumbnails().getHigh().getUrl() != null) {
                 holder.mediaArtImageView.setImageUrl(item.getSnippet()
                                 .getThumbnails().getHigh().getUrl(),
@@ -90,6 +90,8 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
                 if (listener != null && listener.get() != null)
                     listener.get().onItemClick(list.get(position));
             });
+
+            holder.clearSoundTrackButton.setOnClickListener(v -> deleteItem(position));
         }
         //timestamp
         if (viewHolder instanceof TimestampViewHolder) {
@@ -104,7 +106,7 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
         return list != null ? list.size() : 0;
     }
 
-    public void onItemDismiss(int position) {
+    public void deleteItem(int position) {
         String videoId = list.get(position).getId().getVideoId();
         list.remove(position);
         notifyDataSetChanged();
@@ -121,6 +123,7 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
         private final TextView durationTime;
         private final TextView url;
         private final CircularNetworkImageView mediaArtImageView;
+        private final ImageView clearSoundTrackButton;
 
         /**
          *
@@ -129,10 +132,11 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
         public DataObjectHolder(View view) {
             super(view);
             itemView = view;
-            title = (TextView) itemView.findViewById(R.id.titleTextId);
-            url = (TextView) itemView.findViewById(R.id.urlTextId);
-            durationTime = (TextView) itemView.findViewById(R.id.durationTimeTextId);
-            mediaArtImageView = (CircularNetworkImageView) itemView.findViewById(R.id.mediaArtImageViewId);
+            title = itemView.findViewById(R.id.titleTextId);
+            url = itemView.findViewById(R.id.urlTextId);
+            durationTime = itemView.findViewById(R.id.durationTimeTextId);
+            mediaArtImageView = itemView.findViewById(R.id.mediaArtImageViewId);
+            clearSoundTrackButton = itemView.findViewById(R.id.clearSoundTrackButtonId);
         }
     }
 

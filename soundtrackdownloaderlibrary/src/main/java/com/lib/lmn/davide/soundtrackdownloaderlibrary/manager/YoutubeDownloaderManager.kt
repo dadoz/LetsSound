@@ -13,25 +13,17 @@ import java.util.concurrent.TimeUnit
  */
 class YoutubeDownloaderManager(private val youtubeDownloaderService: YoutubeDownloaderModule.YoutubeDownloaderService,
                                private val fileDownloaderManager: FileDownloaderManager) {
-    val headers: HashMap<String, String> = HashMap()
-
-    companion object {
-        val FORMAT_TYPE = "mp3"
-        val HTTP_PROTOCOL = "http:"
-    }
-
-
     /**
      * @return
      */
     fun fetchSoundTrackUrlByVideoId(videoId: String) {
-        val dispsable =  youtubeDownloaderService.fetchUrlByVideoId(headers, videoId)
-                .debounce (1, TimeUnit.MINUTES)
-                .flatMap({ youtubeDownloaderService.fetchUrlByVideoId(headers, videoId) })
+        val dispsable =  youtubeDownloaderService.fetchUrlByVideoId(videoId)
+                .debounce (2, TimeUnit.MINUTES)
+                .flatMap({ youtubeDownloaderService.fetchUrlByVideoId(videoId) })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe({ item ->
                     fileDownloaderManager.getSoundTrack(videoId, Uri.parse(item.dlMusic))
-                }, {error -> run { Log.e("TEST", error.message); fileDownloaderManager.lst2.onErrorResponse(VolleyError(error)) } })
+                }, {error -> run { Log.e(javaClass.name, error.message); fileDownloaderManager.lst2.onErrorResponse(VolleyError(error)) } })
     }
 }

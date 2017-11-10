@@ -42,7 +42,7 @@ public class MostPlayedPlaylistView extends LinearLayout {
 
     void onInit() {
         inflate(getContext(), R.layout.most_played_playlist_layout, this);
-        mostPlayRecyclerView = (RecyclerView) findViewById(R.id.mostPlayRecyclerViewId);
+        mostPlayRecyclerView = findViewById(R.id.mostPlayRecyclerViewId);
         mostPlayedPlayAllButton = findViewById(R.id.mostPlayedPlayAllButtonId);
         //set style
         setBackgroundColor(ContextCompat.getColor(getContext(), R.color.md_blue_grey_900));
