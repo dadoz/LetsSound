@@ -80,7 +80,7 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
             holder.url.setText("Author: " + item.getSnippet().getChannelId());
             holder.durationTime.setText("00:00");
 
-            if (item.getSnippet().getThumbnails().getHigh() != null) {
+            if (item.getSnippet().getThumbnails().getHigh().getUrl() != null) {
                 holder.mediaArtImageView.setImageUrl(item.getSnippet()
                                 .getThumbnails().getHigh().getUrl(),
                         volleyMediaArtManager.getImageLoader());
