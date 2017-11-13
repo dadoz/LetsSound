@@ -1,7 +1,6 @@
 package com.application.letssound.managers;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
@@ -64,11 +63,11 @@ public class MusicPlayerManager implements SoundTrackRetrofitResponseCallbacks {
      *
      * @param videoId
      */
-    public void playSoundTrack(Context context, SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks lst,
+    public void playSoundTrack(Activity activity, SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks lst,
                                String videoId, String thumbnailUrl, String title) {
         this.thumbnailUrl = thumbnailUrl;
         this.title = title;
-        SoundTrackDownloaderManager.Companion.getInstance(context, lst).downloadAndPlaySoundTrack(videoId);
+        SoundTrackDownloaderManager.Companion.getInstance(activity, lst).downloadAndPlaySoundTrack(videoId);
 
 //        fetchSoundTrackUrl(videoId);
     }

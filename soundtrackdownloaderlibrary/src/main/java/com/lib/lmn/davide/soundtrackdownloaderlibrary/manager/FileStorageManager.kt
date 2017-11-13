@@ -1,6 +1,11 @@
 package com.lib.lmn.davide.soundtrackdownloaderlibrary.manager
 
+import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Environment
+import android.support.v4.app.ActivityCompat
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.models.SoundTrackCache
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.models.SoundTrackRealmModule
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule
@@ -12,13 +17,14 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.ref.WeakReference
+import java.util.*
 
 /**
  * Created by davide-syn on 6/26/17.
  */
-class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks?) {
+class FileStorageManager(val activity: Activity, lst: SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks?) {
     val lst: WeakReference<SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks?> = WeakReference(lst)
-    val fileDir: File? = context?.filesDir
+    val fileDir: File? = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
     val config: RealmConfiguration by lazy {
         RealmConfiguration.Builder()
                 .name("library.realm")
@@ -31,7 +37,7 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
     }
 
     init {
-        Realm.init(context)
+        Realm.init(activity)
         //delete previous realm config
 //        Realm.deleteRealm(config)
     }
@@ -54,12 +60,28 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
      */
     fun setFileOnCache(videoId: String, file: ByteArray) {
         if (getCachedFile(videoId) == null) {
-            //save on db
-            saveOnDb(videoId)
-            //replace file
-            saveFile(videoId, file)
+            //request permission
+            requestPermission()
+
+            if (hasPermission()) {
+                //save on db
+                saveOnDb(videoId)
+                //replace file
+                saveFile(videoId, file)
+            }
         }
     }
+
+    private fun hasPermission(): Boolean = ActivityCompat.checkSelfPermission(activity, permissions[0]) == PackageManager.PERMISSION_GRANTED
+
+    private fun requestPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!hasPermission()) {
+                ActivityCompat.requestPermissions(activity, permissions.toTypedArray(), REQUEST)
+            }
+        }
+    }
+
     /**
      * @param key
      * *
@@ -180,6 +202,9 @@ class FileStorageManager(context: Context?, lst: SoundTrackDownloaderModule.OnSo
      * @return
      */
     companion object {
+        val REQUEST = 112
+        val permissions = Arrays.asList(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
         /**
          * get full path
          */

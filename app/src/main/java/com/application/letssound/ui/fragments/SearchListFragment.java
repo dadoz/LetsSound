@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,15 +19,15 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.application.letssound.R;
-import com.application.letssound.ui.SoundTrackPlayerActivity;
 import com.application.letssound.adapters.SoundTrackRecyclerViewAdapter;
+import com.application.letssound.adapters.observer.SoundTrackSearchObserver;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.helpers.SoundTrackStatus;
 import com.application.letssound.managers.HistoryManager;
 import com.application.letssound.managers.MediaSearchManager;
 import com.application.letssound.managers.MusicPlayerManager;
 import com.application.letssound.models.SoundTrack;
-import com.application.letssound.adapters.observer.SoundTrackSearchObserver;
+import com.application.letssound.ui.SoundTrackPlayerActivity;
 import com.application.letssound.utils.Utils;
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule;
 
@@ -50,7 +49,7 @@ import static com.application.letssound.adapters.SoundTrackRecyclerViewAdapter.O
 /**
  * A placeholder fragment containing a simple view.
  */
-public class SearchListFragment extends Fragment implements
+public class SearchListFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener,
         SearchView.OnQueryTextListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnPreparedListener, OnItemClickListenerInterface,
@@ -75,6 +74,7 @@ public class SearchListFragment extends Fragment implements
     private MusicPlayerManager musicPlayerManager;
     private HistoryManager historyManager;
     private Unbinder unbinder;
+    private SoundTrack selectedSoundTrack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,11 +132,12 @@ public class SearchListFragment extends Fragment implements
 
     @Override
     public void onItemClick(SoundTrack soundTrack) {
+        selectedSoundTrack = soundTrack;
         updateUI(true, false);
         Snackbar snackbar = Snackbar.make(getView(), "loading song", Snackbar.LENGTH_SHORT);
         snackbar.getView().setBackgroundColor(ContextCompat.getColor(getContext(), R.color.md_amber_400));
         snackbar.show();
-        musicPlayerManager.playSoundTrack(getContext(),
+        musicPlayerManager.playSoundTrack(getActivity(),
                 this,
                 soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
@@ -305,4 +306,9 @@ public class SearchListFragment extends Fragment implements
             });
     }
 
+    @Override
+    public void onPermissionGrantedCb(String permission) {
+        if (selectedSoundTrack != null)
+            onItemClick(selectedSoundTrack);
+    }
 }

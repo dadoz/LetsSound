@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,11 +23,15 @@ import com.application.letssound.R;
 import com.application.letssound.adapters.SoundTrackListViewPagerAdapter;
 import com.application.letssound.application.LetssoundApplication;
 import com.application.letssound.managers.contentProvider.SoundTrackSuggestionProvider;
+import com.application.letssound.ui.fragments.BaseFragment;
 import com.application.letssound.ui.fragments.SearchListFragment;
 import com.application.letssound.utils.Utils;
+import com.lib.lmn.davide.soundtrackdownloaderlibrary.manager.FileStorageManager;
 
 import icepick.State;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
     @State
@@ -117,5 +125,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (FileStorageManager.Companion.getREQUEST() == requestCode) {
+            if (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                forwardPermissionToFragment(WRITE_EXTERNAL_STORAGE);
+            } else {
+                Snackbar.make(getWindow().getDecorView(), "hey permission not granted", Snackbar.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void forwardPermissionToFragment(String permission) {
+        ViewPager viewPager = findViewById(R.id.soundTrackListViewPagerId);
+        FragmentStatePagerAdapter adapter = (FragmentStatePagerAdapter) viewPager.getAdapter();
+        BaseFragment fragment = (BaseFragment) adapter.instantiateItem(viewPager, 0); //search list frag
+        fragment.onPermissionGrantedCb(permission);
+    }
 
 }

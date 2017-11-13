@@ -1,6 +1,6 @@
 package com.lib.lmn.davide.soundtrackdownloaderlibrary.manager
 
-import android.content.Context
+import android.app.Activity
 import com.android.volley.VolleyError
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.SoundTrackDownloaderModule
 import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.YoutubeDownloaderModule
@@ -9,8 +9,8 @@ import com.lib.lmn.davide.soundtrackdownloaderlibrary.modules.YoutubeDownloaderM
  * Created by davide-syn on 7/7/17.
  */
 
-class SoundTrackDownloaderManager private constructor(context: Context, listener: SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks) {
-    val fileDownloaderManager: FileDownloaderManager = SoundTrackDownloaderModule(context, listener).getFileDownloaderManager()
+class SoundTrackDownloaderManager private constructor(activity: Activity, listener: SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks) {
+    val fileDownloaderManager: FileDownloaderManager = SoundTrackDownloaderModule(activity, listener).getFileDownloaderManager()
     var youtubeDownloaderManager: YoutubeDownloaderManager = YoutubeDownloaderModule(fileDownloaderManager).getYoutubeDownloadManager()
 
     init {
@@ -25,8 +25,8 @@ class SoundTrackDownloaderManager private constructor(context: Context, listener
     companion object {
         lateinit var instance: SoundTrackDownloaderManager
 
-        fun getInstance(context: Context, listener: SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks): SoundTrackDownloaderManager {
-            instance = SoundTrackDownloaderManager(context, listener)
+        fun getInstance(activity: Activity, listener: SoundTrackDownloaderModule.OnSoundTrackRetrievesCallbacks): SoundTrackDownloaderManager {
+            instance = SoundTrackDownloaderManager(activity, listener)
             return instance
         }
     }

@@ -3,7 +3,6 @@ package com.application.letssound.ui.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,7 +29,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Created by davide-syn on 8/9/17.
  */
-public class PlaylistFragment extends Fragment implements SoundTrackLatestPlayRecyclerViewAdapter.OnItemClickListenerInterface, LatestPlayAdapterCallbacks {
+public class PlaylistFragment extends BaseFragment implements SoundTrackLatestPlayRecyclerViewAdapter.OnItemClickListenerInterface, LatestPlayAdapterCallbacks {
     private Unbinder unbinder;
 
     @BindView(R.id.latestPlayRecyclerViewId)
@@ -47,7 +46,7 @@ public class PlaylistFragment extends Fragment implements SoundTrackLatestPlayRe
         View view = inflater.inflate(R.layout.fragment_playlist_layout, container, false);
         unbinder = ButterKnife.bind(this, view);
         //set history manager
-        historyManager = HistoryManager.getInstance(getContext());
+        historyManager = HistoryManager.getInstance(getActivity());
 
         onInitView();
         return view;
@@ -100,8 +99,8 @@ public class PlaylistFragment extends Fragment implements SoundTrackLatestPlayRe
      */
     private void initLatestPlayedRecyclerView(ArrayList<SoundTrack> list) {
         SoundTrackLatestPlayRecyclerViewAdapter adapter =
-                new SoundTrackLatestPlayRecyclerViewAdapter(list, this, this, getContext());
-        latestPlayRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                new SoundTrackLatestPlayRecyclerViewAdapter(list, this, this, getActivity());
+        latestPlayRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         latestPlayRecyclerView.setAdapter(adapter);
     }
 
@@ -115,14 +114,14 @@ public class PlaylistFragment extends Fragment implements SoundTrackLatestPlayRe
 
     @Override
     public void onItemClick(SoundTrack soundTrack) {
-        Bundle bundle = Utils.buildFilePlayBundle(FileStorageManager.Companion.getFullPath(getContext(),
+        Bundle bundle = Utils.buildFilePlayBundle(FileStorageManager.Companion.getFullPath(getActivity(),
                 soundTrack.getId().getVideoId()),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl(), soundTrack.getSnippet().getTitle());
         ((LetssoundApplication) getActivity().getApplication()).getMediaControllerInstance()
                 .getTransportControls().playFromSearch("CACHED_FILE", bundle);
 
         //start activity
-        Intent intent = new Intent(getContext(), SoundTrackPlayerActivity.class);
+        Intent intent = new Intent(getActivity(), SoundTrackPlayerActivity.class);
         intent.putExtras(bundle);
         if (getActivity() != null)
             getActivity().startActivity(intent);
@@ -132,6 +131,11 @@ public class PlaylistFragment extends Fragment implements SoundTrackLatestPlayRe
     public void onItemDismissCallback(String videoId) {
         historyManager.removeFromHistory(videoId);
         if (videoId != null)
-            new FileStorageManager(getContext(), null).deleteFileOnCache(videoId);
+            new FileStorageManager(getActivity(), null).deleteFileOnCache(videoId);
+    }
+
+    @Override
+    public void onPermissionGrantedCb(String permission) {
+
     }
 }

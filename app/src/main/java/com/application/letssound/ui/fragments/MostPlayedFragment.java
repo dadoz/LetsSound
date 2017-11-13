@@ -28,7 +28,7 @@ import rx.Observable;
 /**
  * Created by davide-syn on 8/9/17.
  */
-public class MostPlayedFragment extends Fragment implements
+public class MostPlayedFragment extends BaseFragment implements
         SoundTrackLatestPlayRecyclerViewAdapter.OnItemClickListenerInterface, MostPlayedPlaylistView.OnPlayAllClikListener {
     private Unbinder unbinder;
     @BindView(R.id.mostPlayedPlaylistContainerId)
@@ -95,10 +95,15 @@ public class MostPlayedFragment extends Fragment implements
     public void onItemDismissCallback(String videoId) {
         historyManager.removeFromHistory(videoId);
         if (videoId != null)
-            new FileStorageManager(getContext(), null).deleteFileOnCache(videoId);
+            new FileStorageManager(getActivity(), null).deleteFileOnCache(videoId);
     }
 
     @Override
     public void onPlayAllClick(View view) {
+    }
+
+    @Override
+    public void onPermissionGrantedCb(String permission) {
+
     }
 }
