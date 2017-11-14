@@ -21,4 +21,10 @@
     <style name="DropDownItemDark" parent="Widget.AppCompat.Light.DropDownItem.Spinner">
         <item name="android:textColor">@color/md_grey_400</item>
     </style>
+
+    <style name="AlertDialogCustom" parent="AlertDialog.AppCompat">
+        <item name="colorAccent">@color/md_amber_500</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">@color/md_grey_200</item>
+    </style>
 </resources>

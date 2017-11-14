@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,7 +132,7 @@ public class PlaylistFragment extends BaseFragment implements SoundTrackLatestPl
     @Override
     public void onItemDismissCallback(String videoId, int position) {
         //add dialog
-        new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom))
                 .setTitle("Delete Sound Track")
                 .setMessage("Sure to delete?")
                 .setPositiveButton("DELETE", (dialog, which) -> {
