@@ -108,11 +108,14 @@ public class SoundTrackLatestPlayRecyclerViewAdapter extends RecyclerView
 
     public void deleteItem(int position) {
         String videoId = list.get(position).getId().getVideoId();
-        list.remove(position);
-        notifyDataSetChanged();
-        listenerCallbacks.get().onItemDismissCallback(videoId);
+        listenerCallbacks.get().onItemDismissCallback(videoId, position);
     }
 
+
+    public void removeItem(int position) {
+        list.remove(position);
+        notifyDataSetChanged();
+    }
 
     /**
      * viewHolder

@@ -5,5 +5,5 @@ package com.application.letssound.adapters.interfaces;
  */
 
 public interface LatestPlayAdapterCallbacks {
-    void onItemDismissCallback(String videoId);
+    void onItemDismissCallback(String videoId, int position);
 }

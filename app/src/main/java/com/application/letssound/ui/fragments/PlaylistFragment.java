@@ -1,5 +1,6 @@
 package com.application.letssound.ui.fragments;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -128,14 +129,23 @@ public class PlaylistFragment extends BaseFragment implements SoundTrackLatestPl
     }
 
     @Override
-    public void onItemDismissCallback(String videoId) {
-        historyManager.removeFromHistory(videoId);
-        if (videoId != null)
-            new FileStorageManager(getActivity(), null).deleteFileOnCache(videoId);
+    public void onItemDismissCallback(String videoId, int position) {
+        //add dialog
+        new AlertDialog.Builder(getContext())
+                .setTitle("Delete Sound Track")
+                .setMessage("Sure to delete?")
+                .setPositiveButton("DELETE", (dialog, which) -> {
+                    ((SoundTrackLatestPlayRecyclerViewAdapter) latestPlayRecyclerView.getAdapter()).removeItem(position);
+                    historyManager.removeFromHistory(videoId);
+                    if (videoId != null)
+                        new FileStorageManager(getActivity(), null).deleteFileOnCache(videoId);
+                })
+                .setNegativeButton("Clear", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
     }
 
     @Override
     public void onPermissionGrantedCb(String permission) {
-
     }
 }
