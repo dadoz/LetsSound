@@ -80,7 +80,8 @@ public class HistoryManager {
             searchedItemSubject.onNext(soundTrack);
 
             //save on db
-            if (realm != null)
+            if (realm != null &&
+                    realm.where(SoundTrack.class).equalTo("id.videoId", soundTrack.getId().getVideoId()).findFirst() != null)
                 realm.executeTransaction((realm -> realm.copyToRealmOrUpdate(soundTrack)));
         }
     }
@@ -136,7 +137,7 @@ public class HistoryManager {
         return Observable.from(realm
                 .where(SoundTrack.class)
                 .findAll())
-                .flatMap(results -> Observable.just(results))
+                .flatMap(Observable::just)
                 .map(soundTrack -> new HistoryResult(soundTrack.getSnippet().getTitle(), soundTrack.getTimestamp()))
                 .toList();
     }
@@ -149,18 +150,4 @@ public class HistoryManager {
                 .findAll()
                 .iterator();
     }
-
-//    /**
-//     *
-//     * @return
-//     */
-//    public ArrayList<String> getHistoryString() {
-//        ArrayList<String> list = new ArrayList<>();
-//        RealmResults<SoundTrack> tmp = realm.where(SoundTrack.class)
-//                .findAll();
-//        for (SoundTrack obj: tmp) {
-//            list.add(obj.getSnippet().getTitle());
-//        }
-//        return list;
-//    }
 }

@@ -142,7 +142,7 @@ public class SearchListFragment extends BaseFragment implements
                 soundTrack.getId().getVideoId(),
                 soundTrack.getSnippet().getThumbnails().getMedium().getUrl(),
                 soundTrack.getSnippet().getTitle());
-        historyManager.saveOnHistory(soundTrack);
+        selectedSoundTrack = soundTrack;
     }
 
     @Override
@@ -229,6 +229,7 @@ public class SearchListFragment extends BaseFragment implements
                 .getAdapter());
         adapter.clearAll();
         adapter.addAll(list);
+        new Thread(() -> getActivity().runOnUiThread(adapter::notifyDataSetChanged)).start();
 //        adapter.notifyDataSetChanged(); ------> this was crashing the main UI thread :X
     }
 
@@ -236,7 +237,7 @@ public class SearchListFragment extends BaseFragment implements
     @Override
     public void onTrackSearchSuccess(Object list) {
         //saving on state var
-        this.soundTrackList = (ArrayList<SoundTrack>) list;
+        soundTrackList = (ArrayList<SoundTrack>) list;
         updateRecyclerViewData(soundTrackList);
         updateUI(false, false);
     }
@@ -267,7 +268,12 @@ public class SearchListFragment extends BaseFragment implements
 
     @Override
     public void onSoundTrackRetrieveSuccess(@NotNull String filePath, @NotNull FileInputStream fileInputStream) {
-        Bundle bundle = Utils.buildFilePlayBundle(filePath, "", "Sound Track Title");
+        if (selectedSoundTrack != null) {
+            getActivity().runOnUiThread(() -> historyManager.saveOnHistory(selectedSoundTrack));
+        }
+
+        Bundle bundle = Utils.buildFilePlayBundle(filePath, "",
+                selectedSoundTrack.getSnippet().getTitle());
         ((LetssoundApplication) getActivity().getApplication()).getMediaControllerInstance()
                 .getTransportControls().playFromSearch("CACHED_FILE", bundle);
 
@@ -275,11 +281,8 @@ public class SearchListFragment extends BaseFragment implements
         updateUI(false, false);
 
         //start activity
-        Intent intent = new Intent(getContext(), SoundTrackPlayerActivity.class);
-//        intent.putExtras(bundle);
         if (getActivity() != null)
-            getActivity().startActivity(intent);
-
+            getActivity().startActivity(new Intent(getContext(), SoundTrackPlayerActivity.class));
     }
 
     @Override
