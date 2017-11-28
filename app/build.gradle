@@ -84,4 +84,6 @@ dependencies {
     compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
     compile "com.android.support:multidex:$multidex_version"
+
+    compile "com.opencsv:opencsv:$opencsv_version"
 }

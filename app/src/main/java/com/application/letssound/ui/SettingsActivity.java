@@ -6,9 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.application.letssound.R;
+import com.application.letssound.adapters.SettingsAdapter;
+import com.application.letssound.helpers.RealmExportHelper;
+import com.application.letssound.models.Setting;
 
 import java.util.ArrayList;
 
@@ -24,7 +28,7 @@ public class SettingsActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.settingsListViewId)
     ListView settingsListView;
-    private ArrayList<String> data = new ArrayList<>();
+    private ArrayList<Setting> data = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +51,16 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initView() {
-//        data.add(new Setting("hey this is a sample", "description", true);
-//        ArrayAdapter<String> settingsAdapter = new SettingsAdapter());
-//        settingsListView.setAdapter(settingsAdapter);
+        buildData();
+        ArrayAdapter<Setting> settingsAdapter = new SettingsAdapter(this, -1, data);
+        settingsListView.setAdapter(settingsAdapter);
+        settingsListView.setOnItemClickListener((parent, view, position, id) -> {
+            new RealmExportHelper().setStrategy("CSV").exportAll(getApplicationContext());
+        });
+    }
+
+    private void buildData() {
+        data.add(new Setting(getString(R.string.export_sound_tracks_list), "description", true));
     }
 
     @Override
@@ -64,8 +75,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 

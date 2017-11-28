@@ -4,14 +4,14 @@ package com.application.letssound.models;
  * Created by davide on 11/02/16.
  */
 public class Setting {
-    private final boolean enabledStatus;
+    private boolean enabledStatus;
     private String label;
     private String description;
 
-    public Setting(String s, String description, boolean b) {
+    public Setting(String s, String description, boolean enabledStatus) {
         label = s;
         description = description;
-        enabledStatus = b;
+        enabledStatus = enabledStatus;
 
     }
 

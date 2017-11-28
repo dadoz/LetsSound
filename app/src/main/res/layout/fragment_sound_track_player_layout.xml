@@ -1,61 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <Button
-        android:id="@+id/playerTrackRetryButtonId"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/md_grey_50"
-        android:textSize="@dimen/title_text_medium"
-        android:backgroundTint="@color/md_orange_900"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="TRY BACK"/>
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/playerMediaArtImageViewId"
-        android:background="@drawable/ic_disc_48dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="@dimen/small_margin_16"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
-        android:layout_centerHorizontal="true"/>
+    android:fitsSystemWindows="true">
 
-    <TextView
-        android:id="@+id/playerTrackTitleTextId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/playerMediaArtImageViewId"
-        android:textColor="@color/md_amber_400"
-        android:textSize="@dimen/title_text_extra_large"
-        android:layout_marginBottom="@dimen/small_margin_8"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:maxLines="2"
-        android:text="Sound Track Tiel"/>
-    <TextView
-        android:id="@+id/playerTrackInfoTextId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/playerTrackTitleTextId"
-        android:textColor="@color/md_blue_grey_700"
-        android:textSize="@dimen/title_text_medium"
-        android:gravity="center"
-        android:layout_centerHorizontal="true"
-        android:text="info - duration"/>
-    <android.support.v7.widget.CardView
-        android:id="@+id/playerButtonBarLayoutId"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/playerTrackRetryButtonId"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/md_grey_50"
+                android:textSize="@dimen/title_text_medium"
+                android:backgroundTint="@color/md_orange_900"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="TRY BACK"/>
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/playerMediaArtImageViewId"
+                android:background="@drawable/ic_disc_48dp"
+                android:layout_marginTop="100dp"
+                android:layout_marginBottom="@dimen/small_margin_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/playerTrackTitleTextId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/playerMediaArtImageViewId"
+                android:textColor="@color/md_amber_400"
+                android:textSize="@dimen/title_text_extra_large"
+                android:layout_marginBottom="@dimen/small_margin_8"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="Sound Track Tiel"/>
+            <TextView
+                android:id="@+id/playerTrackInfoTextId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/playerTrackTitleTextId"
+                android:textColor="@color/md_blue_grey_700"
+                android:textSize="@dimen/title_text_medium"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                android:text="info - duration"/>
+        </RelativeLayout>
+    </ScrollView>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+        <RelativeLayout
+            android:id="@+id/playerButtonBarLayoutId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:padding="@dimen/small_margin_16"
             android:background="@color/md_blue_grey_800">
+            <android.support.v7.widget.AppCompatSeekBar
+                android:id="@+id/playerSoundTrackSeekbarId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Base.Widget.AppCompat.SeekBar"/>
             <ImageView
                 android:id="@+id/playerPlayButtonId"
                 android:visibility="gone"
@@ -79,12 +100,5 @@
                 android:src="@drawable/ic_replay_48dp"
                 android:background="?attr/selectableItemBackground"/>
         </RelativeLayout>
-    </android.support.v7.widget.CardView>
-    <android.support.v7.widget.AppCompatSeekBar
-        android:id="@+id/playerSoundTrackSeekbarId"
-        android:layout_above="@id/playerButtonBarLayoutId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Base.Widget.AppCompat.SeekBar"/>
-
-</RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

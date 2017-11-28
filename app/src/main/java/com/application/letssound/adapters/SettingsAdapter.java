@@ -46,8 +46,8 @@ public class SettingsAdapter extends ArrayAdapter<Setting> {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.setting_item, parent, false);
         }
-        TextView label = (TextView) convertView.findViewById(R.id.settingLabelTextId);
-        TextView description = ((TextView) convertView.findViewById(R.id.settingDescriptionTextId));
+        TextView label = convertView.findViewById(R.id.settingLabelTextId);
+        TextView description = (convertView.findViewById(R.id.settingDescriptionTextId));
 
         label.setText(settingObj.getLabel());
         description.setVisibility(settingObj.getDescription() == null ? View.GONE : View.VISIBLE);

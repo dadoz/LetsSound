@@ -14,4 +14,5 @@
     <string name="search_hint">Search a song</string>
     <string name="search_preferite_songs">Search your preferite songs</string>
     <string name="no_playlist_available">No playlist available</string>
+    <string name="export_sound_tracks_list">Export sound track list</string>
 </resources>
